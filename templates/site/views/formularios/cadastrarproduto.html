@@ -1,0 +1,200 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class="w-full  p-5 justify-start">
+    <div class="mb-3 ">
+    <nav class="flex" aria-label="Breadcrumb">
+  <ul class="inline-flex items-center space-x-1 md:space-x-3">
+    <li class="inline-flex items-center">
+      <a href="{{url('')}}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+        <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+        </svg>
+        Início
+      </a>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+        </svg>
+        <a href="{{url('produtos')}}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"> 
+            Produtos</a>
+      </div>
+    </li>
+    <li aria-current="page">
+      <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Cadastrar</span>
+      </div>
+    </li>
+  </ul></nav>
+  </div>
+    {{flash()}}
+    <div class=" w-full flex  justify-center items-start gap-8 overflow-y-scroll " style="max-height: 90vh;">
+        <div class="w-full dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3" >
+            <form action="{{url('produtos/produto_cadastrar')}}" method="post" class="flex gap-5 flex-wrap items-start justify-center">
+                
+                <div class=" w-5/12	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="produto">
+                        Produto
+                    </label>
+                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="produto" type="text" name="produto" placeholder="Ex: Dipirona"  required>
+                </div>
+                 <div class=" w-5/12	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="cod_barras">
+                        Código de Barras
+                    </label>
+                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="cod_barras" type="text" name="cod_barras" placeholder="1234567890128">
+                </div>
+                 <div class="  w-5/12	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fabricante">
+                        Fabricante
+                    </label>
+                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="fabricante" type="text" name="fabricante" placeholder="Ex: Integral Médica" >
+                </div>
+                <div class="w-5/12">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="categoria">
+                        Categoria
+                    </label>
+                      <select name="categoria" id="categoria"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                  <option value=""></option>
+                  <option value="Medicamento">Medicamento</option>
+                  <option value="Químico">Químico</option>
+  <option value="Higiene_e_Beleza">Higiene e Beleza</option>
+  <option value="Material_Médico">Material Médico</option>
+  <option value="Material_Odontológico">Material Odontológico</option>
+  <option value="Material_Descartável">Material Descartável</option>
+  <option value="Cuidado_Infantil">Cuidado Infantil</option>
+  <option value="Equipamento_de_Saúde">Equipamento de Saúde</option>
+  <option value="Dores_e_Lesões">Dores e Lesões</option>
+  <option value="Suplemento_Alimentar">Suplemento Alimentar</option>
+                 
+   
+</select>
+                </div>
+                <div class="w-5/12">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="tipo_medicamento">
+                        Tipo Medicamento
+                    </label>
+                      <select name="tipo_medicamento" id="tipo_medicamento"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option value=""></option>
+                  <option value="Fitoterápico">Fitoterápico</option>
+  <option value="Alopático">Alopático</option>
+  <option value="Homeopático">Homeopático</option>
+  <option value="Similar">Similar</option>
+  <option value="Genérico">Genérico</option>
+  <option value="Referência">Referência</option>
+  <option value="Manipulado">Manipulado</option>
+</select>
+                </div>
+                <div class="w-1/12">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="controlado">
+                        Controlado
+                    </label>
+                       <input id="controlado" name="controlado" type="checkbox" value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+   
+                </div>
+               
+                <div class="w-5/12">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="embalagem">
+                        Tipo Embalagem
+                    </label>
+                      <select name="embalagem" id="embalagem" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option value=""></option>
+                  <option value="Caixa" >Caixa</option>
+                  <option value="Frasco" >Frasco</option>
+                  <option value="Pacote">Pacote</option>
+                   <option value="Tubo">Tubo</option>
+ 
+</select>
+                </div>
+                <div class=" w-5/12  	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="unidade_embalagem" >
+                        Unidade(s) Embalagem
+                    </label>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="unidade_embalagem" type="number" name="unidade_embalagem" placeholder="Ex: 12" min="1"  required>
+                </div>
+                
+                 <div class=" w-5/12  	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="peso" >
+                        Peso
+                    </label>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="peso" type="number" name="peso" placeholder="Ex: 12" min="1"  >
+                </div>
+                <div class=" w-5/12">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="unidade_medida">
+                        Unidade de Medida do Peso
+                    </label>
+                       <select name="unidade_medida" id="unidade_medida" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  <option value=""></option>
+                  <option value="Caixa" >Comprimidos</option>
+                  <option value="mg" >mg</option>
+                  <option value="g">g</option>
+                   <option value="mL">mL</option>
+                    <option value="UI">UI</option>
+                     <option value="µg">µg</option>
+                      <option value="dose">Dose</option>            
+</select>
+                </div>
+                 <div class=" w-5/12">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="lote">
+                        Lote
+                    </label>
+                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="lote" type="text" name="lote" placeholder="Ex: Dipirona"  required>
+                </div>
+                 <div class=" w-5/12	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fornecedor">
+                        Fornecedor
+                    </label>
+                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="fornecedor" type="text" name="fornecedor" placeholder="Ex: Dipirona"  required>
+                </div>
+                 <div class=" w-5/12	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="validade">
+                        Validade
+                    </label>
+                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="validade" type="date" name="validade"  required>
+                </div>
+                <div class=" w-5/12 	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade">
+                        Quantidade
+                    </label>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12" min="1"  required>
+                </div> <div class=" w-5/12 	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
+                        Preço de Venda
+                    </label>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco" type="text" name="preco" placeholder="Ex: 12" min="1"  required>
+                </div>
+                 <div class=" w-5/12 	">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
+                        Preço de Compra
+                    </label>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco_compra" type="text" name="preco_compra" placeholder="Ex: 12" min="1"  required>
+                </div>
+                
+                
+                 <div class="  w-10/12 ">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nota">
+                        Nota
+                    </label>
+                  
+                     <textarea rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nota" name="nota"></textarea>
+                </div>
+
+                <div  class="w-10/12">
+                      <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" value="Cadastrar">
+                </div>
+                  
+                    
+                    
+             
+            </form>
+        </div>
+        
+
+
+</div>
+    </div>
+{% endblock %}

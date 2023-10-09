@@ -1,0 +1,117 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class="w-full  p-5 justify-start">
+  <div class="mb-3 ">
+    <nav class="flex" aria-label="Breadcrumb">
+  <ul class="inline-flex items-center space-x-1 md:space-x-3">
+    <li class="inline-flex items-center">
+      <a href="{{url('')}}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+        <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+          <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
+        </svg>
+        Início
+      </a>
+    </li>
+    <li>
+      <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+        </svg>
+        <a href="{{url('produtos')}}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"> 
+            Produtos</a>
+      </div>
+    </li>
+    <li aria-current="page">
+      <div class="flex items-center">
+        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
+        </svg>
+        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">{{maiuscula(slug(produto.nome))}}</span>
+      </div>
+    </li>
+  </ul></nav>
+  </div> {{flash()}}
+  <div class=" w-full flex  justify-center items-start gap-8 overflow-y-scroll overflow-x-auto  " style="max-height:90vh;">
+   
+      <div class="w-2/5 flex flex-col wrap gap-1  items-start justify-center dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3 h-full">
+          <h2 class="text-lg font-medium text-gray-900 dark:text-white">Info</h2>
+          <hr />
+          <p class="break-normal text-sm dark:text-white font-semibold ">Nome: <span class="text-sm dark:text-white font-normal">{{produto.nome}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Fabricante: <span class="text-sm dark:text-white font-normal">{{maiuscula(produto.fabricante)}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Tipo Embalagem: <span class="text-sm dark:text-white font-normal">{{maiuscula(produto.tipo_embalagem)}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Unidade(s) por Embalagem: <span class="text-sm dark:text-white font-normal">{{produto.unidades_embalagem}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Tipo Produto: <span class="text-sm dark:text-white font-normal">{{maiuscula(produto.tipo_produtos)}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Estoque: <span class="text-sm dark:text-white font-normal">{{produto.quantidade_estoque}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Vendas: <span class="text-sm dark:text-white font-normal">{{produto.quantidade_saida}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Lote: <span class="text-sm dark:text-white font-normal">{{produto.lote}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Fornecedor: <span class="text-sm dark:text-white font-normal">{{produto.fornecedor}}</span></p>
+           <p class="break-normal text-sm dark:text-white font-semibold ">Preço: <span class="text-sm dark:text-white font-normal">{{produto.validade}}</span></p>
+            <p class="break-normal text-sm dark:text-white font-semibold ">Preço de Compra unidade: <span class="text-sm dark:text-white font-normal">{{produto.validade}}</span></p>
+             <p class="break-normal text-sm dark:text-white font-semibold ">Lucro Unidade: <span class="text-sm dark:text-white font-normal">{{produto.validade}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Validade: <span class="text-sm dark:text-white font-normal">{{produto.validade}}</span></p>
+          <p class="break-normal text-sm dark:text-white font-semibold ">Nota: <span class="text-sm dark:text-white font-normal">{{slug(produto.observacao)}}</span></p>
+          
+      </div>
+   
+      
+      
+     <div class="relative w-3/5 flex flex-col items-center justify-center  shadow-md sm:rounded-lg w-full overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr>
+             
+               <th scope="col" class="px-6 py-3">Quantidade</th>
+              <th scope="col" class="px-6 py-3">Data</th>
+               <th scope="col" class="px-6 py-3">Ação</th>
+               <th scope="col" class="px-6 py-3">Local</th>
+            </tr>
+          </thead>
+          <tbody>
+              {%for registro in registros%}
+         
+              <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+              
+             
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.quantidade}}</td>
+             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.data_hora}}</td>
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{maiuscula(registro.acao)}}</td>
+               <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {% set localNome = '' %}
+                    {% for local in locais %}
+                        {% if local.id == registro.local_id %}
+                            {% set localNome = local.nome %}
+                          
+                        {% endif %}
+                    {% endfor %}
+                    <a href="{{url('local/'~registro.local_id)}}" class="hover:text-blue-500">{{maiuscula(slug(localNome))  }}</a></td>
+            </tr>
+            
+           
+           {%endfor%}
+          </tbody>
+        </table>
+         
+         <nav class='flex items-center justify-center my-2 '>
+  <ul class="flex -space-x-px text-sm">
+      {% if paginaAtual > 1 %}
+    <li>
+      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Anterior</a>
+    </li>
+    {% endif %}
+    {% for pagina in 1..totalPaginas %}
+    <li>
+      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{{ pagina }}</a>
+    </li>
+{% endfor %}
+      {% if paginaAtual < totalPaginas %} 
+<li>
+      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Próxima</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+      </div>
+      
+  </div>
+</div>
+
+{% endblock %}
