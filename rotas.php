@@ -32,6 +32,7 @@ SimpleRouter::post(URL_SITE.'buscar','SiteControlador@buscarRegistros');
 SimpleRouter::post(URL_SITE.'buscarProdutos','SiteControlador@buscarProdutos');
 
 SimpleRouter::post(URL_SITE.'buscarCod','SiteControlador@buscarCod');
+SimpleRouter::post(URL_SITE.'buscarId','SiteControlador@buscarId');
 SimpleRouter::match(['get','post'],URL_SITE.'login','AdminLogin@login');
 SimpleRouter::get(URL_SITE.'sair','SiteControlador@sair');
 

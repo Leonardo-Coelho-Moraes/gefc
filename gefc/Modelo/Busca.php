@@ -38,6 +38,18 @@ public function buscaId( string $tabela, int $id): bool|object{
         
         return $resultado;
     }
+    public function buscaProdutoVenda(string $coluna, string $nome): array
+{
+     
+      $query = "SELECT * FROM produtos WHERE $coluna LIKE '%{$nome}%' ORDER BY validade ASC LIMIT 50";
+
+ $stmt = Conexao::getInstancia()->query($query);
+        $resultado = $stmt->fetchAll(); // Use fetch() em vez de fetchAll()
+        return $resultado; 
+
+}
+
+    
 public function buscaSlug(string $tabela, string $slug): bool|object{
     // Use uma variável para armazenar o valor do slug com aspas simples
     $sol = '%' . $slug . '%'; // Adicione % como curinga, se necessário

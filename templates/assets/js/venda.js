@@ -1,7 +1,9 @@
 $(document).ready(function() {
   console.log('jQuery está funcionando!');
 });
+const buscaInput = document.getElementById('busca');
 
+  
 $(document).ready(function() {
   $.ajax({
     url: 'https://jsonplaceholder.typicode.com/posts/1',
@@ -15,17 +17,52 @@ $(document).ready(function() {
   });
 });
 
+function adicionarNoCampo(codigo, nome, preco) {
+  const campo = document.getElementById('produto');
+  campo.dataset.id = codigo;
+  campo.dataset.nome = nome;
+  campo.dataset.preco = preco;
+  campo.value = nome;  // Correção: use assignment instead of calling a function
+   $('#resultado').css('display', 'none');
+             $('#resultado').html('');
+}
+
+
+$(document).ready(function(){
+    $('#formProduto #produto').keyup(function(){
+        var produto = $(this).val();
+        if (produto !== ""){
+            $.ajax({
+                url: $('#formProduto').attr('data-url-produto'),
+                method: 'POST',
+                data:{
+                   produto: produto
+                },
+                success: function (data){
+                    $('#resultado').html(data);
+                      $('#resultado').css('display', 'flex');
+                }
+            });
+        } else{
+            $('#resultado').css('display', 'none');
+             $('#resultado').html('');
+        }
+    });
+    });
+
+
+
 const listaProdutos = [];
 let totalVendas = 0;
 $(document).ready(function(){
-    $("#busca").keyup(function(){
-        var busca = $(this).val();
-        if (busca !== ""){
+    $("#formCod #cod").keyup(function(){
+        var cod = $(this).val();
+        if (cod !== ""){
             $.ajax({
-                url: $('form').attr('data-url-busca'),
+                url: $('#formCod').attr('data-url-codigo'),
                 method: 'POST',
                 data: {
-                    busca: busca
+                    cod: cod
                 },
                 dataType: 'json',  // Espera receber JSON
                 success: function (data) {
@@ -35,12 +72,10 @@ $(document).ready(function(){
                     var produtoPreco = data.preco;
 
                     adicionarProdutoPorBarras(produtoId, produtoNome, produtoPreco);
-                    $('#buscaResultado').html(data);
+                    $('#cod').val('');
                 }
             });
-        } else {
-            $('#buscaResultado').css('display', 'none');
-        }
+        } 
     });
 });
 
@@ -71,16 +106,15 @@ function adicionarProdutoPorBarras(id, nome, valor) {
   atualizarListaProdutos();
 }
 function adicionarProduto() {
-  const produtoSelect = document.getElementById('produto');
-  const selectedOption = produtoSelect.options[produtoSelect.selectedIndex];
+  const produtoInput = document.getElementById('produto');
 
-  const produto = selectedOption.value;
-  const nomeProduto = selectedOption.dataset.nome;
-  const preco = selectedOption.dataset.preco;
+  const produto = produtoInput.dataset.id;
+  const nomeProduto = produtoInput.dataset.nome;
+  const preco = produtoInput.dataset.preco;
   const quantidade = parseInt(document.getElementById('quantidade').value);
 
   if (!produto || isNaN(quantidade) || quantidade <= 0) {
-    alert('Por favor, selecione um produto e insira uma quantidade válida.');
+    alert('Por favor, insira um produto e uma quantidade válida.');
     return;
   }
 
@@ -98,6 +132,7 @@ function adicionarProduto() {
   // Atualiza a lista de produtos exibida na página
   atualizarListaProdutos();
 }
+
 
 
 function atualizarListaProdutos() {

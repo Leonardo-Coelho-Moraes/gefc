@@ -149,7 +149,7 @@ public function vendaRegistro(array $dados): void {
     }
 }
 
-
+    
 public function contaRegistros():int {
        $query = "SELECT COUNT(DISTINCT nome_venda) as total FROM registro_vendas";
     $stmt = Conexao::getInstancia()->query($query);

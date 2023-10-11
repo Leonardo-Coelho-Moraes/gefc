@@ -158,8 +158,8 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
         
         echo $this->template->renderizar('formularios/adicionarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos]);
     }
-    public function buscarCod(): void {
-        $codigoBarras = filter_input(INPUT_POST, 'busca', FILTER_SANITIZE_STRING);
+   public function buscarCod(): void {
+        $codigoBarras = filter_input(INPUT_POST, 'cod', FILTER_DEFAULT);
 
     if ($codigoBarras) {
     $produtoEncontrado = (new Busca())->busca(null, null, 'produtos', "cod_barras = '$codigoBarras'", 'validade ASC', null);
@@ -170,6 +170,18 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
 } else {
     echo json_encode(null); // Se nenhum resultado foi encontrado
 }
+    }
+       
+    }
+      public function buscarId(): void {
+        $id = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
+
+    if (isset($id)) {
+    $produtos = (new Busca())->buscaProdutoVenda('nome',$id);
+    foreach ($produtos as $produto){
+      echo "<p onclick=\"adicionarNoCampo('{$produto->id}', '{$produto->nome}', '{$produto->preco}')\">{$produto->nome}</p><br>";
+
+   }
     }
        
     }
