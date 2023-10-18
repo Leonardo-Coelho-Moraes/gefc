@@ -14,14 +14,13 @@ SimpleRouter::get(URL_SITE.'vendas','SiteControlador@vendas');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/{nome}/','SiteControlador@venda');
 SimpleRouter::match(['get','post'],URL_SITE.'venda/adicionar','SiteControlador@venda_adicionar');
 SimpleRouter::match(['get','post'],URL_SITE.'venda/editar/{id}','SiteControlador@venda_editar');
-SimpleRouter::get(URL_SITE.'produtos','SiteControlador@produtos');
+SimpleRouter::match(['get','post'],URL_SITE.'produtos','SiteControlador@produtos');
 
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/produto_cadastrar','SiteControlador@produto_cadastrar');
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/editar/{slug}/{id}','SiteControlador@editar_produto');
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/deletar/{slug}/{id}','SiteControlador@deletar_produto');
 SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/{slug}/{id}', 'SiteControlador@produto');
 
-SimpleRouter::get(URL_SITE.'registros','SiteControlador@registros');
 SimpleRouter::match(['get','post'],URL_SITE.'usuarios','SiteControlador@usuarios');
 SimpleRouter::match(['get','post'],URL_SITE.'usuarios/editar/{id}','UsuarioControlador@editar_usuario');
 SimpleRouter::match(['get','post'],URL_SITE.'usuarios/deletar/{id}','UsuarioControlador@deletar_usuario');

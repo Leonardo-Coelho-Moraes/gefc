@@ -61,9 +61,10 @@
             <tr>
              
                <th scope="col" class="px-6 py-3">Quantidade</th>
+               <th scope="col" class="px-6 py-3">Venda</th>
               <th scope="col" class="px-6 py-3">Data</th>
-               <th scope="col" class="px-6 py-3">Ação</th>
-               <th scope="col" class="px-6 py-3">Local</th>
+               
+              
             </tr>
           </thead>
           <tbody>
@@ -72,17 +73,10 @@
               <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
               
              
-              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.quantidade}}</td>
-             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.data_hora}}</td>
-              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{maiuscula(registro.acao)}}</td>
-               <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {% set localNome = '' %}
-                    {% for local in locais %}
-                        {% if local.id == registro.local_id %}
-                            {% set localNome = local.nome %}
-                          
-                        {% endif %}
-                    {% endfor %}
-                    <a href="{{url('local/'~registro.local_id)}}" class="hover:text-blue-500">{{maiuscula(slug(localNome))  }}</a></td>
+              <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.quantidade}}</td> <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.nome_venda}}</td>
+             <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{registro.data}}</td>
+            
+              
             </tr>
             
            

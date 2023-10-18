@@ -128,7 +128,7 @@ public function vendaRegistro(array $dados): void {
             'user' => $user
         );
    
-        $query = "INSERT INTO registro_vendas (nome_venda, produto, quantidade, preco, desconto_total_venda, valor_venda, usuario) 
+        $query = "INSERT INTO registro_vendas (nome_venda, produto_id, quantidade, preco, desconto_total_venda, valor_venda, usuario) 
                   VALUES (:nome_venda, :produto, :quantidade, :preco, :desconto_total_venda, :valor_venda, :usuario)";
 
         try {

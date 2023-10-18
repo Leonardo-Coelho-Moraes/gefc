@@ -1,7 +1,21 @@
 $(document).ready(function() {
   console.log('jQuery está funcionando!');
 });
-const buscaInput = document.getElementById('busca');
+const buscaInput = document.getElementById('cod');
+ buscaInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        event.preventDefault();
+        // Aqui você pode adicionar a lógica que deseja executar em vez de enviar o formulário
+      }
+    });
+    
+    
+    
+const precoAdicionar = document.getElementById('preco');
+const campo = document.getElementById('produto');
+const resultado = document.getElementById('resultado');
+resultado.style.display = 'none';
+precoAdicionar.disabled = true;
 
   
 $(document).ready(function() {
@@ -16,40 +30,55 @@ $(document).ready(function() {
     }
   });
 });
-
 function adicionarNoCampo(codigo, nome, preco) {
-  const campo = document.getElementById('produto');
   campo.dataset.id = codigo;
   campo.dataset.nome = nome;
-  campo.dataset.preco = preco;
-  campo.value = nome;  // Correção: use assignment instead of calling a function
-   $('#resultado').css('display', 'none');
-             $('#resultado').html('');
+
+  if (parseFloat(preco) === 0) {
+    // Se o preço for zero, definir o preço para "10.00"
+    campo.dataset.preco = 0;
+    precoAdicionar.disabled = false;
+  } else {
+    campo.dataset.preco = preco;
+  }
+
+  campo.value = nome;
+  const resultado = document.getElementById('resultado');
+resultado.style.display = 'none';
+
+ resultado.innerHTML = '';
 }
+
 
 
 $(document).ready(function(){
     $('#formProduto #produto').keyup(function(){
         var produto = $(this).val();
-        if (produto !== ""){
+
+        // Verifica se o comprimento do produto é pelo menos 3 caracteres
+        if (produto.length >= 3) {
             $.ajax({
                 url: $('#formProduto').attr('data-url-produto'),
                 method: 'POST',
-                data:{
-                   produto: produto
+                data: {
+                    produto: produto
                 },
-                success: function (data){
+                success: function (data) {
                     $('#resultado').html(data);
-                      $('#resultado').css('display', 'flex');
+                    $('#resultado').css({
+                        'display': 'flex',
+                        'flex-direction': 'column',
+                        'flex-wrap': 'wrap',
+                        'cursor': 'pointer'
+                    });
                 }
             });
-        } else{
+        } else {
             $('#resultado').css('display', 'none');
-             $('#resultado').html('');
+            $('#resultado').html('');
         }
     });
-    });
-
+});
 
 
 const listaProdutos = [];
@@ -110,7 +139,12 @@ function adicionarProduto() {
 
   const produto = produtoInput.dataset.id;
   const nomeProduto = produtoInput.dataset.nome;
-  const preco = produtoInput.dataset.preco;
+  let preco = parseFloat(produtoInput.dataset.preco);
+
+if (preco === 0) {
+  preco = parseFloat(precoAdicionar.value);
+}
+  
   const quantidade = parseInt(document.getElementById('quantidade').value);
 
   if (!produto || isNaN(quantidade) || quantidade <= 0) {
@@ -131,6 +165,10 @@ function adicionarProduto() {
 
   // Atualiza a lista de produtos exibida na página
   atualizarListaProdutos();
+  precoAdicionar.disabled = true;
+  precoAdicionar.value = '';
+  produtoInput.value ='';
+  quantidade.value = '';
 }
 
 
@@ -141,7 +179,7 @@ function atualizarListaProdutos() {
 
     let valorTotalVenda = 0;
 
-    listaProdutos.forEach((item, index) => {
+   listaProdutos.forEach((item, index) => {
         const divItem = document.createElement('div');
         divItem.classList.add('mb-2', 'flex', 'justify-between', 'items-center');
 
@@ -167,10 +205,29 @@ function atualizarListaProdutos() {
         precoInput.value = (item.preco * item.quantidade).toFixed(2) + 'R$';
         precoInput.readOnly = true;
         precoInput.classList.add('bg-gray-50', 'border', 'border-gray-300', 'text-gray-900', 'text-sm', 'rounded-lg', 'focus:ring-blue-500', 'focus:border-blue-500', 'block', 'w-1/12', 'p-1', 'px-2', 'dark:bg-gray-700', 'dark:border-gray-600', 'dark:placeholder-gray-400', 'dark:text-white', 'dark:focus:ring-blue-500', 'dark:focus:border-blue-500');
+const botaoDeletar = document.createElement('button');
+        botaoDeletar.type = 'button';
+        botaoDeletar.classList.add('ml-2', 'p-1', 'bg-red-500', 'text-white', 'rounded-lg');
+        botaoDeletar.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
+                <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6a.5.5 0 0 0-.5-.5Z"/>
+                <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
+            </svg>
+        `;
+        botaoDeletar.addEventListener('click', () => {
+            // Chame uma função para deletar o produto pelo índice
+            deletarProduto(index);
+        });
+
+        divItem.appendChild(botaoDeletar);
+
+        listaProdutosElement.appendChild(divItem);
+    
 
         divItem.appendChild(selectProduto);
         divItem.appendChild(precoInput);
         divItem.appendChild(quantidadeInput);
+   divItem.appendChild(botaoDeletar);
 
         listaProdutosElement.appendChild(divItem);
     });
@@ -193,7 +250,13 @@ const descontoInput = document.getElementById('desconto');
         valorTotalVenda = calcularValorTotalVenda(desconto);
         valorTotalVendaElement.innerText = `Valor Total da Venda: ${valorTotalVenda.toFixed(2)}R$ (Desconto: ${desconto.toFixed(2)}R$)`;
     });
+function deletarProduto(index) {
+    // Remove o produto do array de listaProdutos
+    listaProdutos.splice(index, 1);
 
+    // Atualiza a lista de produtos na interface
+    atualizarListaProdutos();
+}
     // Função para calcular o valor total da venda
     function calcularValorTotalVenda(desconto) {
         let total = 0;

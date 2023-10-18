@@ -46,14 +46,15 @@
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="cod_barras">
                         Código de Barras
                     </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="cod_barras" type="text" name="cod_barras" placeholder="1234567890128"  value="{{produto.cod_barras}}>
-                </div>
-                 <div class="  w-5/12	">
+                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="cod_barras" type="text" name="cod_barras" placeholder="1234567890128"  value="{{produto.cod_barras}}">
+                  </div>
+                 <div class="w-5/12">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fabricante">
                         Fabricante
                     </label>
                       <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="fabricante" type="text" name="fabricante" placeholder="Ex: Integral Médica" value="{{produto.fabricante}}">
                 </div>
+                
                 <div class="w-5/12">
                   <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="categoria">
                         Categoria
@@ -62,14 +63,14 @@
                   <option value=""></option>                             
 <option value="Medicamento" {% if "Medicamento" == produto.categoria %}selected{% endif %}>Medicamento</option>
   <option value="Químico" {% if "Químico" == produto.categoria %}selected{% endif %}>Químico</option>
-  <option value="Higiene_e_Beleza" {% if "Higiene_e_Beleza" == produto.categoria %}selected{% endif %}>Higiene e Beleza</option>
-  <option value="Material_Médico" {% if "Material_Médico" == produto.categoria %}selected{% endif %}>Material Médico</option>
-  <option value="Material_Odontológico" {% if "Material_Odontológico" == produto.categoria %}selected{% endif %}>Material Odontológico</option>
-  <option value="Material_Descartável" {% if "Material_Descartável" == produto.categoria %}selected{% endif %}>Material Descartável</option>
-  <option value="Cuidado_Infantil" {% if "Cuidado_Infantil" == produto.categoria %}selected{% endif %}>Cuidado Infantil</option>
-  <option value="Equipamento_de_Saúde" {% if "Equipamento_de_Saúde" == produto.categoria %}selected{% endif %}>Equipamento de Saúde</option>
-  <option value="Dores_e_Lesões" {% if "Dores_e_Lesões" == produto.categoria %}selected{% endif %}>Dores e Lesões</option>
-  <option value="Suplemento_Alimentar" {% if "Suplemento_Alimentar" == produto.categoria %}selected{% endif %}>Suplemento Alimentar</option>
+  <option value="Higien e Beleza" {% if "Higiene e Beleza" == produto.categoria %}selected{% endif %}>Higiene e Beleza</option>
+  <option value="Material Médico" {% if "Material Médico" == produto.categoria %}selected{% endif %}>Material Médico</option>
+  <option value="Material Odontológico" {% if "Material Odontológico" == produto.categoria %}selected{% endif %}>Material Odontológico</option>
+  <option value="Material Descartável" {% if "Material Descartável" == produto.categoria %}selected{% endif %}>Material Descartável</option>
+  <option value="Cuidado Infantil" {% if "Cuidado Infantil" == produto.categoria %}selected{% endif %}>Cuidado Infantil</option>
+  <option value="Equipamento de Saúde" {% if "Equipamento de Saúde" == produto.categoria %}selected{% endif %}>Equipamento de Saúde</option>
+  <option value="Dores e Lesões" {% if "Dores e Lesões" == produto.categoria %}selected{% endif %}>Dores e Lesões</option>
+  <option value="Suplemento Alimentar" {% if "Suplemento Alimentar" == produto.categoria %}selected{% endif %}>Suplemento Alimentar</option>
 
 </select>
                 </div>
@@ -162,7 +163,7 @@
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
                         Preço de Venda
                     </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco" type="text" name="preco" placeholder="Ex: 12" min="1"  value="{{produto.preco}}" required>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco" type="text" name="preco" placeholder="Ex: 12" min="1"  value="{{produto.preco}}">
                 </div>
                  <div class=" w-5/12 	">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >

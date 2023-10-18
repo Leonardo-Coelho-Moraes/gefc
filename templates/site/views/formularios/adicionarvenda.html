@@ -39,7 +39,7 @@
    
   
        
-        <input type="text" id="cod" name="cod" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pesquisar Produto">
+        <input type="text" id="cod" name="cod" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="||||||||||||||||||||||||||||||||||||" autofocus>
   
 </form>
                 
@@ -47,23 +47,18 @@
    
   
        
-        <input type="text" id="produto" name="produto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pesquisar Produto">
+        <input type="text" id="produto" name="produto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 gap-1 overflow-y-scroll" placeholder="Pesquisar Produto">
   
 </form>
-
-             
-                    
-                
-         
-               
-               
-             
+                 <div id='resultado' class="left-56 top-28 w-5/12 h-3/5 absolute  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></div>
+           
                <div class="w-1/6">
                    
                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Quantidade" min="1" required>
                   
-                </div>
-               
+                </div> 
+                <div class="w-1/12">
+                 <input type="text" id="preco" name="preco" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="15.33" >     </div>           
                  <button id="adicionarBtn"class="self-end text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-1/12 sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="adicionarBtn" onclick="adicionarProduto()" > Adicionar</button>
                     
                     
@@ -77,8 +72,7 @@
      
 
     </form>
-             <div id='resultado'></div>
-             <div id='resultados'></div>
+            
             <hr></hr>
             <div class="flex-col items-center justify-between"> 
                 <div class="flex items-center justify-between"> <div class="w-auto">

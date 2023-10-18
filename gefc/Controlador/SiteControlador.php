@@ -60,11 +60,7 @@ class SiteControlador extends Controlador {
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
          $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
-         
-          
-          
-          
-        $registros = (new Busca())->busca($pagina, $limite,'registros', "", 'data_hora DESC');
+        $registros = (new Busca())->busca($pagina, $limite,'registro_entrada', "", 'data_hora DESC');
         $totalRegistros = (new EntradaModelo())->contaRegistros();
         $totalPaginas = ceil($totalRegistros / $limite);
      
@@ -91,7 +87,7 @@ class SiteControlador extends Controlador {
     public function editar_entrada(int $id): void {
          if($this->nivel_user > 2){
        $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
-        $registros = (new Busca())->buscaId('registros',$id);
+        $registros = (new Busca())->buscaId('registro_entrada',$id);
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
 $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos!')->flash();
@@ -110,7 +106,7 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
           $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
        // !!!! concertar a paginação!!!!!
-        $registros = (new Busca())->busca($pagina, $limite,'registro_vendas', '', '');
+        $registros = (new Busca())->busca($pagina, $limite,'registro_vendas', null, null);
         $totalRegistros = (new VendaModelo())->contaRegistros();
 
         $totalPaginas = ceil($totalRegistros / $limite);
@@ -119,8 +115,8 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
 
     // Agrupa os registros pela venda (nome_venda) e data
     foreach ($registros as $registro) {
-        $nomeVenda = $registro->nome_venda;
-        $data = $registro->data;
+           $nomeVenda = $registro['nome_venda'];
+    $data = $registro['data'];
 
         if (!isset($vendasAgrupadas[$nomeVenda])) {
             $vendasAgrupadas[$nomeVenda] = [];
@@ -139,7 +135,15 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
         'paginaAtual' => $pagina,
         'totalPaginas' => $totalPaginas]);
     }
-
+   public function venda(string $nome): void {
+       
+         $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
+         $registros = (new Busca())->buscarVenda( $nome);
+       $desconto = $registros[0]['desconto_total_venda'];
+       $valorVenda = $registros[0]['valor_venda'];
+        echo $this->template->renderizar('venda.html', [ 'titulo' => SITE_NOME.' '.$nome, 'registros' => $registros,
+           'produtos'=> $produtos, 'venda' => $nome, 'desconto' => $desconto,'valorVenda' => $valorVenda]);
+    }
     public function venda_adicionar(): void {
          
 
@@ -173,24 +177,32 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
     }
        
     }
-      public function buscarId(): void {
-        $id = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
+     public function buscarId(): void {
+    $id = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
 
     if (isset($id)) {
-    $produtos = (new Busca())->buscaProdutoVenda('nome',$id);
-    foreach ($produtos as $produto){
-      echo "<p onclick=\"adicionarNoCampo('{$produto->id}', '{$produto->nome}', '{$produto->preco}')\">{$produto->nome}</p><br>";
+        $produtos = (new Busca())->buscaProdutoVenda('nome', $id);
 
-   }
+        foreach ($produtos as $produto) {
+            $preco = $produto['preco']; // Corrigido para acessar a propriedade 'preco' de um array associativo
+
+            // Verifica se o preco é null, vazio, "0.00" ou 0
+            if ($preco === null || $preco === '' || $preco === '0.00' || $preco === 0) {
+                $preco = 0;
+            }
+
+            echo "<p class='hover:text-blue-500' onclick=\"adicionarNoCampo('{$produto['id']}', '{$produto['nome']}', '{$preco}')\">{$produto['nome']}-{$preco}R$</p>";
+        }
     }
-       
-    }
+}
+
+
 
     public function venda_editar(int $id): void {
           if($this->nivel_user > 2){
       $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
        
-        $registros = (new Busca())->buscaId('registros',$id);
+        $registros = (new Busca())->buscaId('registro_venda',"produto_id = $id");
         
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
@@ -211,14 +223,17 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
         $agora = strtotime(date('Y-m-d'));
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
-         $produtos = (new Busca())->busca($pagina, $limite,'produtos', "deletado != 1 OR deletado IS NULL ",'validade ASC');
+         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite);
            $quantidade = (new Contar())->contar('produtos',"deletado = 0 OR deletado IS NULL");
           $edicao = (new Contar())->contar('produtos',"editado = 1");
           
           $deletado = (new Contar())->contar('produtos',"deletado = 1");
-        $totalRegistros = (new ProdutoModelo())->contaRegistros();
+        $totalRegistros = (new Contar())->contar('produtos');
         $totalPaginas = ceil($totalRegistros / $limite);
-       
+       $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            $produtos = (new ProdutoModelo())->pesquisa($dados['pesquisa'],$pagina,$limite);   
+        }
 
         echo $this->template->renderizar('produtos.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos,
             'paginaAtual' => $pagina,
@@ -270,8 +285,8 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
       
-          $registros = (new Busca())->busca($pagina, $limite,'registros',"produto_id = $id",null);
-        $totalRegistros = (new RegistrosModelo())->contaRegistrosIdProduto($id);
+          $registros = (new Busca())->busca($pagina, $limite,'registro_vendas',"produto_id = $id",null);
+        $totalRegistros = (new Contar())->contar('registro_vendas', "produto_id = $id");
 
        
         $totalPaginas = ceil($totalRegistros / $limite);
@@ -285,24 +300,7 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
     }
 
 
-    public function registros(): void {
-       $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
-       
-        $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 30;
-        $registros = (new Busca())->busca($pagina, $limite,'registros','','id DESC');
-        
-        $totalRegistros = (new RegistrosModelo())->contaRegistros();
-
-        $totalPaginas = ceil($totalRegistros / $limite);
-        $quantidadeEntradas = (new Contar())->contar('registros',"acao = 'entrada'");
-         $quantidadeSaidas = (new Contar())->contar('registros',"acao = 'saida'");
-         $edicao = (new Contar())->contar('registros',"editado = 1");
-         $soma =  (new RegistrosModelo())->somarQuantidades('registros', null);
-        echo $this->template->renderizar('registros.html', [ 'titulo' => SITE_NOME.' Registros', 'registros' => $registros, 'produtos' => $produtos, 
-            'paginaAtual' => $pagina,
-            'totalPaginas' => $totalPaginas, 'quantidadeEntradas' => $quantidadeEntradas, 'quantidadeSaidas' => $quantidadeSaidas, 'edicao' => $edicao, 'soma'=>$soma]);
-    }
+ 
 
     public function usuarios(): void {
         if($this->usuario->nivel_acesso >1){
@@ -327,26 +325,8 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
         echo $this->template->renderizar('error404.html', [ 'titulo' => 'Página não Encontrada']);
     }
 
-    public function buscarRegistros(): void {
-      $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
-        
-        $buscar = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
-        if (isset($buscar)) {
-            $pesquisas = (new EntradaModelo())->pesquisa($buscar);
-           
-        }
-        echo $this->template->renderizar('buscar.html', [ 'titulo' => 'Página não Encontrada', 'pesquisas'=>$pesquisas,'produtos'=> $produtos]);
-    }
+   
     
-     public function buscarProdutos(): void {
-        
-        $buscar = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
-        if (isset($buscar)) {
-            $pesquisas = (new ProdutoModelo())->pesquisa($buscar);
-           
-        }
-        echo $this->template->renderizar('buscarProdutos.html', [ 'titulo' => 'Página não Encontrada', 'produtos'=>$pesquisas]);
-    }
     public function sair(): void {
         $this->sessao->limpar('usuarioId');
          $this->mensagem->sucesso('Você deslogou do sistema!')->flash();

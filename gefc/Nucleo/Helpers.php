@@ -140,6 +140,15 @@ public static function textTraco(string $string): string {
        
         return $slug;
     }
+     public static function trocar(string $string , $isso, $por): string {
+        $mapa = [
+            $isso => $por,
+        ];
+
+        $slug = strtr($string, $mapa);
+       
+        return $slug;
+    }
     
     public static function Mudar(string $texto, array $de, string $para): string {
           $slug = str_replace($de, $para, $texto);
