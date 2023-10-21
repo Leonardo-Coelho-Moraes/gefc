@@ -59,6 +59,8 @@ class SiteControlador extends Controlador {
         
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
+        $editado = (new Contar())->contar('registro_entrada', 'editado = 1');
+        $registrosTotais = (new Contar())->contar('registro_entrada');
          $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
         $registros = (new Busca())->busca($pagina, $limite,'registro_entrada', "", 'data_hora DESC');
         $totalRegistros = (new EntradaModelo())->contaRegistros();
@@ -68,7 +70,7 @@ class SiteControlador extends Controlador {
 
         echo $this->template->renderizar('entrada.html', [ 'titulo' => SITE_NOME.' Entrada', 'registros' => $registros,
             'paginaAtual' => $pagina,
-            'totalPaginas' => $totalPaginas, 'produtos'=> $produtos]);
+            'totalPaginas' => $totalPaginas, 'produtos'=> $produtos, 'editado' => $editado, 'total' => $registrosTotais]);
     }
 
     public function entrada_adicionar(): void {
@@ -91,7 +93,7 @@ class SiteControlador extends Controlador {
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
 $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos!')->flash();
-            (new RegistrosModelo())->atualizar($dados, $id);
+            (new EntradaModelo())->atualizar($dados, $id);
             Helpers::redirecionar('entrada');
         }
          echo $this->template->renderizar('formularios/editarentrada.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos]);}
@@ -141,8 +143,9 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
          $registros = (new Busca())->buscarVenda( $nome);
        $desconto = $registros[0]['desconto_total_venda'];
        $valorVenda = $registros[0]['valor_venda'];
+       $vendedor = $registros[0]['usuario'];
         echo $this->template->renderizar('venda.html', [ 'titulo' => SITE_NOME.' '.$nome, 'registros' => $registros,
-           'produtos'=> $produtos, 'venda' => $nome, 'desconto' => $desconto,'valorVenda' => $valorVenda]);
+           'produtos'=> $produtos, 'venda' => $nome, 'desconto' => $desconto,'valorVenda' => $valorVenda, 'vendedor' => $vendedor]);
     }
     public function venda_adicionar(): void {
          
@@ -198,24 +201,26 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
 
 
 
-    public function venda_editar(int $id): void {
+    public function editar_venda(string $venda, int $id): void {
           if($this->nivel_user > 2){
-      $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+     
        
-        $registros = (new Busca())->buscaId('registro_venda',"produto_id = $id");
+        $registros = (new Busca())->buscaId('registro_vendas',"$id");
+        
+         $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
         
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
 
-            (new RegistrosModelo())->atualizar($dados, $id);
+            (new VendaModelo())->atualizar($dados, $id);
             $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos e quantidade de saídas!')->flash();
          
-            Helpers::redirecionar('venda');
+            Helpers::redirecionar('vendas/'.$venda);
         }
-          echo $this->template->renderizar('formularios/editarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos]);}
+          echo $this->template->renderizar('formularios/editarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos, 'venda' => $venda]);}
           else{
   
-            Helpers::redirecionar('venda');
+            Helpers::redirecionar('vendas/'.$venda);
 }
     }
 

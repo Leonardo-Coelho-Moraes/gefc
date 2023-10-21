@@ -20,9 +20,9 @@
             {{flash()}}
             
             <div class="flex gap-2 items-center justify-start"> 
-               {%if quantidade >0 %}   <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Entradas: {{quantidade}}</p></div>{%endif%}
+               {%if total >0 %}   <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Entradas: {{total}}</p></div>{%endif%}
                   {%if soma >0 %}   <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Soma de todas entradas: {{soma}} produtos</p></div>{%endif%}
-                  {%if edicao >0 %}  <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Edições: {{edicao}}</p></div>{%endif%}
+                  {%if editado >0 %}  <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Edições: {{editado}}</p></div>{%endif%}
             </div>
 
                <div class="relative  shadow-md sm:rounded-lg  overflow-x-auto">

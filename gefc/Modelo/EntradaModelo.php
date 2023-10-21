@@ -37,6 +37,17 @@ public function entrada(array $dados): void {
 
     $stmt->execute();
 }
+public function atualizar(array $dados, int $id): void {
+       $user = UsuarioControlador::usuario()->nome;
+       $dadosArray = [
+           'produto' => $dados['produto'],
+           'quantidade' => $dados['quantidade'],
+           'editado' => 1,
+           'user' => $user
+       ];
+       (new Atualizar())->atualizar('registro_entrada', "produto_id = ?,quantidade = ?, editado = ?, user = ?",$dadosArray , $id);
+       
+}
 
  public function entradaRegisto(array $dados): void {
        $resultados = Helpers::validadarDados($dados);

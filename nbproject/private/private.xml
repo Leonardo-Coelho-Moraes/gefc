@@ -20,15 +20,13 @@
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/formularios/editarvenda.html</file>
             <file>file:/C:/xampp/htdocs/gefc/gefc/Controlador/SiteControlador.php</file>
+            <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/Atualizar.php</file>
             <file>file:/C:/xampp/htdocs/gefc/templates/site/views/venda.html</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/vendas.html</file>
-            <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/ProdutoModelo.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/assets/js/venda.js</file>
+            <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/VendaModelo.php</file>
             <file>file:/C:/xampp/htdocs/gefc/templates/site/views/produto.html</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/assets/js/produtos.js</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/produtos.html</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/formularios/adicionarvenda.html</file>
+            <file>file:/C:/xampp/htdocs/gefc/rotas.php</file>
         </group>
     </open-files>
 </project-private>

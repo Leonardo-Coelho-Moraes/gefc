@@ -156,4 +156,22 @@ public function contaRegistros():int {
     $resultado = $stmt->fetch(); // Use fetch() em vez de fetchAll()
     return $resultado->total; // Acesse a propriedade diretamente
     }
+    public function atualizar(array $dados, int $id):void {
+    $produto = $dados['produto'];
+$quantidade = $dados['quantidade'];
+$quantidadeAnterior = $dados['quantidade_anterior'];
+$preco =  $dados['preco'];
+$venda = $dados['valor_venda'];
+$quantidadeDiferenca = $quantidade - $quantidadeAnterior;
+$precoAnterior = $dados['preco_anterior'];
+$precoNovo = $quantidade * $preco;
+$diferenca = $precoAnterior - $precoNovo;
+$valorVenda = $venda + $diferenca;
+
+     $dadosArray = ['preco' => $preco, 'quantidade' => $quantidade ,'valor_venda' => $valorVenda, 'editado' => 1];
+     $dadosArray2 = ['quantidade_saida'=> $quantidadeDiferenca, 'quantidade_estoque' =>$quantidadeDiferenca ];
+     
+      (new Atualizar())->atualizar('registro_vendas', "preco = ? , quantidade = ? , valor_venda = ?, editado = ?", $dadosArray, $id);
+      
+    }
 }
