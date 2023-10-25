@@ -48,11 +48,12 @@ class SiteControlador extends Controlador {
 
     public function index(): void {
         
-        if($this->usuario->nivel_acesso >3){
-        echo $this->template->renderizar('index.html', [ 'titulo' => SITE_NOME.' Dashboard']);}
-        else{
-        Helpers::redirecionar('entrada');}
-    }
+       if($this->usuario->nivel_acesso >3){
+       echo $this->template->renderizar('index.html', [ 'titulo' => SITE_NOME.' Dashboard']);}
+      else{
+       Helpers::redirecionar('entrada');}
+       
+   }
 
     public function entrada(): void {
       
@@ -183,7 +184,31 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
      public function buscarId(): void {
     $id = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
 
-    if (isset($id)) {
+if ($id === null) {
+    // Nenhum valor 'produto' foi enviado via POST, verifique se há um valor 'pesquisa'
+    $id = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
+
+    if ($id !== null) {
+        if (isset($id)) {
+        $produtos = (new Busca())->buscaProdutoVenda('nome', $id);
+
+        foreach ($produtos as $produto) {
+            $preco = $produto['preco']; // Corrigido para acessar a propriedade 'preco' de um array associativo
+            $fabricante = Helpers::tirarTraco($produto['fabricante']);
+            $texto = $produto['nome']." - ".$fabricante." - ".$produto['lote']." - V:".$produto['validade']." - ".$produto['tipo_embalagem']; 
+            // Verifica se o preco é null, vazio, "0.00" ou 0
+            if ($preco === null || $preco === '' || $preco === '0.00' || $preco === 0) {
+                $preco = 0;
+            }
+         
+           echo "<p class='hover:text-blue-500' onclick=\"adicionarAosCampos('{$produto['id']}', '{$texto}', '{$preco}')\">{$texto} - {$preco}R$</p>";
+
+         
+        }
+    }
+    } 
+} else {
+   if (isset($id)) {
         $produtos = (new Busca())->buscaProdutoVenda('nome', $id);
 
         foreach ($produtos as $produto) {
@@ -199,6 +224,9 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
     }
 }
 
+   
+}
+
 
 
     public function editar_venda(string $venda, int $id): void {
@@ -206,8 +234,9 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
      
        
         $registros = (new Busca())->buscaId('registro_vendas',"$id");
+        $produto = $registros->produto_id;
         
-         $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+         $produtos = (new Busca())->buscaId('produtos', "$produto");
         
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {

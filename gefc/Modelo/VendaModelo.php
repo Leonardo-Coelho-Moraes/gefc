@@ -125,11 +125,12 @@ public function vendaRegistro(array $dados): void {
             'preco' => $precoProduto,  // Corrigido para pegar o preço do produto atual
             'desconto_total_venda' => isset($dados['desconto']) ? $dados['desconto'] : 0,
             'valor_venda' => $valorVendaProduto,
+            'valor_venda_sem_desconto' => $valorTotalVenda,
             'user' => $user
         );
    
-        $query = "INSERT INTO registro_vendas (nome_venda, produto_id, quantidade, preco, desconto_total_venda, valor_venda, usuario) 
-                  VALUES (:nome_venda, :produto, :quantidade, :preco, :desconto_total_venda, :valor_venda, :usuario)";
+        $query = "INSERT INTO registro_vendas (nome_venda, produto_id, quantidade, preco, desconto_total_venda, valor_venda,valor_venda_sem_desconto, usuario) 
+                  VALUES (:nome_venda, :produto, :quantidade, :preco, :desconto_total_venda, :valor_venda,:valor_venda_sem_desconto, :usuario)";
 
         try {
             $stmt = Conexao::getInstancia()->prepare($query);
@@ -139,6 +140,7 @@ public function vendaRegistro(array $dados): void {
             $stmt->bindParam(':preco', $array['preco']);
             $stmt->bindParam(':desconto_total_venda', $array['desconto_total_venda']);
             $stmt->bindParam(':valor_venda', $array['valor_venda']);
+             $stmt->bindParam(':valor_venda_sem_desconto', $array['valor_venda_sem_desconto']);
             $stmt->bindParam(':usuario', $array['user']);
             $stmt->execute();
         } catch (PDOException $e) {
@@ -156,22 +158,54 @@ public function contaRegistros():int {
     $resultado = $stmt->fetch(); // Use fetch() em vez de fetchAll()
     return $resultado->total; // Acesse a propriedade diretamente
     }
-    public function atualizar(array $dados, int $id):void {
-    $produto = $dados['produto'];
-$quantidade = $dados['quantidade'];
-$quantidadeAnterior = $dados['quantidade_anterior'];
-$preco =  $dados['preco'];
-$venda = $dados['valor_venda'];
-$quantidadeDiferenca = $quantidade - $quantidadeAnterior;
-$precoAnterior = $dados['preco_anterior'];
-$precoNovo = $quantidade * $preco;
-$diferenca = $precoAnterior - $precoNovo;
-$valorVenda = $venda + $diferenca;
+    
+    public function atualizar(array $dados, int $id): void {
+    $preco = $dados['preco_produto'];
+    $quantidade = $dados['quantidade'];
+    $preco_anterior = $dados['preco_anterior'];
+    $quantidade_anterior = $dados['quantidade_anterior'];
 
-     $dadosArray = ['preco' => $preco, 'quantidade' => $quantidade ,'valor_venda' => $valorVenda, 'editado' => 1];
-     $dadosArray2 = ['quantidade_saida'=> $quantidadeDiferenca, 'quantidade_estoque' =>$quantidadeDiferenca ];
-     
-      (new Atualizar())->atualizar('registro_vendas', "preco = ? , quantidade = ? , valor_venda = ?, editado = ?", $dadosArray, $id);
-      
-    }
+    $valor_anterior = $preco_anterior * $quantidade_anterior;
+    $valor_novo = $preco * $quantidade;
+
+    $desconto = $dados['desconto'];
+    $valor_venda_sem_desconto = $dados['valor_venda_sem_desconto'];
+
+    $valor_descontado = $valor_venda_sem_desconto - $valor_anterior;
+    $valor_somado = $valor_descontado + $valor_novo;
+    $valor_venda_com_desconto = $valor_somado - $desconto;
+
+    // Formate todos os valores para duas casas decimais
+    $preco = number_format($preco, 2);
+    $quantidade = number_format($quantidade, 2);
+    $valor_anterior = number_format($valor_anterior, 2);
+    $valor_novo = number_format($valor_novo, 2);
+    $desconto = number_format($desconto, 2);
+    $valor_venda_sem_desconto = number_format($valor_venda_sem_desconto, 2);
+    $valor_descontado = number_format($valor_descontado, 2);
+    $valor_somado = number_format($valor_somado, 2);
+    $valor_venda_com_desconto = number_format($valor_venda_com_desconto, 2);
+
+    $dadosArray = [
+        'preco' => $preco,
+        'quantidade' => $quantidade,
+        'valor_venda' => $valor_venda_com_desconto,
+        'valor_venda_sem_desconto' => $valor_somado,
+        'editado' => 1
+    ];
+
+    // Atualize o primeiro conjunto de dados
+    (new Atualizar())->atualizar('registro_vendas', "preco = ?, quantidade = ?, valor_venda = ?, valor_venda_sem_desconto = ?, editado = ?", $dadosArray, $id);
+
+    $dadosArray2 = [
+        'valor_venda' => $valor_venda_com_desconto,
+        'valor_venda_sem_desconto' => $valor_somado,
+        'editado' => 1
+    ];
+
+    // Atualize o segundo conjunto de dados
+    $nomeVenda = $dados['nome_venda'];
+    (new Atualizar())->atualizarVendaValor("valor_venda = ?, valor_venda_sem_desconto = ?, editado = ?", $dadosArray2, $nomeVenda);
+}
+
 }

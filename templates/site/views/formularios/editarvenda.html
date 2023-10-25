@@ -34,18 +34,42 @@
   </div>
     <div class=" w-full flex  flex-col  justify-start items-start gap-8  ">
         <div class=" w-full dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3" >
+              <form id="formProduto" class="w-3/5"  data-url-produto="{{url('buscarId')}}"  >   
+   
+  
+       
+      <label for="pesquisa" class="mb-2 text-sm font-medium text-gray-900 sr-only dark:text-white">Search</label>
+    <div class="relative">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+        </div>
+        <input type="text" id="pesquisa" class="pl-10 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Search Mockups, Logos..." name="pesquisa">
+       
+    </div>
+  
+</form>
+                <div id='resultado' class="left-46 top-28 w-3/5 h-3/5 absolute  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 overflow-y-auto max-h-[300px]"></div>
             <form action="{{url('vendas/editar/'~venda~'/'~registros.id)}}" method="post" class="flex gap-5 flex-col items-start justify-center">
+                <div class="hidden">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nome_venda" >
+                        Nome Venda
+                    </label>
+                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nome_venda" type="text" name="nome_venda" value="{{registros.nome_venda}}" placeholder="Ex: 12"  >
+                </div>
                  <div class="w-5/12">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="produtoentrada">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="produto">
                         Produto
                     </label>
-                      <select name="produto" id="produto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value=""></option>
-    {%for pro in produtos%}
-           <option value="{{pro.id}}" {% if pro.id == registros.produto_id %}selected{% endif %}>{{pro.nome}} - {{pro.fabricante}} - {{pro.lote}} -V:{{pro.validade}} Embalagem:{{pro.tip_embalagem}}</option>
-              {%endfor%}
+                      <select name="produto"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+                  
+    
+           <option value="{{produtos.id}}" id="option" >{{produtos.nome}} - {{produtos.fabricante}} - {{produtos.lote}} -V:{{produtos.validade}} Embalagem:{{produtos.tipo_embalagem}}</option>
+            
 </select>
                 </div>
+              
                  
              
                <div class="w-5/12">
@@ -66,23 +90,29 @@
                    
                    
                 </div>
-                 <div class="w-5/12">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="preco" >
-                        Preço
+                 <div class="w-full">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="preco_produto" >
+                        Preço 
                     </label>
-                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco" type="text" name="preco" value="{{registros.preco}}" placeholder="Ex: 12" min="1" reqires >
+                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco_produto" type="text" name="preco_produto" value="{{registros.preco}}" placeholder="Ex: 12" min="0" required >
                 </div>
                  <div class="hidden">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="preco_anterior" >
                         Preço Anterior
                     </label>
-                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco_anterior" type="text" name="preco_anterior" value="{{registros.preco}}" placeholder="Ex: 12" min="1" reqires >
+                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco_anterior" type="text" name="preco_anterior" value="{{registros.preco}}" placeholder="Ex: 12" min="1" >
                 </div>
                 <div class="hidden">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="valor_venda" >
-                       Valor Venda
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="valor_venda_sem_desconto" >
+                       Valor Venda Sem Desconto
                     </label>
-                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="valor_venda" type="text" name="valor_venda" value="{{registros.valor_venda}}" placeholder="Ex: 12" min="1" reqires >
+                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="valor_venda_sem_desconto" type="text" name="valor_venda_sem_desconto" value="{{registros.valor_venda_sem_desconto}}" placeholder="Ex: 12" min="1" reqires >
+                </div>
+                <div class="hidden">
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="desconto" >
+                       Desconto
+                    </label>
+                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="desconto" type="text" name="desconto" value="{{registros.desconto_total_venda}}" placeholder="Ex: 12" min="1" reqires >
                 </div>
                
                

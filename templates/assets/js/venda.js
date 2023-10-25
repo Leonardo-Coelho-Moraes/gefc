@@ -54,6 +54,7 @@ resultado.style.display = 'none';
 $(document).ready(function(){
     $('#formProduto #produto').keyup(function(){
         var produto = $(this).val();
+        var resultado = $('#resultado'); // Cache do elemento para uso posterior
 
         // Verifica se o comprimento do produto é pelo menos 3 caracteres
         if (produto.length >= 3) {
@@ -64,18 +65,27 @@ $(document).ready(function(){
                     produto: produto
                 },
                 success: function (data) {
-                    $('#resultado').html(data);
-                    $('#resultado').css({
+                    resultado.html(data);
+                 
+                    resultado.css({
                         'display': 'flex',
                         'flex-direction': 'column',
                         'flex-wrap': 'wrap',
                         'cursor': 'pointer'
                     });
+                    
+                    // Adiciona um evento de clique no documento para ocultar o elemento #resultado quando clicar fora dele
+                    $(document).click(function(event) {
+                        if (!resultado.is(event.target) && resultado.has(event.target).length === 0) {
+                            resultado.css('display', 'none');
+                            resultado.html('');
+                        }
+                    });
                 }
             });
         } else {
-            $('#resultado').css('display', 'none');
-            $('#resultado').html('');
+            resultado.css('display', 'none');
+            resultado.html('');
         }
     });
 });

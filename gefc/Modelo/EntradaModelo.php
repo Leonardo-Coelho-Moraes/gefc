@@ -45,7 +45,7 @@ public function atualizar(array $dados, int $id): void {
            'editado' => 1,
            'user' => $user
        ];
-       (new Atualizar())->atualizar('registro_entrada', "produto_id = ?,quantidade = ?, editado = ?, user = ?",$dadosArray , $id);
+       (new Atualizar())->atualizar('registro_entrada', "produto_id = ?,quantidade = ?, editado = ?, user = ?",$dadosArray ,$id); //observe que mudei de $id para id = $id
        
 }
 
