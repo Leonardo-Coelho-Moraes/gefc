@@ -141,7 +141,8 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
    public function venda(string $nome): void {
        
          $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
-         $registros = (new Busca())->buscarVenda( $nome);
+         //$registros = (new Busca())->buscarVenda( $nome);
+         $registros = (new Busca())->busca(null,null,'registro_vendas',"nome_venda =  '{$nome}' AND deletado != 1 OR deletado IS NULL ",null,null);
        $desconto = $registros[0]['desconto_total_venda'];
        $valorVenda = $registros[0]['valor_venda'];
        $vendedor = $registros[0]['usuario'];
@@ -231,26 +232,28 @@ if ($id === null) {
 
     public function editar_venda(string $venda, int $id): void {
           if($this->nivel_user > 2){
-     
-       
         $registros = (new Busca())->buscaId('registro_vendas',"$id");
         $produto = $registros->produto_id;
-        
          $produtos = (new Busca())->buscaId('produtos', "$produto");
-        
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
-
             (new VendaModelo())->atualizar($dados, $id);
             $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos e quantidade de saídas!')->flash();
-         
             Helpers::redirecionar('vendas/'.$venda);
         }
           echo $this->template->renderizar('formularios/editarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos, 'venda' => $venda]);}
           else{
-  
             Helpers::redirecionar('vendas/'.$venda);
 }
+    }
+    
+    public function deletar_venda(string $venda, int $id): void {
+         
+         if($this->nivel_user > 2){
+        (new VendaModelo())->deletar($venda,$id);
+        $this->mensagem->sucesso('Venda inserida na lista de deletados com sucesso!')->flash();
+        Helpers::redirecionar('vendas');}
+
     }
 
     public function produtos(): void {

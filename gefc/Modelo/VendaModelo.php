@@ -14,6 +14,7 @@ use gefc\Nucleo\Mensagem;
 use gefc\Nucleo\Helpers;
 use gefc\Controlador\UsuarioControlador;
 use gefc\Nucleo\Conexao;
+use gefc\Modelo\Busca;
 use gefc\Modelo\Inserir;
 use gefc\Modelo\Atualizar;
 class VendaModelo {
@@ -75,8 +76,12 @@ class VendaModelo {
 }
 
 public function vendaRegistro(array $dados): void {
-    $nomeVenda = 'venda' . uniqid();
+    
+    $ano = date("Y");
+    $nomeVenda = 'venda' . uniqid(). $ano;
     $user = UsuarioControlador::usuario()->nome;
+    
+
 
     // Inicializa o valor total da venda
     $valorTotalVenda = 0;
@@ -206,6 +211,23 @@ public function contaRegistros():int {
     // Atualize o segundo conjunto de dados
     $nomeVenda = $dados['nome_venda'];
     (new Atualizar())->atualizarVendaValor("valor_venda = ?, valor_venda_sem_desconto = ?, editado = ?", $dadosArray2, $nomeVenda);
+}
+public function deletar(string $venda, int $id ):void {
+    $produto = (new Busca())->buscaId('registro_vendas', $id);
+    if (isset($produto)){
+        $preco = $produto->preco;
+        $quantidade = $produto->quantidade;
+        $calculo = $preco * $quantidade;
+            $dadosArray = ['deletado' => 1];
+       (new Atualizar())->atualizar('registro_vendas', " deletado = ?", $dadosArray, $id);
+       
+    $dadosArray2 = [
+        'valor_venda' => $calculo,
+        'valor_venda_sem_desconto' => $calculo
+        
+    ];
+       (new Atualizar())->atualizarVendaValor("valor_venda = valor_venda - ?, valor_venda_sem_desconto = valor_venda_sem_desconto - ?", $dadosArray2, $venda);
+    }
 }
 
 }
