@@ -6,13 +6,13 @@
         <div class=" w-full flex flex-col juntify-center gap-3">
             
             <div class="flex gap-3  w-full items-center justify-center"> <a href="{{url('entrada/adicionar')}}" class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Adicionar</a>
-                <form class="relative w-full" action="{{url('buscar')}}" method="post">
+                <form class="relative w-full" action="{{url('entrada')}}" method="post">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
             <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
             </svg>
         </div>
-        <input type="search" id="pesquisa" name="pesquisa"  class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="2023" required>
+        <input type="text" id="pesquisaEntrada" name="pesquisaEntrada"  class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pesquisar" required>
            
     </form>
                 
@@ -25,16 +25,16 @@
                   {%if editado >0 %}  <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Edições: {{editado}}</p></div>{%endif%}
             </div>
 
-               <div class="relative  shadow-md sm:rounded-lg  overflow-x-auto">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-            <tr>
+              <div class="relative  shadow-md sm:rounded-lg overflow-x-scroll ">
+        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+            <tr><th scope="col" class="px-6 py-3">
+                    Cod.
+                </th>
                 <th scope="col" class="px-6 py-3">
                     Produto
                 </th>
-                <th scope="col" class="px-6 py-3">
-                    Local
-                </th>
+                
                 <th scope="col" class="px-6 py-3">
                     Quantidade
                 </th>
@@ -51,33 +51,39 @@
         <tbody>
             {%for registro in registros%}
             <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+              <td scope="row" class="px-6 py-4 font-medium text-gray-900  dark:text-white">
+                 {{registro.produto_id}}
+                </td>
+                <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-[30vw] break-words">
                     {% set produtoNome= '' %}
+                    {% set produtoPeso= '' %}
+                    {% set produtoUnidade= '' %}
+                    {% set produtoFabricante= '' %}
+                    {% set produtoEmbalagem= '' %}
                       {% set produtoSlug = '' %}
                          {% set produtoId = '' %}
                     {% for produto in produtos %}
                         {% if produto.id == registro.produto_id %}
                             {% set produtoNome = produto.nome %}
+                            {% set produtoPeso = produto.peso %}
+                            {% set produtoUnidade = produto.unidade_medida %}
+                            {% set produtoFabricante = produto.fabricante %}
+                            {% set produtoEmbalagem = produto.tipo_embalagem %}
+                            
+                          
                          {% set produtoSlug = produto.slug %}
                          {% set produtoId = produto.id %}
                         {% endif %}
                     {% endfor %}
-                   <a href="{{url('produtos/'~produtoSlug~'/'~produtoId)}}" class="hover:text-blue-500">{{produtoNome }}</a></td>
-             <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white"> {% set localNome = '' %}
-                    {% for local in locais %}
-                        {% if local.id == registro.local_id %}
-                            {% set localNome = local.nome %}
-                          
-                        {% endif %}
-                    {% endfor %}
-                    <a href="{{url('local/'~registro.local_id)}}" class="hover:text-blue-500">{{maiuscula(slug(localNome))  }}</a>
-                </td>
+                   <a href="{{url('produtos/'~produtoSlug~'/'~produtoId)}}" class="hover:text-blue-500">{{produtoNome }} {{produtoPeso}}{{produtoUnidade}} - {{maiuscula(slug(produtoFabricante)) }} {{maiuscula(produtoEmbalagem)}}
+                   </a></td>
+            
              
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                  {{registro.quantidade}}
                 </td>
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                   {{registro.data_hora}}
+                   {{registro.data}}
                 </td> {% if usuario().nivel_acesso >2 %}
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                    <a href="{{url('entrada/editar/'~registro.id)}}" class="w-6 h-6 flex items-center justify-center rounded-full bg-blue-400">

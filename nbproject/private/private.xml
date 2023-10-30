@@ -21,12 +21,9 @@
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
             <file>file:/C:/xampp/htdocs/gefc/templates/site/views/formularios/editarvenda.html</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/aside.html</file>
             <file>file:/C:/xampp/htdocs/gefc/gefc/Controlador/SiteControlador.php</file>
             <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/Atualizar.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/venda.html</file>
             <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/VendaModelo.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/Busca.php</file>
             <file>file:/C:/xampp/htdocs/gefc/rotas.php</file>
             <file>file:/C:/xampp/htdocs/gefc/templates/site/views/formularios/adicionarvenda.html</file>
         </group>

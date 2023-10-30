@@ -71,25 +71,28 @@ public function contaRegistros() {
     return $totalRegistros;
 }
 
-   public function pesquisa(string $buscar) {
-    // Use uma variável para armazenar o valor do slug com aspas simples
-    $sol = '%' . $buscar . '%'; // Adicione % como curinga, se necessário
+   public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
+    $conexao = Conexao::getInstancia();
+    // Calcular o valor de início com base na página e no limite
+    $inicio = ($pagina !== null && $limite !== null) ? (($pagina - 1) * $limite) : 0;
 
-    // Use uma consulta preparada para evitar SQL injection
-    $query = "SELECT * FROM registro_entrada WHERE data_hora LIKE :buscar ORDER BY data_hora DESC";
-
-    // Prepare a consulta
-    $stmt = Conexao::getInstancia()->prepare($query);
-
-    // Associe o valor do parâmetro :buscar ao valor da variável $sol
-    $stmt->bindParam(':buscar', $sol, PDO::PARAM_STR);
-
-    // Execute a consulta preparada
+    $query = "SELECT * FROM registro_entrada
+              WHERE (produto_id LIKE :buscar 
+                     OR ano LIKE :buscar 
+                     OR data LIKE :buscar 
+                      OR hora LIKE :buscar 
+                    )
+              
+              ORDER BY data DESC
+              LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
+              
+    $stmt = $conexao->prepare($query);
+    $stmt->bindValue(':buscar', '%' . $buscar . '%', PDO::PARAM_STR);
+    $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
     $stmt->execute();
-
-    // Obtenha o resultado como um array associativo
+    
     $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
     return $resultado;
 }
 

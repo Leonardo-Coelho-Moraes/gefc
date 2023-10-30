@@ -15,6 +15,7 @@ use gefc\Nucleo\Helpers;
 use gefc\Controlador\UsuarioControlador;
 use gefc\Nucleo\Conexao;
 use gefc\Modelo\Busca;
+use PDO;
 use gefc\Modelo\Inserir;
 use gefc\Modelo\Atualizar;
 class VendaModelo {
@@ -165,6 +166,7 @@ public function contaRegistros():int {
     }
     
     public function atualizar(array $dados, int $id): void {
+        $produto = $dados['produto'];
     $preco = $dados['preco_produto'];
     $quantidade = $dados['quantidade'];
     $preco_anterior = $dados['preco_anterior'];
@@ -190,7 +192,8 @@ public function contaRegistros():int {
     $valor_descontado = number_format($valor_descontado, 2);
     $valor_somado = number_format($valor_somado, 2);
     $valor_venda_com_desconto = number_format($valor_venda_com_desconto, 2);
-
+    $diferençaQuantidade = $quantidade - $quantidade_anterior;
+    
     $dadosArray = [
         'preco' => $preco,
         'quantidade' => $quantidade,
@@ -211,6 +214,14 @@ public function contaRegistros():int {
     // Atualize o segundo conjunto de dados
     $nomeVenda = $dados['nome_venda'];
     (new Atualizar())->atualizarVendaValor("valor_venda = ?, valor_venda_sem_desconto = ?, editado = ?", $dadosArray2, $nomeVenda);
+    $dadosArray3 = array('quantidade_saida' => $diferençaQuantidade,'quantidade_estoque' => $diferençaQuantidade );
+    if($quantidade > $quantidade_anterior){ 
+        
+            (new Atualizar())->atualizar('produtos', "quantidade_saida = quantidade_saida + ?, quantidade_estoque = quantidade_estoque - ?", $dadosArray3, $produto);
+            
+    }else  {
+            (new Atualizar())->atualizar('produtos', "quantidade_saida = quantidade_saida + ?, quantidade_estoque = quantidade_estoque - ?", $dadosArray3, $produto);
+        }
 }
 public function deletar(string $venda, int $id ):void {
     $produto = (new Busca())->buscaId('registro_vendas', $id);
@@ -229,5 +240,35 @@ public function deletar(string $venda, int $id ):void {
        (new Atualizar())->atualizarVendaValor("valor_venda = valor_venda - ?, valor_venda_sem_desconto = valor_venda_sem_desconto - ?", $dadosArray2, $venda);
     }
 }
+public function deletarVendaInteira(string $venda ):void {
+            $dadosArray = ['deletado' => 1];
+       (new Atualizar())->atualizarVendaValor("editado = ?", $dadosArray, $venda);
+}
+
+public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
+    $conexao = Conexao::getInstancia();
+    // Calcular o valor de início com base na página e no limite
+    $inicio = ($pagina !== null && $limite !== null) ? (($pagina - 1) * $limite) : 0;
+
+    $query = "SELECT * FROM registro_vendas
+              WHERE (nome_venda LIKE :buscar 
+                     OR ano LIKE :buscar 
+                     OR data LIKE :buscar 
+                      OR hora LIKE :buscar 
+                    )
+              AND (deletado != 1 OR deletado IS NULL)
+              ORDER BY data DESC
+              LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
+              
+    $stmt = $conexao->prepare($query);
+    $stmt->bindValue(':buscar', '%' . $buscar . '%', PDO::PARAM_STR);
+    $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
+    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
+    $stmt->execute();
+    
+    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resultado;
+}
+
 
 }

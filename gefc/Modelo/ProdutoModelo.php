@@ -115,6 +115,9 @@ public function deletar(int $id): void {
               WHERE (nome LIKE :buscar 
                      OR fabricante LIKE :buscar 
                      OR tipo_embalagem LIKE :buscar 
+                      OR categoria LIKE :buscar 
+                      OR  tipo_medicamento LIKE :buscar 
+                      
                      OR unidades_embalagem LIKE :buscar
                      OR lote LIKE :buscar 
                      OR fornecedor LIKE :buscar)

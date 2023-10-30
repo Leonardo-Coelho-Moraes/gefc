@@ -15,6 +15,7 @@ use gefc\Modelo\EntradaModelo;
 
 use gefc\Modelo\ProdutoModelo;
 use gefc\Modelo\RegistrosModelo;
+use gefc\Modelo\Atualizar;
 use gefc\Modelo\UserModelo;
 use gefc\Nucleo\Controlador;
 use gefc\Modelo\VendaModelo;
@@ -63,7 +64,22 @@ class SiteControlador extends Controlador {
         $editado = (new Contar())->contar('registro_entrada', 'editado = 1');
         $registrosTotais = (new Contar())->contar('registro_entrada');
          $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
-        $registros = (new Busca())->busca($pagina, $limite,'registro_entrada', "", 'data_hora DESC');
+        
+        
+        
+
+   
+   
+        $registros = (new EntradaModelo())->pesquisa('', $pagina, $limite);
+if (isset($_POST['pesquisaEntrada'])) {
+    $pesquisa = $_POST['pesquisaEntrada'];
+    $registros = (new EntradaModelo())->pesquisa($pesquisa, $pagina, $limite);
+    if(empty($registros)){
+         $this->mensagem->erro($dados['pesquisa'] ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou COD. do produto!")->flash();
+         $registros = (new EntradaModelo())->pesquisa('', $pagina, $limite);
+    }
+}
+        
         $totalRegistros = (new EntradaModelo())->contaRegistros();
         $totalPaginas = ceil($totalRegistros / $limite);
      
@@ -108,18 +124,30 @@ $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a qu
         
           $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
-       // !!!! concertar a paginação!!!!!
-        $registros = (new Busca())->busca($pagina, $limite,'registro_vendas', null, null);
+  
+    // Caso não tenha sido enviado um valor de pesquisa
+    $registros = (new VendaModelo())->pesquisa('',$pagina,$limite);   
+
         $totalRegistros = (new VendaModelo())->contaRegistros();
 
         $totalPaginas = ceil($totalRegistros / $limite);
-
+       
+if (isset($_POST['pesquisaVendas'])) {
+    $pesquisa = $_POST['pesquisaVendas'];
+    $registros = (new VendaModelo())->pesquisa($pesquisa, $pagina, $limite);
+    if(empty($registros)){
+          $this->mensagem->erro($dados['pesquisa'] ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou nome da venda!")->flash();
+         $registros = (new VendaModelo())->pesquisa('',$pagina,$limite);   
+    }
+}
+        
         $vendasAgrupadas = [];
 
     // Agrupa os registros pela venda (nome_venda) e data
     foreach ($registros as $registro) {
            $nomeVenda = $registro['nome_venda'];
-    $data = $registro['data'];
+    $data = $registro['data']." ". $registro['hora'];
+  
 
         if (!isset($vendasAgrupadas[$nomeVenda])) {
             $vendasAgrupadas[$nomeVenda] = [];
@@ -238,7 +266,7 @@ if ($id === null) {
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
             (new VendaModelo())->atualizar($dados, $id);
-            $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos e quantidade de saídas!')->flash();
+            $this->mensagem->sucesso('Registro Editado com Sucesso. Quantidade de Venda e Estoque do Produto Editados!')->flash();
             Helpers::redirecionar('vendas/'.$venda);
         }
           echo $this->template->renderizar('formularios/editarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos, 'venda' => $venda]);}
@@ -253,6 +281,16 @@ if ($id === null) {
         (new VendaModelo())->deletar($venda,$id);
         $this->mensagem->sucesso('Venda inserida na lista de deletados com sucesso!')->flash();
         Helpers::redirecionar('vendas');}
+
+    }
+     public function deletarVendaInteira(string $venda): void {
+         
+         if($this->nivel_user > 2){
+              $dadosArray = ['deletado' => 1];
+       (new Atualizar())->atualizarVendaValor("deletado = ?", $dadosArray, $venda);
+       $this->mensagem->sucesso('Venda deletada completamente!')->flash();
+}
+        Helpers::redirecionar('vendas');
 
     }
 
@@ -270,7 +308,13 @@ if ($id === null) {
        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
             $produtos = (new ProdutoModelo())->pesquisa($dados['pesquisa'],$pagina,$limite);   
+             if(empty($produtos)){
+          $this->mensagem->erro($dados['pesquisa'] ." não encontrado(a), abaixo a lista de todos os registros!")->flash();
+         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite);
+    }
         }
+     
+       
 
         echo $this->template->renderizar('produtos.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos,
             'paginaAtual' => $pagina,
