@@ -13,19 +13,16 @@
             <url>templates/site/views/formularios/cadastrarproduto.html</url>
             <bookmark id="3">
                 <name/>
-                <line>159</line>
+                <line>150</line>
                 <key/>
             </bookmark>
         </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/formularios/editarvenda.html</file>
             <file>file:/C:/xampp/htdocs/gefc/gefc/Controlador/SiteControlador.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/Atualizar.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/gefc/Modelo/VendaModelo.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/rotas.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/formularios/adicionarvenda.html</file>
+            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/vendas.html</file>
+            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/entrada.html</file>
         </group>
     </open-files>
 </project-private>

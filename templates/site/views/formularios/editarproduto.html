@@ -54,13 +54,10 @@
                     </label>
                       <select name="tipo_medicamento" id="tipo_medicamento"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value=""></option>
-                  <option value="Fitoterápico" {% if "Fitoterápico" == produto.tipo_medicamento %}selected{% endif %}>Fitoterápico</option>
-  <option value="Alopático" {% if "Alopático" == produto.tipo_medicamento %}selected{% endif %}>Alopático</option>
-  <option value="Homeopático" {% if "Homeopático" == produto.tipo_medicamento %}selected{% endif %}>Homeopático</option>
-  <option value="Similar" {% if "Similar" == produto.tipo_medicamento %}selected{% endif %}>Similar</option>
-  <option value="Genérico" {% if "Genérico" == produto.tipo_medicamento %}selected{% endif %}>Genérico</option>
-  <option value="Referência" {% if "Referência" == produto.tipo_medicamento %}selected{% endif %}>Referência</option>
-  <option value="Manipulado" {% if "Manipulado" == produto.tipo_medicamento %}selected{% endif %}>Manipulado</option>
+              {% for tipo in tipos %}
+  <option value="{{ tipo.tipo }}" {% if tipo.tipo == produto.tipo_medicamento %}selected{% endif %}>{{ tipo.tipo }}</option>
+{% endfor %}
+    
 </select>
                 </div>
                 <div class=" w-1/6	">
@@ -82,16 +79,9 @@
                     </label>
                       <select name="categoria" id="categoria"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                   <option value=""></option>                             
-<option value="Medicamento" {% if "Medicamento" == produto.categoria %}selected{% endif %}>Medicamento</option>
-  <option value="Químico" {% if "Químico" == produto.categoria %}selected{% endif %}>Químico</option>
-  <option value="Higien e Beleza" {% if "Higiene e Beleza" == produto.categoria %}selected{% endif %}>Higiene e Beleza</option>
-  <option value="Material Médico" {% if "Material Médico" == produto.categoria %}selected{% endif %}>Material Médico</option>
-  <option value="Material Odontológico" {% if "Material Odontológico" == produto.categoria %}selected{% endif %}>Material Odontológico</option>
-  <option value="Material Descartável" {% if "Material Descartável" == produto.categoria %}selected{% endif %}>Material Descartável</option>
-  <option value="Cuidado Infantil" {% if "Cuidado Infantil" == produto.categoria %}selected{% endif %}>Cuidado Infantil</option>
-  <option value="Equipamento de Saúde" {% if "Equipamento de Saúde" == produto.categoria %}selected{% endif %}>Equipamento de Saúde</option>
-  <option value="Dores e Lesões" {% if "Dores e Lesões" == produto.categoria %}selected{% endif %}>Dores e Lesões</option>
-  <option value="Suplemento Alimentar" {% if "Suplemento Alimentar" == produto.categoria %}selected{% endif %}>Suplemento Alimentar</option>
+   {% for categoria in categorias %}
+  <option value="{{ categoria.categoria }}" {% if categoria.categoria == produto.categoria %}selected{% endif %}>{{ categoria.categoria }}</option>
+{% endfor %}
 
 </select>
                 </div>

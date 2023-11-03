@@ -13,6 +13,7 @@ SimpleRouter::match(['get','post'],URL_SITE.'entrada/adicionar','SiteControlador
 SimpleRouter::match(['get','post'],URL_SITE.'entrada/editar/{id}','SiteControlador@editar_entrada');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/','SiteControlador@vendas');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/{nome}/','SiteControlador@venda');
+SimpleRouter::match(['get','post'],URL_SITE.'registro/vendas','SiteControlador@registroVendas');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/editar/{venda}/{id}','SiteControlador@editar_venda');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/deletar/{venda}/{id}','SiteControlador@deletar_venda');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/deletar/{nomeVenda}','SiteControlador@deletarVendaInteira');

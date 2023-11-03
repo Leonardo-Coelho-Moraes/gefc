@@ -54,30 +54,39 @@
               <td scope="row" class="px-6 py-4 font-medium text-gray-900  dark:text-white">
                  {{registro.produto_id}}
                 </td>
-                <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-[30vw] break-words">
-                    {% set produtoNome= '' %}
-                    {% set produtoPeso= '' %}
-                    {% set produtoUnidade= '' %}
-                    {% set produtoFabricante= '' %}
-                    {% set produtoEmbalagem= '' %}
-                      {% set produtoSlug = '' %}
-                         {% set produtoId = '' %}
-                    {% for produto in produtos %}
-                        {% if produto.id == registro.produto_id %}
-                            {% set produtoNome = produto.nome %}
-                            {% set produtoPeso = produto.peso %}
-                            {% set produtoUnidade = produto.unidade_medida %}
-                            {% set produtoFabricante = produto.fabricante %}
-                            {% set produtoEmbalagem = produto.tipo_embalagem %}
-                            
-                          
-                         {% set produtoSlug = produto.slug %}
-                         {% set produtoId = produto.id %}
-                        {% endif %}
-                    {% endfor %}
-                   <a href="{{url('produtos/'~produtoSlug~'/'~produtoId)}}" class="hover:text-blue-500">{{produtoNome }} {{produtoPeso}}{{produtoUnidade}} - {{maiuscula(slug(produtoFabricante)) }} {{maiuscula(produtoEmbalagem)}}
-                   </a></td>
-            
+               <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-[30vw] break-words">
+    {% for produto in produtos %}
+    
+        {% set produtoNome = '' %}
+        {% set produtoPeso = '' %}
+        {% set produtoUnidade = '' %}
+        {% set produtoFabricante = '' %}
+        {% set produtoEmbalagem = '' %}
+        {% set produtoEditado = '' %}
+        {% set produtoDeletado = '' %}
+        {% set produtoSlug = '' %}
+        {% set produtoId = '' %}
+
+        {% if produto.id == registro.produto_id %}
+            {% set produtoNome = produto.nome %}
+            {% set produtoPeso = produto.peso %}
+            {% set produtoUnidade = produto.unidade_medida %}
+            {% set produtoFabricante = produto.fabricante %}
+            {% set produtoEmbalagem = produto.tipo_embalagem %}
+            {% set produtoEditado = produto.editado %}
+            {% set produtoDeletado = produto.deletado %}
+            {% set produtoSlug = produto.slug %}
+            {% set produtoId = produto.id %}
+
+            {% if registro.editado == 1 %}
+                <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="text-blue-400 hover:text-green-500">{{ produtoNome }} {{ produtoPeso }}{{ produtoUnidade }} - {{ maiuscula(slug(produtoFabricante)) }} {{ maiuscula(produtoEmbalagem) }}</a>
+             {% else %}
+                <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="hover:text-green-500 text-white">{{ produtoNome }} {{ produtoPeso }}{{ produtoUnidade }} - {{ maiuscula(slug(produtoFabricante)) }} {{ maiuscula(produtoEmbalagem) }}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</td>
+
              
                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                  {{registro.quantidade}}

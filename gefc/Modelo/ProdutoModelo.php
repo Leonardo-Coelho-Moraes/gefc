@@ -14,6 +14,7 @@ use PDO;
 use gefc\Nucleo\Mensagem;
 use gefc\Nucleo\Helpers;
 use gefc\Nucleo\Conexao;
+use gefc\Controlador\UsuarioControlador;
 use gefc\Modelo\Atualizar;
 use gefc\Modelo\Inserir;
 class ProdutoModelo {
@@ -105,7 +106,44 @@ public function deletar(int $id): void {
     $stmt->execute();
 }
 
- public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
+ public function pesquisa(string $buscar, ?int $pagina, ?int $limite, ?array $ordem = null) {
+     $deletado =(UsuarioControlador::usuario()->nivel_acesso >2 ? "" : "AND (deletado != 1 OR deletado IS NULL)" ) ;
+      $nome = isset($ordem['nome']) ? $ordem['nome'] : '';
+    $controlado = isset($ordem['controlado']) ? $ordem['controlado'] : '';
+    $estoque = isset($ordem['estoque']) ? $ordem['estoque'] : '';
+    $preco = isset($ordem['preco']) ? $ordem['preco'] : '';
+    $saida = isset($ordem['saida']) ? $ordem['saida'] : '';
+    $validade = isset($ordem['validade']) ? $ordem['validade'] : 'Validade ASC';
+
+    
+   $categoria = '';
+if (isset($ordem['categoria']) and !empty($ordem['categoria'])) {
+    $OrdemCategoria =$ordem['categoria'];
+    $categoria = "CASE WHEN categoria = '{$OrdemCategoria}' THEN 1 ELSE 2 END";
+}
+     $tipo_medicamento = '';
+     if (isset($ordem['tipo']) and !empty($ordem['tipo'])) {
+    $OrdemTipo =$ordem['tipo'];
+    $tipo_medicamento = "CASE WHEN tipo_medicamento = '{$OrdemTipo}' THEN 1 ELSE 2 END";
+}
+     
+     $arrayOrdem=[$categoria,$tipo_medicamento, $nome, $controlado, $estoque, $preco, $saida, $validade];
+     $ordenação = "ORDER BY ";
+
+$itensOrdenação = [];
+
+foreach ($arrayOrdem as $item) {
+    if (!empty($item)) {
+        $itensOrdenação[] = $item;
+    }
+}
+
+$ordenação .= implode(', ', $itensOrdenação);
+
+// Verifica se há itens na ordenação e remove a vírgula final, se necessário
+if (!empty($itensOrdenação)) {
+    $ordenação = rtrim($ordenação, ',');
+}
     $conexao = Conexao::getInstancia();
 
     // Calcular o valor de início com base na página e no limite
@@ -117,12 +155,12 @@ public function deletar(int $id): void {
                      OR tipo_embalagem LIKE :buscar 
                       OR categoria LIKE :buscar 
                       OR  tipo_medicamento LIKE :buscar 
-                      
+                      OR  cod_barras LIKE :buscar   
                      OR unidades_embalagem LIKE :buscar
                      OR lote LIKE :buscar 
                      OR fornecedor LIKE :buscar)
-              AND (deletado != 1 OR deletado IS NULL)
-              ORDER BY validade ASC
+             $deletado
+              $ordenação
               LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
               
     $stmt = $conexao->prepare($query);

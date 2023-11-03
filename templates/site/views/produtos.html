@@ -24,13 +24,90 @@
                   {%if deletado >0 %}      <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Deletados: {{deletado}}</p></div>{%endif%}    </div>
                   <div class="flex gap-1 items-center justify-center"><p class="text-sm text-white">Validade:</p> <div class="rounded-full py-1 px-1 bg-red-500 "></div><p class="text-sm text-white">Vencido</p><div class="rounded-full py-1 px-1 bg-cyan-500"></div><p class="text-sm text-white">Vence dentro de 3 meses.</p></div>
             </div>
+               <div class="flex flex-col gap2">
+                   <h3>Filtros de Ordenação:</h3>
+                   <form class="flex gap-1 justify-start align-center " action="{{url('produtos')}}" method="post">
+                       <div class="w-max">          
+<label for="nome" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nome</label>
+<select id="nome" name="nome" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+ <option value="nome ASC">A-Z</option>
+ <option value="nome DESC">Z-A</option>
+</select>
+
+                       </div>
+                       <div class="w-max">          
+<label for="categoria" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Categoria</label>
+<select id="categoria" name="categoria" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+   {% for categoria in categorias%}
+<option value="{{categoria.categoria}}">{{categoria.categoria}}</option>
+ 
+  {%endfor%}
+</select>
+                       </div>
+                        <div class="w-max">          
+<label for="controlado" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Controlado</label>
+<select id="controlado" name="controlado" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+ <option value="controlado DESC">Sim</option>
+  <option value="controlado ASC">Não</option>
+</select>
+                       </div>
+                        <div class="w-max">          
+<label for="tipo" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tipo Medicamento</label>
+<select id="tipo" name="tipo" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+  {% for tipo in tipos%}
+<option value="{{tipo.tipo}}">{{tipo.tipo}}</option>
+ 
+  {%endfor%}
+</select>
+                       </div>
+                       <div class="w-max">          
+<label for="estoque" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Estoque</label>
+<select id="estoque" name="estoque" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+ <option value="quantidade_estoque DESC">Maior</option>
+  <option value="quantidade_estoque ASC">Menor</option>
+</select>
+                       </div>
+                       <div class="w-max">          
+<label for="preco" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Preço</label>
+<select id="preco" name="preco" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+ <option value="preco DESC">Maior</option>
+  <option value="preco ASC">Menor</option>
+</select>
+                       </div>
+                       <div class="w-max">          
+<label for="saida" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Qnt. Saída</label>
+<select id="saida" name="saida" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+ <option value="quantidade_saida DESC">Maior</option>
+  <option value="quantidade_saida ASC">Menor</option>
+</select>
+                       </div>
+                       <div class="w-max">          
+<label for="validade" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Validade</label>
+<select id="validade" name="validade" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+  <option value=""></option>
+ <option value="validade DESC">Maior</option>
+  <option value="Validade ASC">Menor</option>
+</select>
+                       </div>
+                       <div  class="w-max self-end">
+                      <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" value="Aplicar">
+                </div>
+                   </form>
+               </div>
 
 
       <div class="relative  shadow-md sm:rounded-lg overflow-x-scroll ">
         <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
           <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              
+              <th scope="col" class="px-6 py-3">COD</th>
               <th scope="col" class="px-6 py-3">Nome</th>
                <th scope="col" class="px-6 py-3">Categoria</th>
                <th scope="col" class="px-6 py-3">Controlado</th>
@@ -46,11 +123,26 @@
               {%for produto in produtos%}
          
               <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-             
-                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-[30vw] break-words">
-    <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="hover:text-blue-500">
+              <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white  break-words">
+    
+        {{ produto.id }} 
+</td>
+                 <td scope="row" class="px-6 py-4 font-medium text-gray-900 dark:text-white max-w-[30vw] break-words">{% if produto.deletado == 1  %}
+                 <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="hover:text-green-500 text-red-400">
         {{ produto.nome }} {{ produto.peso }}{{ produto.unidade_medida}} - {{ maiuscula(slug(produto.fabricante)) }} {{ maiuscula(produto.tipo_embalagem) }}
     </a>
+                      {% elseif produto.editado == 1 %}
+                 <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="hover:text-green-500 text-blue-400">
+        {{ produto.nome }} {{ produto.peso }}{{ produto.unidade_medida}} - {{ maiuscula(slug(produto.fabricante)) }} {{ maiuscula(produto.tipo_embalagem) }}
+    </a>
+            
+            {% else %}
+               <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="hover:text-green-500 text-white">
+        {{ produto.nome }} {{ produto.peso }}{{ produto.unidade_medida}} - {{ maiuscula(slug(produto.fabricante)) }} {{ maiuscula(produto.tipo_embalagem) }}
+    </a>
+            {% endif %}
+            
+    
 </td>
               <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{maiuscula(produto.categoria)}}</td>
                   <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
@@ -64,7 +156,7 @@
     {% if produto.tipo_medicamento %}
         {{produto.tipo_medicamento }}
     {% else %}
-        XXXXX
+        Não
     {% endif %}
 </td>
                       

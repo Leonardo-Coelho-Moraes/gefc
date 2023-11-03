@@ -246,6 +246,7 @@ public function deletarVendaInteira(string $venda ):void {
 }
 
 public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
+     $deletado =(UsuarioControlador::usuario()->nivel_acesso >2 ? "" : "AND (deletado != 1 OR deletado IS NULL)" ) ;
     $conexao = Conexao::getInstancia();
     // Calcular o valor de início com base na página e no limite
     $inicio = ($pagina !== null && $limite !== null) ? (($pagina - 1) * $limite) : 0;
@@ -255,8 +256,9 @@ public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
                      OR ano LIKE :buscar 
                      OR data LIKE :buscar 
                       OR hora LIKE :buscar 
+                       OR produto_id LIKE :buscar 
                     )
-              AND (deletado != 1 OR deletado IS NULL)
+              $deletado
               ORDER BY data DESC
               LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
               

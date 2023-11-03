@@ -40,7 +40,7 @@ class SiteControlador extends Controlador {
           
         $this->nivel_user = UsuarioControlador::usuario()->nivel_acesso;
            $this->sessao = new Sessao();
-           (new UsuarioControlador())->limpar_usuario();
+         
            
            
            $this->user = UsuarioControlador::usuario()->nome;   
@@ -49,42 +49,29 @@ class SiteControlador extends Controlador {
 
     public function index(): void {
         
-       if($this->usuario->nivel_acesso >3){
-       echo $this->template->renderizar('index.html', [ 'titulo' => SITE_NOME.' Dashboard']);}
-      else{
-       Helpers::redirecionar('entrada');}
+      
+       Helpers::redirecionar('entrada');
        
    }
 
     public function entrada(): void {
-      
         
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
         $editado = (new Contar())->contar('registro_entrada', 'editado = 1');
         $registrosTotais = (new Contar())->contar('registro_entrada');
-         $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
-        
-        
-        
-
-   
-   
+         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,peso,unidade_medida,fabricante,tipo_embalagem,slug,editado,deletado','produtos',null,'nome ASC',null);
         $registros = (new EntradaModelo())->pesquisa('', $pagina, $limite);
 if (isset($_POST['pesquisaEntrada'])) {
     $pesquisa = $_POST['pesquisaEntrada'];
     $registros = (new EntradaModelo())->pesquisa($pesquisa, $pagina, $limite);
     if(empty($registros)){
-         $this->mensagem->erro($dados['pesquisa'] ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou COD. do produto!")->flash();
+         $this->mensagem->erro($pesquisa ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou COD. do produto!")->flash();
          $registros = (new EntradaModelo())->pesquisa('', $pagina, $limite);
     }
 }
-        
         $totalRegistros = (new EntradaModelo())->contaRegistros();
         $totalPaginas = ceil($totalRegistros / $limite);
-     
-        
-
         echo $this->template->renderizar('entrada.html', [ 'titulo' => SITE_NOME.' Entrada', 'registros' => $registros,
             'paginaAtual' => $pagina,
             'totalPaginas' => $totalPaginas, 'produtos'=> $produtos, 'editado' => $editado, 'total' => $registrosTotais]);
@@ -136,7 +123,7 @@ if (isset($_POST['pesquisaVendas'])) {
     $pesquisa = $_POST['pesquisaVendas'];
     $registros = (new VendaModelo())->pesquisa($pesquisa, $pagina, $limite);
     if(empty($registros)){
-          $this->mensagem->erro($dados['pesquisa'] ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou nome da venda!")->flash();
+          $this->mensagem->erro($pesquisa ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou nome da venda!")->flash();
          $registros = (new VendaModelo())->pesquisa('',$pagina,$limite);   
     }
 }
@@ -168,7 +155,7 @@ if (isset($_POST['pesquisaVendas'])) {
     }
    public function venda(string $nome): void {
        
-         $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
+         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,peso,unidade_medida,fabricante,tipo_embalagem,slug','produtos',null,'nome ASC',null);
          //$registros = (new Busca())->buscarVenda( $nome);
          $registros = (new Busca())->busca(null,null,'registro_vendas',"nome_venda =  '{$nome}' AND deletado != 1 OR deletado IS NULL ",null,null);
        $desconto = $registros[0]['desconto_total_venda'];
@@ -293,36 +280,68 @@ if ($id === null) {
         Helpers::redirecionar('vendas');
 
     }
-
+public function registroVendas(): void {
+    
+    
+        $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+        $limite = 30;
+        $editado = (new Contar())->contar('registro_vendas', 'editado = 1');
+        $registrosTotais = (new Contar())->contar('registro_vendas','editado != 1');
+         $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
+        $registros = (new VendaModelo())->pesquisa('', $pagina, $limite);
+if (isset($_POST['pesquisaRegistroVenda'])) {
+    $pesquisa = $_POST['pesquisaRegistroVenda'];
+    $registros = (new VendaModelo())->pesquisa($pesquisa, $pagina, $limite);
+    if(empty($registros)){
+         $this->mensagem->erro($pesquisa ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou COD. do produto, não busca nome do produto!")->flash();
+         $registros = (new VendaModelo())->pesquisa('', $pagina, $limite);
+    }
+}
+        $totalPaginas = ceil($registrosTotais / $limite);
+        echo $this->template->renderizar('registroVendas.html', [ 'titulo' => SITE_NOME.' Registro Vendas', 'registros' => $registros,
+            'paginaAtual' => $pagina,
+            'totalPaginas' => $totalPaginas, 'produtos'=> $produtos, 'editado' => $editado, 'total' => $registrosTotais]);
+    }
+    
     public function produtos(): void {
+            $categorias = (new Busca())->buscaLimitada(null,null,'categoria','categorias',null,'categoria ASC',null);
+            $tipos = (new Busca())->buscaLimitada(null,null,'tipo','tipo_medicamento',null,'tipo ASC',null);
         $agora = strtotime(date('Y-m-d'));
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
         $limite = 30;
-         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite);
+         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite, null);
            $quantidade = (new Contar())->contar('produtos',"deletado = 0 OR deletado IS NULL");
           $edicao = (new Contar())->contar('produtos',"editado = 1");
           
           $deletado = (new Contar())->contar('produtos',"deletado = 1");
         $totalRegistros = (new Contar())->contar('produtos');
         $totalPaginas = ceil($totalRegistros / $limite);
-       $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-        if (isset($dados)) {
-            $produtos = (new ProdutoModelo())->pesquisa($dados['pesquisa'],$pagina,$limite);   
+       
+       $pesquisa = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
+       
+        if (isset($pesquisa)) {
+            $produtos = (new ProdutoModelo())->pesquisa($pesquisa,$pagina,$limite,null);   
              if(empty($produtos)){
-          $this->mensagem->erro($dados['pesquisa'] ." não encontrado(a), abaixo a lista de todos os registros!")->flash();
-         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite);
+          $this->mensagem->erro($pesquisa ." não encontrado(a), abaixo a lista de todos os registros!")->flash();
+         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite,null);
     }
         }
-     
+          $ordenação = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+          
+     if (isset($ordenação)) {
+            $produtos = (new ProdutoModelo())->pesquisa('',$pagina,$limite, $ordenação);   
+           
+        }
        
 
         echo $this->template->renderizar('produtos.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos,
             'paginaAtual' => $pagina,
-            'totalPaginas' => $totalPaginas,'quantidade' =>$quantidade,'edicao' =>$edicao, 'deletado' => $deletado, 'agora'=> $agora]);
+            'totalPaginas' => $totalPaginas,'quantidade' =>$quantidade,'edicao' =>$edicao, 'deletado' => $deletado, 'agora'=> $agora, 'categorias'=> $categorias, 'tipos' => $tipos]);
     }
 
     public function produto_cadastrar(): void {
-
+  $categorias = (new Busca())->buscaLimitada(null,null,'categoria','categorias',null,'categoria ASC',null);
+            $tipos = (new Busca())->buscaLimitada(null,null,'tipo','tipo_medicamento',null,'tipo ASC',null);
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
             (new ProdutoModelo())->armazenar($dados);
@@ -330,10 +349,12 @@ if ($id === null) {
             Helpers::redirecionar('produtos');
         }
 
-        echo $this->template->renderizar('formularios/cadastrarproduto.html', [ 'titulo' => 'SGE-SEMSA Produtos']);
+        echo $this->template->renderizar('formularios/cadastrarproduto.html', [ 'titulo' => 'SGE-SEMSA Produtos', 'categorias'=> $categorias, 'tipos' => $tipos]);
     }
 
     public function editar_produto(string $slug, int $id): void {
+         $categorias = (new Busca())->buscaLimitada(null,null,'categoria','categorias',null,'categoria ASC',null);
+            $tipos = (new Busca())->buscaLimitada(null,null,'tipo','tipo_medicamento',null,'tipo ASC',null);
          if($this->nivel_user > 2){
         $produtos = (new Busca())->buscaSlug('produtos',$slug);
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
@@ -344,7 +365,7 @@ if ($id === null) {
         }
 
 
-        echo $this->template->renderizar('formularios/editarproduto.html', [ 'titulo' => SITE_NOME.' Produtos', 'produto' => $produtos]);
+        echo $this->template->renderizar('formularios/editarproduto.html', [ 'titulo' => SITE_NOME.' Produtos', 'produto' => $produtos, 'categorias'=> $categorias, 'tipos' => $tipos]);
     }
      else{
    

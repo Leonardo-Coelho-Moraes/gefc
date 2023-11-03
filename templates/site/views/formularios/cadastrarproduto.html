@@ -54,13 +54,10 @@
                     </label>
                       <select name="tipo_medicamento" id="tipo_medicamento"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
                   <option value=""></option>
-                  <option value="Fitoterápico">Fitoterápico</option>
-  <option value="Alopático">Alopático</option>
-  <option value="Homeopático">Homeopático</option>
-  <option value="Similar">Similar</option>
-  <option value="Genérico">Genérico</option>
-  <option value="Referência">Referência</option>
-  <option value="Manipulado">Manipulado</option>
+                    {% for tipo in tipos%}
+<option value="{{tipo.tipo}}">{{tipo.tipo}}</option>
+ 
+  {%endfor%}
 </select>
                 </div>
                   <div class=" w-1/6	">
@@ -81,17 +78,11 @@
                     </label>
                       <select name="categoria" id="categoria"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
                   <option value=""></option>
-                  <option value="Medicamento">Medicamento</option>
-                  <option value="Químico">Químico</option>
-  <option value="Higiene e Beleza">Higiene e Beleza</option>
-  <option value="Material Médico">Material Médico</option>
-  <option value="Material Odontológico">Material Odontológico</option>
-  <option value="Material Descartável">Material Descartável</option>
-  <option value="Cuidado Infantil">Cuidado Infantil</option>
-  <option value="Equipamento de Saúde">Equipamento de Saúde</option>
-  <option value="Dores e Lesões">Dores e Lesões</option>
-  <option value="Suplemento Alimentar">Suplemento Alimentar</option>
-                 
+                   {% for categoria in categorias%}
+<option value="{{categoria.categoria}}">{{categoria.categoria}}</option>
+ 
+  {%endfor%}
+   
    
 </select>
                 </div>
