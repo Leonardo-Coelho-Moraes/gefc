@@ -12,7 +12,7 @@ use gefc\Controlador\UsuarioControlador;
 use gefc\Modelo\Busca;
 use gefc\Modelo\Contar;
 use gefc\Modelo\EntradaModelo;
-
+use gefc\Modelo\Inserir;
 use gefc\Modelo\ProdutoModelo;
 use gefc\Modelo\RegistrosModelo;
 use gefc\Modelo\Atualizar;
@@ -22,13 +22,13 @@ use gefc\Modelo\VendaModelo;
 use gefc\Nucleo\Helpers;
 use gefc\Nucleo\Sessao;
 class SiteControlador extends Controlador {
-     private $sessao;
-     protected $usuario;
-     protected $user;
-     protected $nivel_user;
+    private $sessao;
+    protected $usuario;
+    protected $user;
+    protected $nivel_user;
 
 
-     public function __construct() {
+    public function __construct() {
         parent::__construct('templates/site/views');
         $this->usuario = UsuarioControlador::usuario();
         if(!$this->usuario)
@@ -49,15 +49,19 @@ class SiteControlador extends Controlador {
 
     public function index(): void {
         
+      if($this->nivel_user < 3){
+      Helpers::redirecionar('entrada');
       
-       Helpers::redirecionar('entrada');
+      }else{
+           echo $this->template->renderizar('index.html', [ 'titulo' => SITE_NOME.' Página Inicial',]);
+      }
        
    }
 
     public function entrada(): void {
         
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 30;
+        $limite = 2;
         $editado = (new Contar())->contar('registro_entrada', 'editado = 1');
         $registrosTotais = (new Contar())->contar('registro_entrada');
          $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,peso,unidade_medida,fabricante,tipo_embalagem,slug,editado,deletado','produtos',null,'nome ASC',null);
@@ -70,7 +74,7 @@ if (isset($_POST['pesquisaEntrada'])) {
          $registros = (new EntradaModelo())->pesquisa('', $pagina, $limite);
     }
 }
-        $totalRegistros = (new EntradaModelo())->contaRegistros();
+        $totalRegistros = (new Contar())->contar('registro_entrada');
         $totalPaginas = ceil($totalRegistros / $limite);
         echo $this->template->renderizar('entrada.html', [ 'titulo' => SITE_NOME.' Entrada', 'registros' => $registros,
             'paginaAtual' => $pagina,
@@ -153,7 +157,8 @@ if (isset($_POST['pesquisaVendas'])) {
         'paginaAtual' => $pagina,
         'totalPaginas' => $totalPaginas]);
     }
-   public function venda(string $nome): void {
+    
+    public function venda(string $nome): void {
        
          $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,peso,unidade_medida,fabricante,tipo_embalagem,slug','produtos',null,'nome ASC',null);
          //$registros = (new Busca())->buscarVenda( $nome);
@@ -164,6 +169,7 @@ if (isset($_POST['pesquisaVendas'])) {
         echo $this->template->renderizar('venda.html', [ 'titulo' => SITE_NOME.' '.$nome, 'registros' => $registros,
            'produtos'=> $produtos, 'venda' => $nome, 'desconto' => $desconto,'valorVenda' => $valorVenda, 'vendedor' => $vendedor]);
     }
+    
     public function venda_adicionar(): void {
          
 
@@ -182,7 +188,8 @@ if (isset($_POST['pesquisaVendas'])) {
         
         echo $this->template->renderizar('formularios/adicionarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos]);
     }
-   public function buscarCod(): void {
+    
+    public function buscarCod(): void {
         $codigoBarras = filter_input(INPUT_POST, 'cod', FILTER_DEFAULT);
 
     if ($codigoBarras) {
@@ -197,7 +204,8 @@ if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
     }
        
     }
-     public function buscarId(): void {
+    
+    public function buscarId(): void {
     $id = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
 
 if ($id === null) {
@@ -243,8 +251,6 @@ if ($id === null) {
    
 }
 
-
-
     public function editar_venda(string $venda, int $id): void {
           if($this->nivel_user > 2){
         $registros = (new Busca())->buscaId('registro_vendas',"$id");
@@ -270,7 +276,8 @@ if ($id === null) {
         Helpers::redirecionar('vendas');}
 
     }
-     public function deletarVendaInteira(string $venda): void {
+    
+    public function deletarVendaInteira(string $venda): void {
          
          if($this->nivel_user > 2){
               $dadosArray = ['deletado' => 1];
@@ -280,7 +287,8 @@ if ($id === null) {
         Helpers::redirecionar('vendas');
 
     }
-public function registroVendas(): void {
+    
+    public function registroVendas(): void {
     
     
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
@@ -401,9 +409,6 @@ if (isset($_POST['pesquisaRegistroVenda'])) {
       
     }
 
-
- 
-
     public function usuarios(): void {
         if($this->usuario->nivel_acesso >1){
      $usuarios = (new Busca())->busca(null,null,'usuarios','deletado = 0','criado_em DESC',null);
@@ -419,19 +424,133 @@ if (isset($_POST['pesquisaRegistroVenda'])) {
             Helpers::redirecionar('entrada');}
    
     }
-
+    public function categorias(): void {
+        if($this->usuario->nivel_acesso >2){
+            $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+            $limite = 30;
+            $deletado = (new Contar())->contar('categorias', 'deletado = 1');
+            $categoriasTotais = (new Contar())->contar('categorias');
+            $totalRegistros = (new Contar())->contar('categorias');
+            $totalPaginas = ceil($totalRegistros / $limite);
+            $categorias= (new Busca())->busca($pagina, $limite, 'categorias', 'deletado != 1 OR deletado IS NULL');
+            $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+            if (isset($dados)) {
+                if( strlen($dados['categoria']) > 3)
+                {
+                    $criador = $this->user;
+                $categoria = $dados['categoria'];
+                $array= [$categoria, $criador];
+                (new Inserir() )->inserir('categorias','categoria,criado_por', $array);
+                Helpers::redirecionar('categorias');}
+                else{
+                    $this->mensagem->erro('Categoria precisa ter pelo menos 4 caracteres!')->flash();
+                }
+            }
+            echo $this->template->renderizar('categorias.html', [ 'titulo' => SITE_NOME.' Categorias', 'paginaAtual' => $pagina,'totalPaginas' => $totalPaginas, 'categorias' => $categorias]);}
+        else{ 
+            Helpers::redirecionar('entrada');  
+        }
    
+    }
+public function editarCategoria(int $id): void {
+        if($this->usuario->nivel_acesso >2){
+             $categoria = (new Busca())->buscaId('categorias',$id);
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            $array=[$dados['categoria']];
+            (new Atualizar())->atualizar('categorias', 'categoria = ?', $array, $id);
+            $this->mensagem->sucesso('Categoria '. $categoria->categoria.' editado para '.$dados['categoria'].' com sucesso!')->flash();
+            Helpers::redirecionar('categorias');
+    }
+     echo $this->template->renderizar('formularios/editarCategoria.html', [ 'titulo' => 'SGE-SEMSA Editar Categoria', 'categoria' => $categoria]);
+        }
+        else{ 
+            Helpers::redirecionar('categorias');
+            
+        }
    
-    
+    }
+    public function deletarCategoria(int $id): void {
+        if($this->usuario->nivel_acesso >2){
+      $deletado = 1;
+$data = date('Y-m-d');
+             $array = [$deletado,$data];
+            (new Atualizar())->atualizar('categorias', 'deletado = ?,deletado_em = ?', $array, $id);
+            $this->mensagem->sucesso('Categoria deletada com sucesso!')->flash();
+            Helpers::redirecionar('categorias');
+    }
+        else{ 
+            Helpers::redirecionar('categorias');
+        }
+   
+    }
+     public function medicamentos(): void {
+        if($this->usuario->nivel_acesso >2){
+            $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+            $limite = 30;
+            $deletado = (new Contar())->contar('tipo_medicamento', 'deletado = 1');
+            $categoriasTotais = (new Contar())->contar('tipo_medicamento');
+            $totalRegistros = (new Contar())->contar('tipo_medicamento');
+            $totalPaginas = ceil($totalRegistros / $limite);
+            $tipos= (new Busca())->busca($pagina, $limite, 'tipo_medicamento', 'deletado != 1 OR deletado IS NULL');
+            $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+            if (isset($dados)) {
+                if( strlen($dados['tipo']) > 3)
+                {
+                    $criador = $this->user;
+                $categoria = $dados['tipo'];
+                $array= [$categoria, $criador];
+                (new Inserir() )->inserir('tipo_medicamento','tipo,criado_por', $array);
+                Helpers::redirecionar('medicamentos');}
+                else{
+                    $this->mensagem->erro('Tipo do Medicamento precisa ter pelo menos 4 caracteres!')->flash();
+                }
+            }
+            echo $this->template->renderizar('medicamentos.html', [ 'titulo' => SITE_NOME.' Tipos Medicamentos', 'paginaAtual' => $pagina,'totalPaginas' => $totalPaginas, 'tipos' => $tipos]);}
+        else{ 
+            Helpers::redirecionar('entrada');  
+        }
+   
+    }
+public function editarMedicamento(int $id): void {
+        if($this->usuario->nivel_acesso >2){
+             $tipo = (new Busca())->buscaId('tipo_medicamento',$id);
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            $array=[$dados['tipo']];
+            (new Atualizar())->atualizar('tipo_medicamento', 'tipo = ?', $array, $id);
+            $this->mensagem->sucesso('Tipo Medicamento '. $tipo->tipo.' editado para '.$dados['tipo'].' com sucesso!')->flash();
+            Helpers::redirecionar('medicamentos');
+    }
+     echo $this->template->renderizar('formularios/editarMedicamento.html', [ 'titulo' => 'SGE-SEMSA Editar Tipo Medicamento', 'tipo' => $tipo]);
+        }
+        else{ 
+            Helpers::redirecionar('medicamentos');
+            
+        }
+   
+    }
+    public function deletarMedicamento(int $id): void {
+        if($this->usuario->nivel_acesso >2){
+      $deletado = 1;
+$data = date('Y-m-d');
+             $array = [$deletado,$data];
+            (new Atualizar())->atualizar('tipo_medicamento', 'deletado = ?,deletado_em = ?', $array, $id);
+            $this->mensagem->sucesso('Tipo Medicamento deletado com sucesso!')->flash();
+            Helpers::redirecionar('medicamentos');
+    }
+        else{ 
+            Helpers::redirecionar('medicamentos');
+        }
+   
+    }
     public function erro404(): void {
         echo $this->template->renderizar('error404.html', [ 'titulo' => 'Página não Encontrada']);
     }
 
-   
-    
     public function sair(): void {
         $this->sessao->limpar('usuarioId');
-         $this->mensagem->sucesso('Você deslogou do sistema!')->flash();
+        $this->mensagem->sucesso('Você deslogou do sistema!')->flash();
         Helpers::redirecionar('login');
        
     }

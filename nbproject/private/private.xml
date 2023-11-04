@@ -22,6 +22,7 @@
         <group>
             <file>file:/C:/xampp/htdocs/gefc/gefc/Controlador/SiteControlador.php</file>
             <file>file:/C:/xampp/htdocs/gefc/templates/site/views/vendas.html</file>
+            <file>file:/C:/xampp/htdocs/gefc/rotas.php</file>
             <file>file:/C:/xampp/htdocs/gefc/templates/site/views/entrada.html</file>
         </group>
     </open-files>

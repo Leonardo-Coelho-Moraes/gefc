@@ -61,15 +61,6 @@ public function atualizar(array $dados, int $id): void {
        (new Inserir())->inserir('registro_entrada', 'produto_id , quantidade, user', $array);
       
 }
-public function contaRegistros() {
-    $query = "SELECT COUNT(*) FROM registro_entrada";
-    $stmt = Conexao::getInstancia()->prepare($query);
-    $stmt->execute();
-
-    // Use fetchColumn para obter o resultado da contagem diretamente
-    $totalRegistros = $stmt->fetchColumn();
-    return $totalRegistros;
-}
 
    public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
     $conexao = Conexao::getInstancia();
