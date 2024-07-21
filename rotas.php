@@ -1,5 +1,6 @@
 <?php
  use Pecee\SimpleRouter\SimpleRouter;
+use gefc\Controlador\UsuarioControlador;
 use gefc\Nucleo\Helpers;
 try {
     SimpleRouter::setDefaultNamespace('gefc\Controlador');
@@ -16,39 +17,53 @@ SimpleRouter::match(['get','post'],URL_SITE.'vendas/','SiteControlador@vendas');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/{nome}/','SiteControlador@venda');
 SimpleRouter::match(['get','post'],URL_SITE.'registro/vendas','SiteControlador@registroVendas');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/editar/{venda}/{id}','SiteControlador@editar_venda');
+SimpleRouter::match(['get','post'],URL_SITE.'vendas/{venda}/local/','SiteControlador@editarLocal');
+SimpleRouter::match(['get','post'],URL_SITE.'vendas/adicionar/{venda}/{local}','SiteControlador@adicionarAVenda');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/deletar/{venda}/{id}','SiteControlador@deletar_venda');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/deletar/{nomeVenda}','SiteControlador@deletarVendaInteira');
 SimpleRouter::match(['get','post'],URL_SITE.'venda/adicionar','SiteControlador@venda_adicionar');
 SimpleRouter::match(['get','post'],URL_SITE.'venda/editar/{id}','SiteControlador@venda_editar');
+SimpleRouter::match(['get','post'],URL_SITE.'estoque/locais/','SiteControlador@estoqueLocais');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/','SiteControlador@saidasFora');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/{nome}/','SiteControlador@saidaFora');
+SimpleRouter::match(['get','post'],URL_SITE.'registro/saida/fora','SiteControlador@registroSaidaFora');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/editar/{saida}/{id}','SiteControlador@editarSaidaFora');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/{saida}/local/','SiteControlador@editarLocalFora');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/adicionar/{saida}/{local}','SiteControlador@adicionarASaida');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/deletar/{saida}/{id}','SiteControlador@deletarSaida');
+SimpleRouter::match(['get','post'],URL_SITE.'saida/fora/adicionar','SiteControlador@saidaForaAdicionar');
+SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/deletar/{nomeVenda}','SiteControlador@deletarSaidaForaInteira');
+
+SimpleRouter::match(['get','post'],URL_SITE.'pedido/fazer','SiteControlador@pedidoFazer');
+SimpleRouter::match(['get','post'],URL_SITE.'pedidos/','SiteControlador@pedidos');
+SimpleRouter::match(['get','post'],URL_SITE.'pedidos/{pedido}','SiteControlador@pedidoAtender');
+SimpleRouter::match(['get','post'],URL_SITE.'pedidos/atender/{pedido}','SiteControlador@pedidoAtendido');
+
 
 SimpleRouter::match(['get','post'],URL_SITE.'produtos','SiteControlador@produtos');
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/produto_cadastrar','SiteControlador@produto_cadastrar');
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/editar/{slug}/{id}','SiteControlador@editar_produto');
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/deletar/{slug}/{id}','SiteControlador@deletar_produto');
 SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/{slug}/{id}', 'SiteControlador@produto');
+SimpleRouter::match(['get','post'],URL_SITE.'local/','SiteControlador@local');
+SimpleRouter::match(['get','post'],URL_SITE.'local/editar/estoque/{produto}/','SiteControlador@editarEstoqueLocal');
 
-SimpleRouter::match(['get','post'],URL_SITE.'medicamentos','SiteControlador@medicamentos');
-SimpleRouter::match(['get','post'],URL_SITE.'medicamentos/editar/{id}','SiteControlador@editarMedicamento');
-SimpleRouter::match(['get','post'],URL_SITE.'medicamentos/deletar/{id}','SiteControlador@deletarMedicamento');
 
-SimpleRouter::match(['get','post'],URL_SITE.'categorias','SiteControlador@categorias');
-SimpleRouter::match(['get','post'],URL_SITE.'categorias/editar/{id}','SiteControlador@editarCategoria');
-SimpleRouter::match(['get','post'],URL_SITE.'categorias/deletar/{id}','SiteControlador@deletarCategoria');
 
 SimpleRouter::match(['get','post'],URL_SITE.'usuarios','SiteControlador@usuarios');
 SimpleRouter::match(['get','post'],URL_SITE.'usuarios/editar/{id}','UsuarioControlador@editar_usuario');
 SimpleRouter::match(['get','post'],URL_SITE.'usuarios/deletar/{id}','UsuarioControlador@deletar_usuario');
 
 SimpleRouter::match(['get','post'],URL_SITE.'relatorio','RelatorioControlador@relatorio');
+SimpleRouter::match(['get','post'],URL_SITE.'media','RelatorioControlador@media');
 SimpleRouter::get(URL_SITE.'relatorio/download','RelatorioControlador@download');
-
+SimpleRouter::get(URL_SITE.'relatorio/imprimir','RelatorioControlador@imprimir');
+SimpleRouter::match(['get','post'],URL_SITE.'relatorio/imprimir/{nome}/','RelatorioControlador@gerarVenda');
+SimpleRouter::match(['get','post'],URL_SITE.'saida/relatorio/imprimir/{saida}/','RelatorioControlador@gerarSaida');
+SimpleRouter::match(['get','post'],URL_SITE.'usuarios','SiteControlador@usuarios');
+SimpleRouter::match(['get','post'],URL_SITE.'usuarios/editar/{id}','UsuarioControlador@editar_usuario');
+SimpleRouter::get(URL_SITE.'proibido','SiteControlador@proibido');
 SimpleRouter::get(URL_SITE.'erro404','SiteControlador@erro404');
-
-SimpleRouter::post(URL_SITE.'buscar','SiteControlador@buscarRegistros');
-SimpleRouter::post(URL_SITE.'buscarProdutos','SiteControlador@buscarProdutos');
-SimpleRouter::post(URL_SITE.'buscarCod','SiteControlador@buscarCod');
-SimpleRouter::post(URL_SITE.'buscarId','SiteControlador@buscarId');
-
 SimpleRouter::match(['get','post'],URL_SITE.'login','AdminLogin@login');
 SimpleRouter::get(URL_SITE.'sair','SiteControlador@sair');
 

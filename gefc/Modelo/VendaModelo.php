@@ -10,9 +10,9 @@ namespace gefc\Modelo;
  *
  * @author Leonardo
  */
+
 use gefc\Nucleo\Mensagem;
 use gefc\Nucleo\Helpers;
-use gefc\Controlador\UsuarioControlador;
 use gefc\Nucleo\Conexao;
 use gefc\Modelo\Busca;
 use PDO;
@@ -28,134 +28,103 @@ class VendaModelo {
         return $resultado;
     }
     
-    public function venda(array $dados): void {
+ public function venda(array $dados): void {
     // Verifique se os dados foram fornecidos corretamente
     if (empty($dados)) {
         $mensagem = (new Mensagem)->erro('Envie Algo')->flash();
-           Helpers::redirecionar('venda/adicionar');
+        Helpers::redirecionar('venda/adicionar');
         return;
     }
 
-    $i = 1;
-    while (isset($dados['produto' . $i]) && isset($dados['quantidade' . $i])) {
-        $produtoId = intval($dados['produto' . $i]);
-        $quantidade = intval($dados['quantidade' . $i]);
+    foreach ($dados as $key => $value) {
+        if (strpos($key, 'produto') === 0) {
+            $index = str_replace('produto', '', $key);
+            $produtoId = intval($value);
+            $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
 
-        // Verifica se a quantidade é válida
-        if ($quantidade > 0) {
-            // Atualiza o banco de dados para o produto correspondente
-            $dadosArray = array('quantidade' => $quantidade);
-            (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque - ?", $dadosArray, $produtoId);
+            if ($quantidade > 0) {
+                // Atualiza o banco de dados para o produto correspondente
+                $dadosArray = array('quantidade' => $quantidade);
+                (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque - ?", $dadosArray, $produtoId);
+
+                // Verifique se o produto já existe na tabela local_estoque
+                $localId = intval($dados['local']);
+                $query = "SELECT estoque FROM local_estoque WHERE produto_id = ? AND local_id = ?";
+                $stmt = Conexao::getInstancia()->prepare($query);
+                $stmt->execute([$produtoId, $localId]);
+                $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                if ($result) {
+                    // Produto já existe no local, atualize o estoque
+                    $estoqueAtual = intval($result['estoque']);
+                    $novoEstoque = $estoqueAtual + $quantidade;
+                    $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE produto_id = ? AND local_id = ?";
+                    $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
+                    $stmtUpdate->execute([$novoEstoque, $produtoId, $localId]);
+                } else {
+                    // Produto não existe no local, insira um novo registro
+                    $insertQuery = "INSERT INTO local_estoque (local_id, produto_id, estoque) VALUES (?, ?, ?)";
+                    $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
+                    $stmtInsert->execute([$localId, $produtoId, $quantidade]);
+                }
+            }
         }
-
-        $i++;
     }
 }
 
-    public function quantidadeVenda(array $dados): void {
-    // Verifique se os dados foram fornecidos corretamente
-    if (empty($dados)) {
-        $mensagem = (new Mensagem)->erro('Envie Algo')->flash();
-           Helpers::redirecionar('venda/adicionar');
-        return;
-    }
 
-    $i = 1;
-    while (isset($dados['produto' . $i]) && isset($dados['quantidade' . $i])) {
-        $produtoId = intval($dados['produto' . $i]);
-        $quantidade = intval($dados['quantidade' . $i]);
 
-        // Verifica se a quantidade é válida
-        if ($quantidade > 0) {
-            // Atualiza o banco de dados para o produto correspondente
-            $dadosArray = array('quantidade' => $quantidade);
-            (new Atualizar())->atualizar('produtos', "quantidade_saida = quantidade_saida + ?", $dadosArray, $produtoId);
-        }
-
-        $i++;
-    }
-}
+ 
 
 public function vendaRegistro(array $dados): void {
-    
-    $ano = date("Y");
-    $nomeVenda = 'venda' . uniqid(). $ano;
-    $user = UsuarioControlador::usuario()->nome;
-    
-
-
-    // Inicializa o valor total da venda
-    $valorTotalVenda = 0;
-
-    // Itera sobre os dados para extrair os produtos e quantidades
-    $i = 1;
-
-    while (isset($dados['produto' . $i]) && isset($dados['quantidade' . $i])) {
-        $produto = $dados['produto' . $i];
-        $quantidade = intval($dados['quantidade' . $i]);
-
-        // Busca o preço do produto no banco de dados usando o ID do produto
-        $precoResultado = (new Busca())->buscaId('produtos', $produto);
-        $precoProduto = $precoResultado->preco;
-
-        // Calcula o preço total do produto
-        $precoTotalProduto = $precoProduto * $quantidade;
-
-        // Acumula o valor total deste produto ao valor total da venda
-        $valorTotalVenda += $precoTotalProduto;
-
-        $i++;
+    // Verifica se há dados enviados
+    if (empty($dados)) {
+        // Trate aqui a situação de dados vazios, se necessário
+        return;
     }
 
-    // Agora que temos o valor total da venda, atribuímos a todas as iterações
-    $i = 1;
-    while (isset($dados['produto' . $i]) && isset($dados['quantidade' . $i])) {
-        $produto = $dados['produto' . $i];
-        $quantidade = intval($dados['quantidade' . $i]);
-
-        // Busca o preço do produto no banco de dados usando o ID do produto
-        $precoResultado = (new Busca())->buscaId('produtos', $produto);
-        $precoProduto = $precoResultado->preco;
-
-        // Calcula o valor total da venda para este produto, considerando o desconto
-        $valorVendaProduto = $valorTotalVenda - (isset($dados['desconto']) ? $dados['desconto'] : 0);
-
-        // Garante que o valor total da venda não seja negativo
-        $valorVendaProduto = max(0, $valorVendaProduto);
-
-        // Insere os dados no banco de dados para este produto
-        $array = array(
-            'nome_venda' => $nomeVenda,
-            'produto' => $produto,
-            'quantidade' => $quantidade,
-            'preco' => $precoProduto,  // Corrigido para pegar o preço do produto atual
-            'desconto_total_venda' => isset($dados['desconto']) ? $dados['desconto'] : 0,
-            'valor_venda' => $valorVendaProduto,
-            'valor_venda_sem_desconto' => $valorTotalVenda,
-            'user' => $user
-        );
+    $ano = date("Y");
+    $nomeVenda = 'saida' . uniqid(). $ano;
    
-        $query = "INSERT INTO registro_vendas (nome_venda, produto_id, quantidade, preco, desconto_total_venda, valor_venda,valor_venda_sem_desconto, usuario) 
-                  VALUES (:nome_venda, :produto, :quantidade, :preco, :desconto_total_venda, :valor_venda,:valor_venda_sem_desconto, :usuario)";
 
-        try {
-            $stmt = Conexao::getInstancia()->prepare($query);
-            $stmt->bindParam(':nome_venda', $array['nome_venda']);
-            $stmt->bindParam(':produto', $array['produto']);
-            $stmt->bindParam(':quantidade', $array['quantidade']);
-            $stmt->bindParam(':preco', $array['preco']);
-            $stmt->bindParam(':desconto_total_venda', $array['desconto_total_venda']);
-            $stmt->bindParam(':valor_venda', $array['valor_venda']);
-             $stmt->bindParam(':valor_venda_sem_desconto', $array['valor_venda_sem_desconto']);
-            $stmt->bindParam(':usuario', $array['user']);
-            $stmt->execute();
-        } catch (PDOException $e) {
-            echo 'Error: ' . $e->getMessage();
+    foreach ($dados as $key => $value) {
+        if (strpos($key, 'produto') === 0) {
+            $index = str_replace('produto', '', $key);
+            $produtoId = intval($value);
+            $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
+            $qntSolic = isset($dados['qntSolic' . $index]) ? intval($dados['qntSolic' . $index]) : 0;
+
+            if ($quantidade > 0) {
+                // Insere os dados no banco de dados para este produto
+                $array = array(
+                    'nome_venda' => $nomeVenda,
+                    'produto' => $produtoId,
+                    'quantidade' => $quantidade,
+                    'qnt_solicitada' => $qntSolic,
+                    'local'=> $dados['local'],
+                   
+                );
+
+                $query = "INSERT INTO registro_vendas (nome_venda, produto_id, quantidade, qnt_solicitada, local) 
+                          VALUES (:nome_venda, :produto, :quantidade, :qnt_solicitada, :local)";
+
+                try {
+                    $stmt = Conexao::getInstancia()->prepare($query);
+                    $stmt->bindParam(':nome_venda', $array['nome_venda']);
+                    $stmt->bindParam(':produto', $array['produto']);
+                    $stmt->bindParam(':quantidade', $array['quantidade']);
+                    $stmt->bindParam(':qnt_solicitada', $array['qnt_solicitada']);
+                    $stmt->bindParam(':local', $array['local']);
+                   
+                    $stmt->execute();
+                } catch (PDOException $e) {
+                    echo 'Error: ' . $e->getMessage();
+                }
+            }
         }
-
-        $i++;
     }
 }
+
 
     
 public function contaRegistros():int {
@@ -165,102 +134,122 @@ public function contaRegistros():int {
     return $resultado->total; // Acesse a propriedade diretamente
     }
     
-    public function atualizar(array $dados, int $id): void {
-        $produto = $dados['produto'];
-    $preco = $dados['preco_produto'];
-    $quantidade = $dados['quantidade'];
-    $preco_anterior = $dados['preco_anterior'];
-    $quantidade_anterior = $dados['quantidade_anterior'];
+public function atualizar(array $dados, int $id): void {
+    $produto = $dados['produto'];
+    $quant_anterior = $dados['quantidade_anterior'];
+    $nova_quantidade = $dados['quantidade'];
+    $diferencaQuantidade = $nova_quantidade - $quant_anterior;
 
-    $valor_anterior = $preco_anterior * $quantidade_anterior;
-    $valor_novo = $preco * $quantidade;
-
-    $desconto = $dados['desconto'];
-    $valor_venda_sem_desconto = $dados['valor_venda_sem_desconto'];
-
-    $valor_descontado = $valor_venda_sem_desconto - $valor_anterior;
-    $valor_somado = $valor_descontado + $valor_novo;
-    $valor_venda_com_desconto = $valor_somado - $desconto;
-
-    // Formate todos os valores para duas casas decimais
-    $preco = number_format($preco, 2);
-    $quantidade = number_format($quantidade, 2);
-    $valor_anterior = number_format($valor_anterior, 2);
-    $valor_novo = number_format($valor_novo, 2);
-    $desconto = number_format($desconto, 2);
-    $valor_venda_sem_desconto = number_format($valor_venda_sem_desconto, 2);
-    $valor_descontado = number_format($valor_descontado, 2);
-    $valor_somado = number_format($valor_somado, 2);
-    $valor_venda_com_desconto = number_format($valor_venda_com_desconto, 2);
-    $diferençaQuantidade = $quantidade - $quantidade_anterior;
-    
-    $dadosArray = [
-        'preco' => $preco,
-        'quantidade' => $quantidade,
-        'valor_venda' => $valor_venda_com_desconto,
-        'valor_venda_sem_desconto' => $valor_somado,
+    $dadosArray = [   
+        'quantidade' => $nova_quantidade,
         'editado' => 1
     ];
 
     // Atualize o primeiro conjunto de dados
-    (new Atualizar())->atualizar('registro_vendas', "preco = ?, quantidade = ?, valor_venda = ?, valor_venda_sem_desconto = ?, editado = ?", $dadosArray, $id);
+    (new Atualizar())->atualizar('registro_vendas', "quantidade = ?, editado = ?", $dadosArray, $id);
 
-    $dadosArray2 = [
-        'valor_venda' => $valor_venda_com_desconto,
-        'valor_venda_sem_desconto' => $valor_somado,
-        'editado' => 1
-    ];
-
-    // Atualize o segundo conjunto de dados
-    $nomeVenda = $dados['nome_venda'];
-    (new Atualizar())->atualizarVendaValor("valor_venda = ?, valor_venda_sem_desconto = ?, editado = ?", $dadosArray2, $nomeVenda);
-    $dadosArray3 = array('quantidade_saida' => $diferençaQuantidade,'quantidade_estoque' => $diferençaQuantidade );
-    if($quantidade > $quantidade_anterior){ 
-        
-            (new Atualizar())->atualizar('produtos', "quantidade_saida = quantidade_saida + ?, quantidade_estoque = quantidade_estoque - ?", $dadosArray3, $produto);
-            
-    }else  {
-            (new Atualizar())->atualizar('produtos', "quantidade_saida = quantidade_saida + ?, quantidade_estoque = quantidade_estoque - ?", $dadosArray3, $produto);
-        }
-}
-public function deletar(string $venda, int $id ):void {
-    $produto = (new Busca())->buscaId('registro_vendas', $id);
-    if (isset($produto)){
-        $preco = $produto->preco;
-        $quantidade = $produto->quantidade;
-        $calculo = $preco * $quantidade;
-            $dadosArray = ['deletado' => 1];
-       (new Atualizar())->atualizar('registro_vendas', " deletado = ?", $dadosArray, $id);
-       
-    $dadosArray2 = [
-        'valor_venda' => $calculo,
-        'valor_venda_sem_desconto' => $calculo
-        
-    ];
-       (new Atualizar())->atualizarVendaValor("valor_venda = valor_venda - ?, valor_venda_sem_desconto = valor_venda_sem_desconto - ?", $dadosArray2, $venda);
+    if ($diferencaQuantidade > 0) {
+        // A quantidade aumentou, então subtraia a diferença do estoque
+        (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque - ?", [$diferencaQuantidade], $produto);
+    } elseif ($diferencaQuantidade < 0) {
+        // A quantidade diminuiu, então adicione a diferença ao estoque
+        (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque + ?", [abs($diferencaQuantidade)], $produto);
     }
 }
-public function deletarVendaInteira(string $venda ):void {
-            $dadosArray = ['deletado' => 1];
-       (new Atualizar())->atualizarVendaValor("editado = ?", $dadosArray, $venda);
+
+    
+public function deletar(string $venda, int $id): void {
+    // Buscar o produto na tabela 'registro_vendas' usando o ID fornecido
+    $produto = (new Busca())->buscaId('registro_vendas', $id);
+
+        // Atualizar a quantidade do produto no estoque
+        (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque + ?", [$produto->quantidade], $produto->produto_id);
+        
+        // Deletar o registro de venda na tabela 'registro_vendas'
+        $query = "DELETE FROM registro_vendas WHERE id = :id";
+        
+        // Preparar e executar a query de delete
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+    
+}
+    
+public function deletarTudo(string $venda): void {
+    // Buscar os registros de venda na tabela 'registro_vendas' usando o nome da venda fornecido
+    $vendas = (new Busca())->busca(null, null, 'registro_vendas', "nome_venda = '{$venda}'", null);
+    
+
+    // Iterar sobre cada registro de venda encontrado
+    foreach($vendas as $registro) {
+        // Atualizar a quantidade de estoque do produto associado ao registro de venda
+        (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque + ?", [$registro['quantidade']], $registro['produto_id']);
+        
+        // Deletar o registro de venda na tabela 'registro_vendas'
+        $query = "DELETE FROM registro_vendas WHERE id = :id";
+        
+        // Preparar e executar a query de delete
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->bindParam(':id', $registro['id'], PDO::PARAM_INT);
+        $stmt->execute();
+    }
+}
+public function atualizarLocal(array $dados, string $venda): void {
+    // Definir a query de atualização
+    $query = "UPDATE registro_vendas SET local = :local WHERE nome_venda = :nome_venda";
+    
+    // Preparar e executar a query de atualização
+    $stmt = Conexao::getInstancia()->prepare($query);
+    $stmt->bindParam(':local', $dados['local'], PDO::PARAM_STR);
+    $stmt->bindParam(':nome_venda', $venda, PDO::PARAM_STR);
+    $stmt->execute();
+}
+public function adicionarAVenda(array $dados, string $venda, string $local): void {
+    $dataHora = $this->pesquisa($venda, 1, 300);
+
+    $dadosArray = array('quantidade' => $dados['quantidade']);
+    (new Atualizar())->atualizar('produtos', "quantidade_estoque = quantidade_estoque - ?", $dadosArray, $dados['produto']);
+    // Definir a query de inserção
+    $query = "INSERT INTO registro_vendas (nome_venda, produto_id, quantidade, qnt_solicitada, local, data, hora) 
+              VALUES (:nome_venda, :produto, :quantidade, :qnt_solicitada, :local, :data, :hora)";
+
+    // Preparar a query
+    $stmt = Conexao::getInstancia()->prepare($query);
+    
+    // Vincular os parâmetros
+    $stmt->bindParam(':nome_venda', $venda);
+    $stmt->bindParam(':produto', $dados['produto']);
+    $stmt->bindParam(':quantidade', $dados['quantidade']);
+    $stmt->bindParam(':qnt_solicitada', $dados['qntSolic']);
+    $stmt->bindParam(':local', $local);
+    $stmt->bindParam(':data', $dataHora[0]['data']);
+    $stmt->bindParam(':hora', $dataHora[0]['hora']);
+    
+    // Executar a query
+    $stmt->execute();
 }
 
+
+
+
 public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
-     $deletado =(UsuarioControlador::usuario()->nivel_acesso >2 ? "" : "AND (deletado != 1 OR deletado IS NULL)" ) ;
     $conexao = Conexao::getInstancia();
     // Calcular o valor de início com base na página e no limite
     $inicio = ($pagina !== null && $limite !== null) ? (($pagina - 1) * $limite) : 0;
 
-    $query = "SELECT * FROM registro_vendas
-              WHERE (nome_venda LIKE :buscar 
-                     OR ano LIKE :buscar 
-                     OR data LIKE :buscar 
-                      OR hora LIKE :buscar 
-                       OR produto_id LIKE :buscar 
-                    )
-              $deletado
-              ORDER BY data DESC
-              LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
+    // Consulta SQL com JOIN para buscar pelo nome do produto
+    $query = "
+        SELECT registro_vendas.*, produtos.nome AS nome_produto
+        FROM registro_vendas
+        JOIN produtos ON registro_vendas.produto_id = produtos.id
+        WHERE (registro_vendas.nome_venda LIKE :buscar
+               OR registro_vendas.ano LIKE :buscar
+               OR registro_vendas.data LIKE :buscar
+               OR registro_vendas.hora LIKE :buscar
+               OR produtos.nome LIKE :buscar)  -- Buscar pelo nome do produto
+        ORDER BY registro_vendas.data DESC
+        LIMIT :limite OFFSET :inicio
+    ";
               
     $stmt = $conexao->prepare($query);
     $stmt->bindValue(':buscar', '%' . $buscar . '%', PDO::PARAM_STR);
@@ -273,4 +262,31 @@ public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
 }
 
 
+public function pesquisaEstoque(string $buscar, int $local) {
+    $conexao = Conexao::getInstancia();
+    $query = "
+        SELECT local_estoque.*, produtos.nome AS nome_produto
+        FROM local_estoque
+        JOIN produtos ON local_estoque.produto_id = produtos.id
+        WHERE produtos.nome LIKE :buscar AND local_estoque.local_id = :local";
+              
+    $stmt = $conexao->prepare($query);
+    $stmt->bindValue(':buscar', '%' . $buscar . '%', PDO::PARAM_STR);
+    $stmt->bindValue(':local', $local, PDO::PARAM_INT);
+    $stmt->execute();
+    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    return $resultado;
+}
+
+
+public function atualizarEstoque(int $estoque, int $id): void {
+    // Definir a query de atualização
+    $query = "UPDATE local_estoque SET estoque = :estoque WHERE id = :id";
+    
+    // Preparar e executar a query de atualização
+    $stmt = Conexao::getInstancia()->prepare($query);
+    $stmt->bindParam(':estoque', $estoque, PDO::PARAM_STR);
+    $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+    $stmt->execute();
+}
 }

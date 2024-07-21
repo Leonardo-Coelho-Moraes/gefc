@@ -1,73 +1,50 @@
 {%extends 'base.html'%}
 {% block conteudo %}
 <div class=" w-full  p-5  justify-start ">
-    <a href="#" class="mb-3 text-white font-medium hover:text-gray-600">Relatório</a>
+    <a href="#" class="mb-3 font-medium text-gray-900">Relatório</a>
     <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height: 90vh;">
         <div class=" w-full flex flex-col juntify-center gap-3">
             
-            
-                <form class="flex gap-3  w-full items-center justify-start dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3 flex-wrap" action="{{url('relatorio')}}" method="post">
        
-            <div class=" w-1/4">
+                <form class="flex flex-col w-full gap-1 items-start justify-start" action="{{url('relatorio')}}" method="post">
+       
+       
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="produto">
                         Produto
                     </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="produto" type="text" name="produto" placeholder="Ex: Dipirona"  >
-                </div>
-                    
-                    <div class="w-auto">
+                      <select name="produto" id="produto"  class="block w-full p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" >
+                 <option value=""></option>
+                  {%for produto in produtos%}
+                  <option value="{{produto.id}}">{{produto.nome}} - {{produto.fornecedor}}</option>
+                   {%endfor%}
+ 
+</select>
+              
+                   
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="acao">
                        Ação
                     </label>
-                      <select name="acao" id="acao"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                  <option value=""></option>
-                  <option value="entrada">Entrada</option>
-                  <option value="saida">Saída</option>
+                      <select name="acao" id="acao"  class="block w-50 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" required>
+                 
+                  <option value="Entrada">Entrada</option>
+                  <option value="Saida">Saída</option>
  
 </select>
-                </div>
-                    <div class="w-1/4	">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fabricante">
-                        Fabricante
-                    </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="fabricante" type="text" name="fabricante" placeholder="Ex: Generico"  >
-                </div>
-                     <div class=" w-1/4	">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fornecedor">
-                        Fornecedor
-                    </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="fornecedor" type="text" name="fornecedor" placeholder="Ex: Integral Medica">
-                </div>
-                     <div class=" w-auto">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="lote">
-                        Lote
-                    </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="lote" type="text" name="lote" placeholder="Ex: sa311">
-                </div>
-                    <div class=" w-auto">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="local">
-                        Local
-                    </label>
-                      <select name="local" id="local" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value=""></option>
-   {% for local in locais %}
-    {% if local.id != 6 %}
-        <option value="{{ local.nome}}">{{ maiuscula(slug(local.nome)) }}</option>
-    {% endif %}
-{% endfor %}
-</select>
-                </div>
+              
+                    
+                    
+                   
                     <div class=" w-auto">
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="data">
                         Data
                     </label>
-                       <input type="month" name="mes" id="mes" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                       <input type="month" name="mes" id="mes" class="block w-40 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" >
                 </div>
                   
 
-                    <div  class="w-full">
-                      <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" value="Pesquisar">
-                </div>
+                    
+                      <input class="border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" type="submit" value="Pesquisar">
+               
                     
            
     </form>
@@ -81,20 +58,19 @@
                {%if quantidade >0 %}   <div class="rounded-lg py-1 px-2 bg-green-800 w-max"><p class="text-sm text-white">Total de Registros: {{quantidade}}</p></div>{%endif%}
                  
             </div>
- <a href="{{url('relatorio/download')}}" class=" w-auto text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Dowload Relatorio</a>
-      <div class="relative  shadow-md sm:rounded-lg overflow-x-auto " >
-          
-        <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-          <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+ <a href="{{url('relatorio/imprimir')}}"  class=" flex border border-gray-300 justify-center items-center rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" target="_blank">Imprimir</a>
+      <div class="relative overflow-x-scroll ">
+        <table class="w-full text-sm text-left text-gray-900">
+          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
             <tr>
               
               <th scope="col" class="px-6 py-3">Nome</th>
                <th scope="col" class="px-6 py-3">Ação</th>
-              <th scope="col" class="px-6 py-3">Fabricante</th>
-              <th scope="col" class="px-6 py-3">Fonecedor</th>
+              
                <th scope="col" class="px-6 py-3">Quantidade</th>
+                {%if acao == 'Saida'%}<th scope="col" class="px-6 py-3">Quantidade Solicitada</th>{%endif%}
                <th scope="col" class="px-6 py-3">Local</th>
-<th scope="col" class="px-6 py-3">Lote</th>
+
                 <th scope="col" class="px-6 py-3">Data</th>
             
             </tr>
@@ -102,39 +78,29 @@
           <tbody>
               {%for rela in relatorio%}
          
-              <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
+             <tr class="border-b border-gray-700 text-gray-700 text-md">
              
-                  <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{maiuscula(slug(rela.nome))}} 
+                  <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
+                      {{maiuscula(rela.produto_nome)}} - {{maiuscula(rela.produto_fornecedor)}} - {{maiuscula(rela.produto_unidade)}}
                   </td>
-                  <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{maiuscula(rela.acao)}}
+                  <td scope="row" class="px-6 py-4">
+                      {{acao}}
                   </td>
-                  <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{maiuscula(slug(rela.fabricante))}}
-                  </td>
-                  <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{maiuscula(slug(rela.fornecedor))}}
-                  </td>
-            <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                  <td scope="row" class="px-6 py-4">
                       {{rela.quantidade}}
                   </td>
-                  
-                    {%if rela.local%}
-            <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{maiuscula(slug(rela.local))}}
+                  {%if acao == 'Saida'%}
+                  <td scope="row" class="px-6 py-4">
+                      {{rela.qnt_solicitada}}
                   </td>
-                   {%endif%}
-              <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{rela.lote}}
+                  {%endif%}
+                   <td scope="row" class="px-6 py-4">
+                      {{rela.local}}
                   </td>
-            <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                      {{rela.data_hora}}
+            <td scope="row" class="px-6 py-4">
+                      {{rela.data}} - {{rela.hora}}
                   </td>
-              
-            
-                  
-            </tr>
+             </tr>
             
               {%endfor%}
            

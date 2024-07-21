@@ -19,59 +19,79 @@ class RelatorioModelo {
     
 public function buscaRegistros(array $dados)
 {
-    
     $acao = $dados['acao'];
     $mesAno = $dados['mes'];
-    $produto =  Helpers::Mudar(Helpers::validarString($dados['produto']), [' '], '-');
-    $fabricante =  Helpers::Mudar(Helpers::validarString($dados['fabricante']), [' '], '-');
-    $fornecedor =  Helpers::Mudar(Helpers::validarString($dados['fornecedor']), [' '], '-');
-    $lote =  $dados['lote'];
-    $local = $dados['local'];
+    $produto = $dados['produto'];
 
-    
     // Converta o valor do campo mes_ano para o formato 'yyyy-mm'
     $mesAnoFormatado = date('Y-m', strtotime($mesAno));
 
-    $query = "SELECT registros.*, produtos.nome AS nome, produtos.fabricante, produtos.fornecedor, produtos.lote, locais.nome AS local
-              FROM registros
-              LEFT JOIN produtos ON registros.produto_id = produtos.id
-              LEFT JOIN locais ON registros.local_id = locais.id
-              WHERE DATE_FORMAT(registros.data_hora, '%Y-%m') = :mesAno
-              AND registros.acao = :acao";
+    // Escolha da tabela com base na ação
+    $tabela = ($acao == 'Entrada') ? 'registro_entrada' : 'registro_vendas';
 
-    $params = [
-        ':mesAno' => $mesAnoFormatado,
-        ':acao' => $acao
-    ];
-
-    if (!empty($produto)) {
-        $query .= " AND produtos.nome = :produto";
-        $params[':produto'] = $produto;
+    if (empty($produto) && !empty($mesAno)) {
+        $query = "SELECT {$tabela}.*, produtos.nome AS produto_nome, produtos.fornecedor AS produto_fornecedor, produtos.unidade_contagem AS produto_unidade
+                  FROM {$tabela}
+                  JOIN produtos ON {$tabela}.produto_id = produtos.id
+                  WHERE DATE_FORMAT({$tabela}.data, '%Y-%m') = '{$mesAnoFormatado}'";
+    } elseif (empty($mesAno) && !empty($produto)) {
+        $query = "SELECT {$tabela}.*, produtos.nome AS produto_nome, produtos.fornecedor AS produto_fornecedor, produtos.unidade_contagem AS produto_unidade
+                  FROM {$tabela}
+                  JOIN produtos ON {$tabela}.produto_id = produtos.id
+                  WHERE produtos.id = {$produto}";
+    } elseif (!empty($mesAno) && !empty($produto)) {
+        $query = "SELECT {$tabela}.*, produtos.nome AS produto_nome, produtos.fornecedor AS produto_fornecedor, produtos.unidade_contagem AS produto_unidade
+                  FROM {$tabela}
+                  JOIN produtos ON {$tabela}.produto_id = produtos.id
+                  WHERE DATE_FORMAT({$tabela}.data, '%Y-%m') = '{$mesAnoFormatado}'
+                  AND produtos.id = {$produto}";
     }
-    if (!empty($fabricante)) {
-        $query .= " AND produtos.fabricante = :fabricante";
-        $params[':fabricante'] = $fabricante;
+    elseif (empty($mesAno) && empty($produto)) {
+        $query = "SELECT {$tabela}.*, produtos.nome AS produto_nome, produtos.fornecedor AS produto_fornecedor, produtos.unidade_contagem AS produto_unidade
+                  FROM {$tabela}
+                  JOIN produtos ON {$tabela}.produto_id = produtos.id
+                  ";
     }
-    if (!empty($fornecedor)) {
-        $query .= " AND produtos.fornecedor = :fornecedor";
-        $params[':fornecedor'] = $fornecedor;
-    }
-    if (!empty($lote)) {
-        $query .= " AND (produtos.lote) = :lote";
-        $params[':lote'] = $lote;
-    }
-    if (!empty($local) && $acao === 'saida') {
-        $query .= " AND locais.nome = :local";
-        $params[':local'] = $local;
+    else {
+        // Caso em que nenhum parâmetro é especificado, você pode querer definir um comportamento padrão ou lançar um erro.
+        return []; // Por exemplo, retornar um array vazio se nenhum parâmetro válido for fornecido.
     }
 
     $stmt = Conexao::getInstancia()->prepare($query);
-    $stmt->execute($params);
+    $stmt->execute();
 
     $resultado = $stmt->fetchAll();
 
     return $resultado;
 }
+
+public function buscaMedia(array $dados)
+{
+    $produto = $dados['produto'];
+    $local = $dados['local'];
+    $mesAno = $dados['data'];
+
+    // Converta o valor do campo mes_ano para o formato 'yyyy-mm'
+    $mesAnoFormatado = date('Y-m', strtotime($mesAno));
+
+    // Query SQL para buscar os dados
+    $query = "SELECT registro_vendas.*, produtos.nome AS produto_nome, produtos.fornecedor AS produto_fornecedor, produtos.unidade_contagem AS produto_unidade
+              FROM registro_vendas
+              JOIN produtos ON registro_vendas.produto_id = produtos.id
+              WHERE DATE_FORMAT(registro_vendas.data, '%Y-%m') = '{$mesAnoFormatado}' 
+                AND registro_vendas.local = '{$local}' 
+                AND produtos.id = {$produto}";
+
+    $stmt = Conexao::getInstancia()->prepare($query);
+    $stmt->execute();
+
+    $resultado = $stmt->fetchAll();
+
+    return $resultado;
+}
+
+
+
 
 
 

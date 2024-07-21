@@ -47,22 +47,15 @@
                     </label>
                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{usuario.senha}}" id="senha" type="password" name="senha" placeholder="Ex: akmi432mx"  required>
                 </div>
-                 {% if usuario().nivel_acesso ==2 %}
+                 
+                    
                 <div class="w-full"  >
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nivelacesso" >
                         Nível
                     </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nivelacesso" type="number" name="nivelacesso" placeholder="Ex: 1" min="1" max="2" value="{{usuario.nivel_acesso}}" required>
+                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nivelacesso" type="number" name="nivelacesso" placeholder="Ex: 1" min="1" max="3" value="{{usuario.nivel}}" required>
                 </div>
-                  {% endif%}
-                    {% if usuario().nivel_acesso >2 %}
-                <div class="w-full"  >
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nivelacesso" >
-                        Nível
-                    </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nivelacesso" type="number" name="nivelacesso" placeholder="Ex: 1" min="1" max="3" value="{{usuario.nivel_acesso}}" required>
-                </div>
-                  {% endif%}
+                 
 
 
                 <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit">

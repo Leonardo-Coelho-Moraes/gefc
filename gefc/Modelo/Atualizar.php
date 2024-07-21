@@ -29,18 +29,6 @@ foreach ($dados as $valor) {
 
 $stmt->execute($bindParams);
 }
- public function atualizarVendaValor(string $atualizar, array $dados, string $nome ):  void {
-    $query = "UPDATE registro_vendas SET {$atualizar} WHERE nome_venda = '{$nome}'";
-    
-     $stmt = Conexao::getInstancia()->prepare($query);
-     $bindParams = [];
-
-foreach ($dados as $valor) {
-    $bindParams[] = $valor;
-}
-
-$stmt->execute($bindParams);
-}
 
 public function atualizarSlug(string $tabela,string $atualizar, array $dados, string $slug ):  void {
     $query = "UPDATE {$tabela} SET {$atualizar} WHERE slug = {$slug}";

@@ -1,7 +1,7 @@
 {%extends 'base.html'%}
 {% block conteudo %}
 <div class="w-full  p-5 justify-start">
-    {% if usuario().nivel_acesso >2 %}
+  
     <div class="mb-3 ">
    <nav class="flex" aria-label="Breadcrumb">
   <ul class="inline-flex items-center space-x-1 md:space-x-3">
@@ -35,159 +35,52 @@
     {{flash()}}
     <div class=" w-full flex  justify-center items-start gap-8 overflow-y-scroll " style="max-height: 90vh;">
         <div class="w-full dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3" >
-            <form action="{{url('produtos/editar/'~produto.slug~'/'~produto.id)}}" method="post" class="flex gap-5 flex-wrap items-start justify-start">
-                <div class=" w-5/12	">
+            <form action="{{url('produtos/editar/'~produto.slug~'/'~produto.id)}}" method="post" class="flex flex-col w-full gap-1 items-start justify-start">
+                
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="produto">
                         Produto
                     </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{maiuscula(produto.nome)}}" id="produto" type="text" name="produto" placeholder="Ex: Dipirona"  required>
-                </div>
-                <div class=" w-2/12	">
+                      <input class="block w-full p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" value="{{maiuscula(produto.nome)}}" id="produto" type="text" name="produto" placeholder="Ex: Dipirona"  required>
+
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="cod_barras">
                         Código de Barras
                     </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="cod_barras" type="text" name="cod_barras" placeholder="1234567890128"  value="{{produto.cod_barras}}">
-                  </div>
-                <div class="w-2/12">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="tipo_medicamento">
-                        Tipo Medicamento
-                    </label>
-                      <select name="tipo_medicamento" id="tipo_medicamento"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value=""></option>
-              {% for tipo in tipos %}
-  <option value="{{ tipo.tipo }}" {% if tipo.tipo == produto.tipo_medicamento %}selected{% endif %}>{{ tipo.tipo }}</option>
-{% endfor %}
-    
-</select>
-                </div>
-                <div class=" w-1/6	">
+                      <input class="block w-60 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500"  id="cod_barras" type="text" name="cod_barras" placeholder="1234567890128"  value="{{produto.cod_barras}}">
+
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fornecedor">
                         Fornecedor
                     </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"value="{{maiuscula(produto.fornecedor)}}"  id="fornecedor" type="text" name="fornecedor" placeholder="Ex: Dipirona"  required>
-                </div>
-                 <div class="w-1/4">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="fabricante">
-                        Fabricante
+                      <input class="block w-50 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500"value="{{maiuscula(produto.fornecedor)}}"  id="fornecedor" type="text" name="fornecedor" placeholder="Ex: CEMA/FORNECEDOR"  required>
+                          
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="unicont">
+                       Unidade de Contagem
                     </label>
-                      <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="fabricante" type="text" name="fabricante" placeholder="Ex: Integral Médica" value="{{maiuscula(slug(produto.fabricante))}}">
-                </div>
-                
-                <div class="w-1/4">
-                  <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="categoria">
-                        Categoria
-                    </label>
-                      <select name="categoria" id="categoria"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
-                  <option value=""></option>                             
-   {% for categoria in categorias %}
-  <option value="{{ categoria.categoria }}" {% if categoria.categoria == produto.categoria %}selected{% endif %}>{{ categoria.categoria }}</option>
-{% endfor %}
+                      <select name="unicont" id="unicont" class="block w-30 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500">
+                 <option value="unidade" {% if "unidade" == produto.unid_cont %}selected{% endif %}>Unidade</option>
+                  <option value="caixa" {% if "caixa" == produto.unid_cont %}selected{% endif %}>Caixa</option>
+                  <option value="pacote" {% if "pacote" == produto.unid_cont %}selected{% endif %} >Pacote</option>
+                  
 
 </select>
-                </div>
-                 
-                
-                <div class="w-1/12">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="embalagem">
-                        Embalagem
-                    </label>
-                      <select name="embalagem" id="embalagem" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value=""></option>
-                  <option value="caixa" {% if "caixa" == produto.tipo_embalagem %}selected{% endif %}>Caixa</option>
-                  <option value="frasco" {% if "frasco" == produto.tipo_embalagem %}selected{% endif %} >Frasco</option>
-                  <option value="pacote" {% if "pacote" == produto.tipo_embalagem %}selected{% endif %}>Pacote</option>
-                  <option value="tubo" {% if "tubo" == produto.tipo_embalagem %}selected{% endif %}>Tubo</option>
- 
-</select>
-                </div>
-                <div class=" w-1/6  	">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="unidade_embalagem" >
-                        Unidade(s) Embalagem
-                    </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" type="number" name="unidade_embalagem" placeholder="Ex: 12" min="1" value="{{produto.unidades_embalagem}}" required>
-                </div>
-                <div class="w-1/12">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="controlado">
-                        Controlado
-                    </label>
-                    <input id="controlado" name="controlado" type="checkbox" {% if produto.controlado == 1 %}checked{% endif %} value="1" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            </div>
-                <div class=" w-1/12  	">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="peso" >
-                        Peso
-                    </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{produto.peso}}" id="peso" type="number" name="peso" placeholder="Ex: 12" min="1">
-                </div>
-                <div class=" w-1/6">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="unidade_medida">
-                        Unid. de Medida do Peso
-                    </label>
-                       <select name="unidade_medida" id="unidade_medida" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value=""></option>
-              <option value="Caixa" {% if "Caixa" == produto.unidade_medida %}selected{% endif %}>Comprimidos</option>
-  <option value="mg" {% if "mg" == produto.unidade_medida %}selected{% endif %}>mg</option>
-  <option value="g" {% if "g" == produto.unidade_medida %}selected{% endif %}>g</option>
-  <option value="mL" {% if "mL" == produto.unidade_medida %}selected{% endif %}>mL</option>
-  <option value="UI" {% if "UI" == produto.unidade_medida %}selected{% endif %}>UI</option>
-  <option value="µg" {% if "µg" == produto.unidade_medida %}selected{% endif %}>µg</option>
-  <option value="dose" {% if "dose" == produto.unidade_medida %}selected{% endif %}>Dose</option>
-</select>
-                </div>
-                 <div class=" w-1/6">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="lote">
-                        Lote
-                    </label>
-                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"  id="lote" value="{{produto.lote}}" type="text" name="lote" placeholder="Ex: Dipirona"  required>
-                </div>
-                 
-                 <div class=" w-1/6	">
+
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="validade">
                         Validade
                     </label>
-                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" value="{{produto.validade}}"  id="validade" type="date" name="validade"  required>
-                </div>
-                <div class=" w-1/12   	">
+                     <input class="block w-40 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" value="{{produto.validade}}"  id="validade" type="date" name="validade"  required>
+
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
                         Quantidade
                     </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12" min="1" value="{{produto.quantidade_estoque}}" required>
-                </div>
-                <div class=" w-1/6	">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
-                        Preço de Venda
-                    </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco" type="text" name="preco" placeholder="Ex: 12" min="1"  value="{{produto.preco}}">
-                </div>
-                 <div class=" w-1/6 	">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
-                        Preço de Compra
-                    </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="preco_compra" type="text" name="preco_compra" placeholder="Ex: 12" min="1" value="{{produto.preco_compra}}" required>
-                </div>
-                
-                
-                 <div class=" w-full ">
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nota">
-                        Nota
-                    </label>
-                  
-                     <textarea rows="4" class="block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nota" name="nota" >{{slug(produto.observacao)}}</textarea>
-                </div>
+                    <input class="block w-24 p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12" min="1" value="{{produto.quantidade_estoque}}" required>
 
-               
-                   <div  class="w-10/12">
-                      <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" value="Atualizar">
-                </div>
-                    
-                    
-             
-             
+                      <input class=" border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" type="submit" value="Atualizar">
+          
             </form>
         </div>
         
 
 
 </div>
-    {% endif %}
+  
     </div>
 {% endblock %}

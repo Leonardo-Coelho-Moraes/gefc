@@ -28,13 +28,13 @@ class UsuarioControlador extends Controlador {
           return null;
           
       }
-      return (new Busca())->buscaId('usuarios', $sessao->usuarioId) ;
+      return (new Busca())->buscaId('usuario', $sessao->usuarioId) ;
     }
     
      public function editar_usuario(int $id): void {
-        $nivel_user = UsuarioControlador::usuario()->nivel_acesso;
+        $nivel_user = UsuarioControlador::usuario()->nivel;
     if($nivel_user > 2){
-        $usuario = (new Busca())->buscaId('usuarios',$id);
+        $usuario = (new Busca())->buscaId('usuario',$id);
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
             (new UserModelo())->atualizar($dados, $id);
@@ -52,7 +52,7 @@ else{
     }
     
     public function deletar_usuario(int $id): void {
-    $nivel_user = UsuarioControlador::usuario()->nivel_acesso;
+    $nivel_user = UsuarioControlador::usuario()->nivel;
     if($nivel_user > 2){
         (new UserModelo())->deletar($id);
         $this->mensagem->sucesso('Usuário deletado com sucesso')->flash();

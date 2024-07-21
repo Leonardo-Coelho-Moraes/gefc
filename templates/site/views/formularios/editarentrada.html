@@ -1,7 +1,7 @@
 {%extends 'base.html'%}
 {% block conteudo %}
 <div class="flex w-full p-5 flex-col justify-start  ">
-     {% if usuario().nivel_acesso >2 %}
+    
     <div class="mb-3 ">
     <nav class="flex" aria-label="Breadcrumb">
   <ul class="inline-flex items-center space-x-1 md:space-x-3">
@@ -34,31 +34,30 @@
   </div>
     <div class=" w-full flex  flex-col  justify-start items-start gap-8  ">
         <div class=" w-full dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3 " >
-            <form action="{{url('entrada/editar/'~registros.id)}}" method="post" class="flex gap-5  items-start justify-center">
-                 <div class="w-5/12">
+            <form action="{{url('entrada/editar/'~registros.id)}}" method="post" class="flex flex-col gap-2  items-start justify-start">
+                 
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="produto">
                         Produto
                     </label>
-                      <select name="produto" id="produto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
-                  <option value=""></option>
-    {%for pro in produtos%}
-           <option value="{{pro.id}}" {% if pro.id == registros.produto_id %}selected{% endif %}>{{pro.nome}} - {{maiuscula(pro.fabricante)}} - L:{{pro.lote}} V:{{pro.validade}}</option>
-              {%endfor%}
+                      <select name="produto" id="produto" class=" flex w-full p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500">
+           <option value="{{produtos.id}}" selected>{{produtos.nome}} - {{produtos.fornecedor}}</option>
+            
 </select>
-                </div>
+                
+                
                   
              
-               <div class="w-5/12">
+               
                     <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="quantidade" >
                         Quantidade
                     </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12" min="0" value="{{registros.quantidade}}" required>           
-                </div>
+                    <input class=" flex w-32 p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12" min="0" value="{{registros.quantidade}}" required>           
+               
                 
                
               
                 
-                    <input class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit" value="Atualizar">
+                    <input class="border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5 text-sm w-full sm:w-auto  text-center" type="submit" value="Atualizar">
                     
                     
              
@@ -68,6 +67,6 @@
 
 
 </div>
-      {% endif%}
+     
     </div>
 {% endblock %}

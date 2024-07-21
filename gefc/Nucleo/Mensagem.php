@@ -49,4 +49,5 @@ class Mensagem {
     public  function flash():void {
         (new Sessao())->criar('flash', $this);
     }
+    
 }

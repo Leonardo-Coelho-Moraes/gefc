@@ -1,0 +1,90 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class=" w-full  p-5  justify-start ">
+    <a href="#" class="mb-3 text-gray-900 text-lg ">Saídas Fora</a>
+    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
+        <div class=" w-full flex flex-col juntify-center gap-3">
+            
+            <div class="flex gap-3 text-gray-900 w-full items-center justify-center text-sm"> 
+                <a href="{{url('saida/fora/adicionar')}}" class=" border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5">Adicionar</a>
+                <form class="relative w-full" action="{{url('saidas/fora/')}}" method="post">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+        </div>
+        <input type="text" id="pesquisaVendas" name="pesquisaVendas"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Pesquisar" required>
+           
+    </form>
+                </div>
+            {{flash()}}
+           
+
+         
+
+               <div class="relative sm:rounded-lg  overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-900">
+          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
+            <tr>
+                <th scope="col" class="px-6 py-3">Saída</th>                
+                <th scope="col" class="px-6 py-3">Data da Saída</th>
+                <th scope="col" class="px-6 py-3">Local</th>
+                <th scope="col" class="px-6 py-3">Ação</th>
+            </tr>
+        </thead>
+        {% for nomeVenda, vendasPorData in vendasAgrupadas %}
+        
+            {% for data, registros in vendasPorData %}
+            
+             
+                <tr class="border-b border-gray-700 text-gray-700 text-md">
+                    <td scope="row" class="px-6 py-4">
+                        
+                        <a href="{{ url('saidas/fora/'~nomeVenda) }}" class="hover:text-blue-600 hover:font-medium">{{ nomeVenda }}</a>
+                    </td>
+                    <td scope="row" class="px-6 py-4">
+                        {{ data }}
+                    </td>
+                   <td scope="row" class="px-6 py-4">
+                {{ registros[0].local }}
+            </td>
+                       
+                     <td scope="row" class="px-6 py-4">
+                  <a href="{{url('saidas/fora/deletar/'~nomeVenda)}}"  class="hover:text-blue-600 text-blue-800">
+                  Deletar</a>
+                  
+              </td>
+                         
+                </tr>
+             {% endfor %}
+            
+        {% endfor %}
+    </tbody>
+    </table>
+</div>
+             <nav class='flex items-center justify-center my-2 '>
+  <ul class="flex -space-x-px text-sm">
+      {% if paginaAtual > 1 %}
+    <li>
+      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Anterior</a>
+    </li>
+    {% endif %}
+    {% for pagina in 1..totalPaginas %}
+    <li>
+      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ pagina }}</a>
+    </li>
+{% endfor %}
+      {% if paginaAtual < totalPaginas %} 
+<li>
+      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Próxima</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+        </div>
+        </div>
+    </div>
+
+
+
+{% endblock %}

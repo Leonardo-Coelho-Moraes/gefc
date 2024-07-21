@@ -12,7 +12,6 @@ namespace gefc\Modelo;
  */
 use gefc\Nucleo\Mensagem;
 use gefc\Nucleo\Helpers;
-use gefc\Controlador\UsuarioControlador;
 use gefc\Modelo\Inserir;
 use gefc\Modelo\Atualizar;
 use gefc\Nucleo\Conexao;
@@ -38,27 +37,31 @@ public function entrada(array $dados): void {
     $stmt->execute();
 }
 public function atualizar(array $dados, int $id): void {
-       $user = UsuarioControlador::usuario()->nome;
+      
+        $busca = (new Busca())->buscaId('produtos',$dados['produto']);
        $dadosArray = [
            'produto' => $dados['produto'],
+           'produto_nome' => $busca->nome,
            'quantidade' => $dados['quantidade'],
-           'editado' => 1,
-           'user' => $user
+           'editado' => 1
+          
        ];
-       (new Atualizar())->atualizar('registro_entrada', "produto_id = ?,quantidade = ?, editado = ?, user = ?",$dadosArray ,$id); //observe que mudei de $id para id = $id
+       (new Atualizar())->atualizar('registro_entrada', "produto_id = ?,produto_nome = ?,quantidade = ?, editado = ?",$dadosArray ,$id); //observe que mudei de $id para id = $id
+       //!!! muito importante, deve fazer uma equação pra edição da quantidade no estoque,
        
 }
 
  public function entradaRegisto(array $dados): void {
        $resultados = Helpers::validadarDados($dados);
-                $user = UsuarioControlador::usuario()->nome;
-               $array = array('produto' => $resultados['produto'] , 'quantidade' =>   $resultados['quantidade'], 'user' => $user);
+                
+                $busca = (new Busca())->buscaId('produtos',$dados['produto']);
+               $array = array('produto' => $resultados['produto'] ,'produto_nome' => $busca->nome ,'quantidade' =>   $resultados['quantidade']);
       if ($resultados['quantidade'] < 1) {
            $mensagem = (new Mensagem)->erro('A quantidade precisa ser maior ou igual 1')->flash();
            Helpers::redirecionar('entrada/adicionar');
            return;
         }
-       (new Inserir())->inserir('registro_entrada', 'produto_id , quantidade, user', $array);
+       (new Inserir())->inserir('registro_entrada', 'produto_id ,produto_nome, quantidade', $array);
       
 }
 
@@ -68,12 +71,7 @@ public function atualizar(array $dados, int $id): void {
     $inicio = ($pagina !== null && $limite !== null) ? (($pagina - 1) * $limite) : 0;
 
     $query = "SELECT * FROM registro_entrada
-              WHERE (produto_id LIKE :buscar 
-                     OR ano LIKE :buscar 
-                     OR data LIKE :buscar 
-                      OR hora LIKE :buscar 
-                    )
-              
+              WHERE (produto_nome LIKE :buscar)
               ORDER BY data DESC
               LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
               

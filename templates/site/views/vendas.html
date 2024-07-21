@@ -1,18 +1,19 @@
 {%extends 'base.html'%}
 {% block conteudo %}
 <div class=" w-full  p-5  justify-start ">
-    <a href="#" class="mb-3 text-white font-medium hover:text-gray-600">Venda</a>
+    <a href="#" class="mb-3 text-gray-900 text-lg ">Saída</a>
     <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
         <div class=" w-full flex flex-col juntify-center gap-3">
             
-            <div class="flex gap-3  w-full items-center justify-center"> <a href="{{url('venda/adicionar')}}" class=" text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5  dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800">Adicionar</a>
+            <div class="flex gap-3 text-gray-900 w-full items-center justify-center text-sm"> 
+                <a href="{{url('venda/adicionar')}}" class=" border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5">Adicionar</a>
                 <form class="relative w-full" action="{{url('vendas')}}" method="post">
         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
             </svg>
         </div>
-        <input type="text" id="pesquisaVendas" name="pesquisaVendas"  class="block w-full p-2 pl-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Pesquisar" required>
+        <input type="text" id="pesquisaVendas" name="pesquisaVendas"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Pesquisar" required>
            
     </form>
                 </div>
@@ -21,51 +22,42 @@
 
          
 
-               <div class="relative  shadow-md sm:rounded-lg  overflow-x-auto">
-    <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-        <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+               <div class="relative sm:rounded-lg  overflow-x-auto">
+    <table class="w-full text-sm text-left text-gray-900">
+          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
             <tr>
-                <th scope="col" class="px-6 py-3">
-                    Venda
-                </th>
-               
-                <th scope="col" class="px-6 py-3">
-                    Data da Venda
-                    
-                </th>
-                   {% if usuario().nivel_acesso >2 %}
-                   <th scope="col" class="px-6 py-3">
-                    Ação
-                </th>
-                      {% endif%}
+                <th scope="col" class="px-6 py-3">Saída</th>                
+                <th scope="col" class="px-6 py-3">Data da Saída</th>
+                <th scope="col" class="px-6 py-3">Local</th>
+                <th scope="col" class="px-6 py-3">Ação</th>
             </tr>
         </thead>
         {% for nomeVenda, vendasPorData in vendasAgrupadas %}
+        
             {% for data, registros in vendasPorData %}
+            
              
-                <tr class="bg-white border-b dark:bg-gray-900 dark:border-gray-700">
-                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                <tr class="border-b border-gray-700 text-gray-700 text-md">
+                    <td scope="row" class="px-6 py-4">
                         
-                        <a href="{{ url('vendas/'~nomeVenda) }}" class="hover:text-blue-500">{{ nomeVenda }}</a>
+                        <a href="{{ url('vendas/'~nomeVenda) }}" class="hover:text-blue-600 hover:font-medium">{{ nomeVenda }}</a>
                     </td>
-                    <td scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                    <td scope="row" class="px-6 py-4">
                         {{ data }}
                     </td>
-                       {% if usuario().nivel_acesso >2 %}
-                     <td scope="row" class="px-6 py-4 flex gap-1 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                  <a href="{{url('vendas/deletar/'~nomeVenda)}}"  class="w-6 h-6 flex items-center justify-center rounded-full bg-red-400">
-                   <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-trash" viewBox="0 0 16 16">
-  <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5Zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6Z"/>
-  <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1ZM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118ZM2.5 3h11V2h-11v1Z"/>
-</svg>
-                      
-                  </a>
+                   <td scope="row" class="px-6 py-4">
+                {{ registros[0].local }}
+            </td>
+                       
+                     <td scope="row" class="px-6 py-4">
+                  <a href="{{url('vendas/deletar/'~nomeVenda)}}"  class="hover:text-blue-600 text-blue-800">
+                  Deletar</a>
                   
               </td>
-                          {% endif%}
+                         
                 </tr>
+             {% endfor %}
             
-            {% endfor %}
         {% endfor %}
     </tbody>
     </table>
@@ -74,17 +66,17 @@
   <ul class="flex -space-x-px text-sm">
       {% if paginaAtual > 1 %}
     <li>
-      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Anterior</a>
+      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Anterior</a>
     </li>
     {% endif %}
     {% for pagina in 1..totalPaginas %}
     <li>
-      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 text-blue-600 border border-gray-300 bg-blue-50 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white">{{ pagina }}</a>
+      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ pagina }}</a>
     </li>
 {% endfor %}
       {% if paginaAtual < totalPaginas %} 
 <li>
-      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">Próxima</a>
+      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Próxima</a>
     </li>
     {% endif %}
   </ul>

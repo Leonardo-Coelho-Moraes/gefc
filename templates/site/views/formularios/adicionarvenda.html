@@ -17,7 +17,7 @@
         <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
           <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
         </svg>
-        <a href="{{url('venda')}}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"> 
+        <a href="{{url('vendas')}}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"> 
             Saída</a>
       </div>
     </li>
@@ -31,67 +31,61 @@
     </li>
   </ul></nav>
   </div>
-    <div class=" w-full flex  flex-col  justify-start items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
+    <div class=" w-full flex  justify-start items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
              {{flash()}}
-        <div class="w-full dark:bg-gray-900 dark:border-gray-700 rounded-lg p-3 " >
-            <div class="flex mb-7 gap-1 items-center justify-between">
-             <form id="formCod"  data-url-codigo="{{url('buscarCod')}}"  >   
-   
-  
-       
-        <input type="text" id="cod" name="cod" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="||||||||||||||||||||||||||||||||||||" autofocus>
-  
-</form>
-                
-<form id="formProduto" class="w-9/12"  data-url-produto="{{url('buscarId')}}"  >   
-   
-  
-       
-        <input type="text" id="produto" name="produto" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 gap-1 overflow-y-scroll" placeholder="Pesquisar Produto">
-  
-</form>
-                 <div id='resultado' class="left-56 top-28 w-5/12 h-3/5 absolute  bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"></div>
-           
-               <div class="w-1/6">
-                   
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="quantidade" type="number" name="quantidade" placeholder="Quantidade" min="1" required>
-                  
-                </div> 
-                <div class="w-1/12">
-                 <input type="text" id="preco" name="preco" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="15.33" >     </div>           
-                 <button id="adicionarBtn"class="self-end text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-1/12 sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="adicionarBtn" onclick="adicionarProduto()" > Adicionar</button>
-                    
-                    
+        <div class=" w-full" >
              
-            </div>
-            <hr></hr>
-            <h1 class='mb-2 mt-2 text-sm font-medium text-gray-900 dark:text-white'>Lista da Venda:</h1>
-            <form id="listaProdutos" action="{{url('venda/adicionar')}}"  method='post'  class=" border-gray-300">
-               
-      <!-- Os produtos adicionados serão exibidos aqui -->
-     
+               <form id="sourceForm" class=' w-full flex-wrap flex justify-start items-center gap-8 pb-3'>
+        <label for="selectField" class=''>Produtos:</label>
+        <select id="selectField" class="select" style="width: 40%;" id="produtoSelecionar" name="selectField">
+             <option value=""></option>
+            {% for pro in produtos%}
+            <option value="{{pro.id}},{{pro.nome}}">{{pro.nome}} - {{pro.fornecedor}}</option>
+              {% endfor%}
+        </select>
+        <label for="qntSolic">Qnt Solicitada:</label>
+        <input type="number" id="qntSolic" name="qntSolic" min='1' class=' flex w-32 p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500'>
+        <label for="qntSolic">Qnt:</label>
+        <input type="number" id="numberField" name="numberField" min='1' class=' flex w-32 p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500'>
 
+        <button type="button" class=' w-auto border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5 ' id="submitButton">Enviar</button>
+    </form>
+             <p class='text-lg text-gray-900'>Lista:</p>
+            <hr>
+               
+    <form  action="{{url('venda/adicionar')}}" method="post">
+        <div id="targetForm" class="flex flex-col w-full text-sm">
+            
+        </div>
+        <div class="flex gap-3 w-full align-center">
+        <!-- Campos serão adicionados aqui -->
+        <label for="local" class=''>Local</label>
+        <select id="local" class=' block p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700' name="local">
+             {% for local in locais %}
+                    <option value="{{ local.id }}">{{ local.nome }}</option>
+                {% endfor %}
+        </select>
+         <input class="border mt-3 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5 " id="venderBtn" type="submit"  value="Adicionar Saída">
+        </div>
     </form>
             
-            <hr></hr>
-            <div class="flex-col items-center justify-between"> 
-                <div class="flex items-center justify-between"> <div class="w-auto">
-                        <label class="mb-2 text-sm font-medium text-gray-900 dark:text-white" for="desconto" >
-                        Desconto
-                    </label> 
-                        <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-1/2 p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="desconto" type="text" name="desconto" placeholder="0.00"></div>
-                    <p id="valorTotalVenda"  class="mb-2 text-sm font-medium text-gray-900 dark:text-white"></p>
-                </div>
-               
-                <input class="text-white mt-2 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm  sm:w-auto px-5 py-2.5 w-full text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" id="venderBtn" type="button" onclick="enviarFormulario()" value="Vender">
-        </div>
-    <!-- Botão de Vender -->
+           
    
  
         </div>
         
 
 
+             
 </div>
+    <script>
+        $(document).ready(function() {
+            $('.select').select2({
+                placeholder: 'Selecione um produto',
+                allowClear: true
+            });
+           
+        });
+    </script>
     </div>
 {% endblock %}

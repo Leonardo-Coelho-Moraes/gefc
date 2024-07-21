@@ -9,21 +9,17 @@
                 <key/>
             </bookmark>
         </file>
-        <file>
-            <url>templates/site/views/formularios/cadastrarproduto.html</url>
-            <bookmark id="3">
-                <name/>
-                <line>150</line>
-                <key/>
-            </bookmark>
-        </file>
     </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/xampp/htdocs/gefc/gefc/Controlador/SiteControlador.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/vendas.html</file>
-            <file>file:/C:/xampp/htdocs/gefc/rotas.php</file>
-            <file>file:/C:/xampp/htdocs/gefc/templates/site/views/entrada.html</file>
+            <file>file:/C:/xampp2/htdocs/gefc/rotas.php</file>
+            <file>file:/C:/xampp2/htdocs/gefc/templates/site/views/formularios/pedido.html</file>
+            <file>file:/C:/xampp2/htdocs/gefc/templates/site/views/formularios/adicionarvenda.html</file>
+            <file>file:/C:/xampp2/htdocs/gefc/templates/site/views/aside.html</file>
+            <file>file:/C:/xampp2/htdocs/gefc/gefc/Modelo/VendaModelo.php</file>
+            <file>file:/C:/xampp2/htdocs/gefc/gefc/Controlador/SiteControlador.php</file>
+            <file>file:/C:/xampp2/htdocs/gefc/templates/site/views/registroVendas.html</file>
+            <file>file:/C:/xampp2/htdocs/gefc/gefc/Modelo/LocalModelo.php</file>
         </group>
     </open-files>
 </project-private>

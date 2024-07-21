@@ -1,0 +1,92 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class=" w-full  p-5  justify-start ">
+    <p class="mb-3 text-gray-900 text-lg ">Estoque {{nome.nome}}</p>
+    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll overflow-x-auto  " style="max-height:90vh;">
+        <div class=" w-full flex flex-col juntify-center gap-3">
+
+                <form class="relative w-full" action="{{url('local')}}" method="post">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+        </div>
+        <input type="text" id="pesquisaProduto" name="pesquisaProduto"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Pesquisar" required></form>
+                
+                </div>
+            {{flash()}}
+
+            
+            
+
+              <div class="relative overflow-x-scroll ">
+        <table class="w-full text-sm text-left text-gray-900">
+          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
+            <tr><th scope="col" class="px-6 py-3">
+                    ID
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Produto
+                </th>
+               
+                
+                <th scope="col" class="px-6 py-3">
+                    Estoque
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Ação
+                </th>
+                
+                 
+                
+                 
+            </tr>
+        </thead>
+        <tbody>
+            {%for registro in registros%}
+            <tr class="border-b border-gray-700 text-gray-700 text-md">
+              <td scope="row" class="px-6 py-4">
+                 {{registro.produto_id}}
+                </td>
+                <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
+    {% for produto in produtos %}
+    
+        {% set produtoNome = '' %}
+
+        {% if produto.id == registro.produto_id %}
+            {% set produtoNome = produto.nome %}
+            
+
+            {% if registro.editado == 1 %}
+            <a class="text-blue-800 hover:text-blue-600 hover:font-medium">{{ produtoNome }}</a>
+             {% else %}
+                <a  class="hover:text-blue-600 hover:font-medium">{{ produtoNome }}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</td>
+
+             
+                <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                 {{registro.estoque}}
+                </td>
+               
+                <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                   <a href="{{url('local/editar/estoque/'~registro.id)}}" class="hover:text-blue-600 text-blue-800">Editar</a>
+                </td>
+              
+            </tr>
+        {%endfor%}
+          
+        </tbody>
+    </table>
+</div>
+             
+        </div>
+        </div>
+    
+    </div>
+
+
+
+{% endblock %}

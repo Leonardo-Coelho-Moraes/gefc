@@ -1,0 +1,111 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class=" w-full  p-5  justify-start ">
+    <p class="mb-3 text-gray-900 text-lg ">Entrada</p>
+    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll overflow-x-auto  " style="max-height:90vh;">
+        <div class=" w-full flex flex-col juntify-center gap-3">
+            
+            
+                
+                <form class="flex  w-full gap-4 items-start justify-start" action="{{url('estoque/locais')}}" method="post">
+       
+       
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="local">
+                        Local
+                    </label>
+                      <select name="local" id="local"  class="block w-full p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" >
+                 <option value=""></option>
+                  {%for local in locais%}
+                  <option value="{{local.id}}">{{local.nome}}</option>
+                   {%endfor%}
+ 
+</select>
+              
+                   
+                  
+                    
+       
+                      <input class="border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" type="submit" value="Pesquisar">
+               
+                    
+           
+    </form>
+                
+                </div>
+            {{flash()}}
+
+            
+            
+                
+              <div class="relative overflow-x-scroll ">
+        <table class="w-full text-sm text-left text-gray-900">
+          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
+            <tr><th scope="col" class="px-6 py-3">
+                    ID
+                </th>
+                <th scope="col" class="px-6 py-3">
+                    Produto
+                </th>
+               
+                
+                <th scope="col" class="px-6 py-3">
+                    Quantidade
+                </th>
+                
+                 
+            </tr>
+        </thead>
+        <tbody>
+            {%for registro in estoque%}
+            <tr class="border-b border-gray-700 text-gray-700 text-md">
+              <td scope="row" class="px-6 py-4">
+                 {{registro.produto_id}}
+                </td>
+                <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
+    {% for produto in produtos %}
+    
+        {% set produtoNome = '' %}
+        {% set produtoFor = '' %}
+        {% set produtoEditado = '' %}
+        {% set produtoDeletado = '' %}
+        {% set produtoSlug = '' %}
+        {% set produtoId = '' %}
+
+        {% if produto.id == registro.produto_id %}
+            {% set produtoNome = produto.nome %}
+            {% set produtoFor = produto.fornecedor %}
+            {% set produtoEditado = produto.editado %}
+            {% set produtoDeletado = produto.deletado %}
+            {% set produtoSlug = produto.slug %}
+            {% set produtoId = produto.id %}
+
+            {% if registro.editado == 1 %}
+            <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="text-blue-800 hover:text-blue-600 hover:font-medium">{{ produtoNome }} - {{produtoFor}}</a>
+             {% else %}
+                <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="hover:text-blue-600 hover:font-medium">{{ produtoNome }} - {{produtoFor}}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+</td>
+
+             
+                <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                 {{registro.estoque}}
+                </td>
+               
+              
+            </tr>
+        {%endfor%}
+          
+        </tbody>
+    </table>
+</div>
+            
+        </div>
+        </div>
+    
+    </div>
+
+
+
+{% endblock %}

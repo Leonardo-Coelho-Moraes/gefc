@@ -8,15 +8,17 @@ namespace gefc\Controlador;
  * @author Leonardo
  */
 
-use gefc\Controlador\UsuarioControlador;
 use gefc\Modelo\Busca;
 use gefc\Modelo\Contar;
+use gefc\Modelo\UserModelo;
+use gefc\Modelo\LocalModelo;
+use gefc\Controlador\UsuarioControlador;
 use gefc\Modelo\EntradaModelo;
 use gefc\Modelo\Inserir;
 use gefc\Modelo\ProdutoModelo;
 use gefc\Modelo\RegistrosModelo;
+use gefc\Modelo\SaidaModelo;
 use gefc\Modelo\Atualizar;
-use gefc\Modelo\UserModelo;
 use gefc\Nucleo\Controlador;
 use gefc\Modelo\VendaModelo;
 use gefc\Nucleo\Helpers;
@@ -26,6 +28,7 @@ class SiteControlador extends Controlador {
     protected $usuario;
     protected $user;
     protected $nivel_user;
+  
 
 
     public function __construct() {
@@ -38,33 +41,32 @@ class SiteControlador extends Controlador {
              $limpar = (new Sessao())->limpar('usuarioId');
         }
           
-        $this->nivel_user = UsuarioControlador::usuario()->nivel_acesso;
+        $this->nivel_user = UsuarioControlador::usuario()->nivel;
            $this->sessao = new Sessao();
-         
-           
-           
-           $this->user = UsuarioControlador::usuario()->nome;   
-           
+           $this->user = UsuarioControlador::usuario()->nome;    
     }
-
+     private function verificarPermissaoAdmin() {
+        if ($this->nivel_user != 1) {
+            
+            Helpers::redirecionar('local');
+        }
+    }
+public function proibido(): void {
+        echo $this->template->renderizar('proibição.html', [ 'titulo' => SITE_NOME]);
+    }
     public function index(): void {
         
-      if($this->nivel_user < 3){
-      Helpers::redirecionar('entrada');
-      
-      }else{
-           echo $this->template->renderizar('index.html', [ 'titulo' => SITE_NOME.' Página Inicial',]);
-      }
-       
-   }
-
-    public function entrada(): void {
+          Helpers::redirecionar('entrada') ;  
         
+   }
+  
+    public function entrada(): void {
+        $this->verificarPermissaoAdmin();
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 2;
+        $limite = 40;
         $editado = (new Contar())->contar('registro_entrada', 'editado = 1');
         $registrosTotais = (new Contar())->contar('registro_entrada');
-         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,peso,unidade_medida,fabricante,tipo_embalagem,slug,editado,deletado','produtos',null,'nome ASC',null);
+         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,slug,editado,deletado, fornecedor','produtos',null,'nome ASC',null);
         $registros = (new EntradaModelo())->pesquisa('', $pagina, $limite);
 if (isset($_POST['pesquisaEntrada'])) {
     $pesquisa = $_POST['pesquisaEntrada'];
@@ -82,6 +84,7 @@ if (isset($_POST['pesquisaEntrada'])) {
     }
 
     public function entrada_adicionar(): void {
+        $this->verificarPermissaoAdmin();
         $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
        
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
@@ -95,26 +98,25 @@ if (isset($_POST['pesquisaEntrada'])) {
     }
 
     public function editar_entrada(int $id): void {
-         if($this->nivel_user > 2){
-       $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+        $this->verificarPermissaoAdmin();
         $registros = (new Busca())->buscaId('registro_entrada',$id);
+         $produtos = (new Busca())->buscaId('produtos', $registros->produto_id);
+      
+        
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
-$this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos!')->flash();
+$this->mensagem->alerta('Registro Editado com Sucesso. Corrija a quantidade de estoque do produto pra mais ou para menos!')->flash();
             (new EntradaModelo())->atualizar($dados, $id);
             Helpers::redirecionar('entrada');
         }
-         echo $this->template->renderizar('formularios/editarentrada.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos]);}
-         else{
-    
-            Helpers::redirecionar('entrada');
-}
+         echo $this->template->renderizar('formularios/editarentrada.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos]);
     }
 
     public function vendas(): void {
-        
+        $this->verificarPermissaoAdmin();
+
           $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 30;
+        $limite = 40;
   
     // Caso não tenha sido enviado um valor de pesquisa
     $registros = (new VendaModelo())->pesquisa('',$pagina,$limite);   
@@ -137,6 +139,7 @@ if (isset($_POST['pesquisaVendas'])) {
     // Agrupa os registros pela venda (nome_venda) e data
     foreach ($registros as $registro) {
            $nomeVenda = $registro['nome_venda'];
+           
     $data = $registro['data']." ". $registro['hora'];
   
 
@@ -159,143 +162,97 @@ if (isset($_POST['pesquisaVendas'])) {
     }
     
     public function venda(string $nome): void {
-       
-         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,peso,unidade_medida,fabricante,tipo_embalagem,slug','produtos',null,'nome ASC',null);
+       $this->verificarPermissaoAdmin();
+         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,slug,fornecedor','produtos',null,'id ASC',null);
          //$registros = (new Busca())->buscarVenda( $nome);
-         $registros = (new Busca())->busca(null,null,'registro_vendas',"nome_venda =  '{$nome}' AND deletado != 1 OR deletado IS NULL ",null,null);
-       $desconto = $registros[0]['desconto_total_venda'];
-       $valorVenda = $registros[0]['valor_venda'];
-       $vendedor = $registros[0]['usuario'];
-        echo $this->template->renderizar('venda.html', [ 'titulo' => SITE_NOME.' '.$nome, 'registros' => $registros,
-           'produtos'=> $produtos, 'venda' => $nome, 'desconto' => $desconto,'valorVenda' => $valorVenda, 'vendedor' => $vendedor]);
+         $registros = (new Busca())->busca(null,null,'registro_vendas',"nome_venda =  '{$nome}' ",null,null);
+         $local = $registros[0]['local'];
+    
+        echo $this->template->renderizar('venda.html', [ 'titulo' => SITE_NOME.' '.$nome, 'registros' => $registros,'produtos'=> $produtos, 'venda' => $nome, 'local' => $local]);
     }
     
     public function venda_adicionar(): void {
-         
-
-  
+$this->verificarPermissaoAdmin();
+        $locais = (new Busca())->busca(null,null,'locais','','',null);
         $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
        
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)   ) {
             (new VendaModelo())->venda($dados);
-            (new VendaModelo())->quantidadeVenda($dados);
            (new VendaModelo())->vendaRegistro($dados);
-            $this->mensagem->sucesso('Venda Feita com Sucesso!')->flash();
+            $this->mensagem->sucesso('Saída Feita com Sucesso!')->flash();
             Helpers::redirecionar('venda/adicionar');
         }
           
         
-        echo $this->template->renderizar('formularios/adicionarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos]);
+        echo $this->template->renderizar('formularios/adicionarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos,'locais' => $locais]);
     }
     
-    public function buscarCod(): void {
-        $codigoBarras = filter_input(INPUT_POST, 'cod', FILTER_DEFAULT);
-
-    if ($codigoBarras) {
-    $produtoEncontrado = (new Busca())->busca(null, null, 'produtos', "cod_barras = '$codigoBarras'", 'validade ASC', null);
-   header('Content-Type: application/json');
-
-if (!empty($produtoEncontrado) && is_array($produtoEncontrado)) {
-    echo json_encode($produtoEncontrado[0]);
-} else {
-    echo json_encode(null); // Se nenhum resultado foi encontrado
-}
-    }
-       
-    }
-    
-    public function buscarId(): void {
-    $id = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
-
-if ($id === null) {
-    // Nenhum valor 'produto' foi enviado via POST, verifique se há um valor 'pesquisa'
-    $id = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
-
-    if ($id !== null) {
-        if (isset($id)) {
-        $produtos = (new Busca())->buscaProdutoVenda('nome', $id);
-
-        foreach ($produtos as $produto) {
-            $preco = $produto['preco']; // Corrigido para acessar a propriedade 'preco' de um array associativo
-            $fabricante = Helpers::tirarTraco($produto['fabricante']);
-            $texto = $produto['nome']." - ".$fabricante." - ".$produto['lote']." - V:".$produto['validade']." - ".$produto['tipo_embalagem']; 
-            // Verifica se o preco é null, vazio, "0.00" ou 0
-            if ($preco === null || $preco === '' || $preco === '0.00' || $preco === 0) {
-                $preco = 0;
-            }
-         
-           echo "<p class='hover:text-blue-500' onclick=\"adicionarAosCampos('{$produto['id']}', '{$texto}', '{$preco}')\">{$texto} - {$preco}R$</p>";
-
-         
-        }
-    }
-    } 
-} else {
-   if (isset($id)) {
-        $produtos = (new Busca())->buscaProdutoVenda('nome', $id);
-
-        foreach ($produtos as $produto) {
-            $preco = $produto['preco']; // Corrigido para acessar a propriedade 'preco' de um array associativo
-
-            // Verifica se o preco é null, vazio, "0.00" ou 0
-            if ($preco === null || $preco === '' || $preco === '0.00' || $preco === 0) {
-                $preco = 0;
-            }
-
-            echo "<p class='hover:text-blue-500' onclick=\"adicionarNoCampo('{$produto['id']}', '{$produto['nome']}', '{$preco}')\">{$produto['nome']}-{$preco}R$</p>";
-        }
-    }
-}
-
-   
-}
-
     public function editar_venda(string $venda, int $id): void {
-          if($this->nivel_user > 2){
+        $this->verificarPermissaoAdmin();
         $registros = (new Busca())->buscaId('registro_vendas',"$id");
         $produto = $registros->produto_id;
-         $produtos = (new Busca())->buscaId('produtos', "$produto");
+        $produtos = (new Busca())->buscaId('produtos', "$produto");
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
             (new VendaModelo())->atualizar($dados, $id);
-            $this->mensagem->sucesso('Registro Editado com Sucesso. Quantidade de Venda e Estoque do Produto Editados!')->flash();
+            $this->mensagem->sucesso('Registro Editado com Sucesso. Quantidade de Saída e Estoque do Produto Editados!')->flash();
             Helpers::redirecionar('vendas/'.$venda);
         }
-          echo $this->template->renderizar('formularios/editarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos, 'venda' => $venda]);}
-          else{
+          echo $this->template->renderizar('formularios/editarvenda.html', [ 'titulo' => SITE_NOME.' Produtos', 'registros' => $registros, 'produtos' => $produtos, 'venda' => $venda]);
+    }
+    
+    public function editarLocal(string $venda): void {
+        $this->verificarPermissaoAdmin();
+        $locais = (new Busca())->busca(null,null,'locais','','',null);
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            (new VendaModelo())->atualizarLocal($dados, $venda);
+            $this->mensagem->sucesso('Local Editado com Sucesso.')->flash();
             Helpers::redirecionar('vendas/'.$venda);
-}
+        }
+          echo $this->template->renderizar('formularios/editarLocal.html', ['venda' => $venda, 'locais' => $locais]);
+    }
+    
+    public function adicionarAVenda(string $venda, string $local): void {
+        $this->verificarPermissaoAdmin();
+         $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+         
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            (new VendaModelo())->adicionarAVenda($dados, $venda, $local);
+            $this->mensagem->sucesso('Produto adiconado a venda com Sucesso.')->flash();
+            Helpers::redirecionar('vendas/adicionar/'.$venda.'/'.$local);
+        }
+          echo $this->template->renderizar('formularios/adicionarAVenda.html', ['venda' => $venda, 'produtos' => $produtos, 'local' => $local]);
     }
     
     public function deletar_venda(string $venda, int $id): void {
-         
-         if($this->nivel_user > 2){
+         $this->verificarPermissaoAdmin();
+        
         (new VendaModelo())->deletar($venda,$id);
-        $this->mensagem->sucesso('Venda inserida na lista de deletados com sucesso!')->flash();
-        Helpers::redirecionar('vendas');}
-
-    }
-    
-    public function deletarVendaInteira(string $venda): void {
-         
-         if($this->nivel_user > 2){
-              $dadosArray = ['deletado' => 1];
-       (new Atualizar())->atualizarVendaValor("deletado = ?", $dadosArray, $venda);
-       $this->mensagem->sucesso('Venda deletada completamente!')->flash();
-}
+        $this->mensagem->sucesso('Saída inserida na lista de deletados com sucesso!')->flash();
         Helpers::redirecionar('vendas');
 
     }
     
+    public function deletarVendaInteira(string $venda): void {  
+         $this->verificarPermissaoAdmin();
+       (new VendaModelo())->deletarTudo($venda);
+       $this->mensagem->sucesso('Saída deletada completamente e produtos readicionados ao estoque!')->flash();
+       Helpers::redirecionar('vendas');
+
+
+    }
+    
     public function registroVendas(): void {
-    
-    
-        $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 30;
+    $this->verificarPermissaoAdmin();
+    $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+        $limite = 40;
         $editado = (new Contar())->contar('registro_vendas', 'editado = 1');
         $registrosTotais = (new Contar())->contar('registro_vendas','editado != 1');
-         $produtos = (new Busca())->busca(null,null,'produtos',null,'nome ASC',null);
+       
+         $produtos = (new Busca())->busca(null,null,'produtos',"",'nome ASC',null);
         $registros = (new VendaModelo())->pesquisa('', $pagina, $limite);
 if (isset($_POST['pesquisaRegistroVenda'])) {
     $pesquisa = $_POST['pesquisaRegistroVenda'];
@@ -310,18 +267,169 @@ if (isset($_POST['pesquisaRegistroVenda'])) {
             'paginaAtual' => $pagina,
             'totalPaginas' => $totalPaginas, 'produtos'=> $produtos, 'editado' => $editado, 'total' => $registrosTotais]);
     }
+      
+    public function saidasFora(): void {
+$this->verificarPermissaoAdmin();
+          $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+        $limite = 40;
+  
+    // Caso não tenha sido enviado um valor de pesquisa
+    $registros = (new SaidaModelo())->pesquisa('',$pagina,$limite);   
+
+        $totalRegistros = (new SaidaModelo())->contaRegistros();
+
+        $totalPaginas = ceil($totalRegistros / $limite);
+       
+if (isset($_POST['pesquisaVendas'])) {
+    $pesquisa = $_POST['pesquisaVendas'];
+    $registros = (new SaidaModelo())->pesquisa($pesquisa, $pagina, $limite);
+    if(empty($registros)){
+          $this->mensagem->erro($pesquisa ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou nome da venda!")->flash();
+         $registros = (new SaidaModelo())->pesquisa('',$pagina,$limite);   
+    }
+}
+        
+        $vendasAgrupadas = [];
+
+    // Agrupa os registros pela venda (nome_venda) e data
+    foreach ($registros as $registro) {
+           $nomeVenda = $registro['nome_saida'];
+           
+    $data = $registro['data'];
+  
+
+        if (!isset($vendasAgrupadas[$nomeVenda])) {
+            $vendasAgrupadas[$nomeVenda] = [];
+        }
+
+        if (!isset($vendasAgrupadas[$nomeVenda][$data])) {
+            $vendasAgrupadas[$nomeVenda][$data] = [];
+        }
+
+        $vendasAgrupadas[$nomeVenda][$data][] = $registro;
+    }
+
+    echo $this->template->renderizar('saidasFora.html', [
+        'titulo' => SITE_NOME.' Saídas Fora',
+        'vendasAgrupadas' => $vendasAgrupadas,
+        'paginaAtual' => $pagina,
+        'totalPaginas' => $totalPaginas]);
+    }
+    
+    public function saidaFora(string $nome): void {
+       $this->verificarPermissaoAdmin();
+         $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,slug,fornecedor','produtos',null,'id ASC',null);
+         //$registros = (new Busca())->buscarVenda( $nome);
+         $registros = (new Busca())->busca(null,null,'registro_saida_sem_local',"nome_saida =  '{$nome}' ",null,null);
+         $local = $registros[0]['local'];
+    
+        echo $this->template->renderizar('saidaFora.html', [ 'titulo' => SITE_NOME.' '.$nome, 'registros' => $registros,'produtos'=> $produtos, 'saida' => $nome, 'local' => $local]);
+    }
+    
+    public function registroSaidaFora(): void {
+     $this->verificarPermissaoAdmin();
+    $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
+        $limite = 40;
+        
+       $registrosTotais = (new Contar())->contar('registro_vendas','');
+         $produtos = (new Busca())->busca(null,null,'produtos',"",'nome ASC',null);
+        $registros = (new SaidaModelo())->pesquisa('', $pagina, $limite);
+if (isset($_POST['pesquisaRegistroVenda'])) {
+    $pesquisa = $_POST['pesquisaRegistroVenda'];
+    $registros = (new SaidaModelo())->pesquisa($pesquisa, $pagina, $limite);
+    if(empty($registros)){
+         $this->mensagem->erro($pesquisa ." não encontrado(a), abaixo a lista de todos os registros!Observe que pode por ano, data: 2023-10-16 ou COD. do produto, não busca nome do produto!")->flash();
+         $registros = (new SaidaModelo())->pesquisa('', $pagina, $limite);
+    }
+}
+        $totalPaginas = ceil($registrosTotais / $limite);
+        echo $this->template->renderizar('registroSaidaFora.html', [ 'titulo' => SITE_NOME.' Registro Saida Fora', 'registros' => $registros,
+            'paginaAtual' => $pagina,
+            'totalPaginas' => $totalPaginas, 'produtos'=> $produtos]);
+    }
+    
+    public function saidaForaAdicionar(): void {
+         $this->verificarPermissaoAdmin();
+         $locais = (new Busca())->busca(null, null, 'locais', null);
+        $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+        
+       
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)   ) {
+            (new SaidaModelo())->venda($dados);
+           (new SaidaModelo())->vendaRegistro($dados);
+            $this->mensagem->sucesso('Saída Fora Feita com Sucesso!')->flash();
+            Helpers::redirecionar('saida/fora/adicionar');
+        }
+          
+        
+        echo $this->template->renderizar('formularios/adicionarsaidafora.html', [ 'titulo' => SITE_NOME.' Saída Fora Adicionar', 'produtos' => $produtos, 'locais' => $locais]);
+    }
+    
+    public function deletarSaidaForaInteira(string $venda): void {  
+         $this->verificarPermissaoAdmin();
+       (new SaidaModelo())->deletarTudo($venda);
+       $this->mensagem->sucesso('Saída Fora deletada completamente e produtos readicionados ao estoque!')->flash();
+       Helpers::redirecionar('saidas/fora/');
+
+
+    }
+    
+    public function editarLocalFora(string $saida): void {
+        $this->verificarPermissaoAdmin();
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            (new SaidaModelo())->atualizarLocal($dados, $saida);
+            $this->mensagem->sucesso('Local Fora Editado com Sucesso.')->flash();
+            Helpers::redirecionar('saidas/fora/'.$saida);
+        }
+          echo $this->template->renderizar('formularios/editarLocalFora.html', ['saida' => $saida]);
+    }
+    
+    public function editarSaidaFora(string $saida, int $id): void {
+        $this->verificarPermissaoAdmin();
+        $registros = (new Busca())->buscaId('registro_saida_sem_local',"$id");
+        $produto = $registros->produto_id;
+        $produtos = (new Busca())->buscaId('produtos', "$produto");
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            (new SaidaModelo())->atualizar($dados, $id);
+            $this->mensagem->sucesso('Registro Editado com Sucesso. Quantidade de Saída e Estoque do Produto Editados!')->flash();
+            Helpers::redirecionar('saidas/fora/'.$saida);
+        }
+          echo $this->template->renderizar('formularios/editarSaidaFora.html', [ 'titulo' => SITE_NOME.'Editar Saída Fora', 'registros' => $registros, 'produtos' => $produtos, 'saida' => $saida]);
+    }
+    
+    public function adicionarASaida(string $saida, string $local): void {
+         $this->verificarPermissaoAdmin();
+        $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+         
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            (new SaidaModelo())->adicionarAVenda($dados, $saida, $local);
+            $this->mensagem->sucesso('Produto adiconado a venda com Sucesso.')->flash();
+            Helpers::redirecionar('saidas/fora/adicionar/'.$saida.'/'.$local);
+        }
+          echo $this->template->renderizar('formularios/adicionarASaida.html', ['saida' => $saida, 'produtos' => $produtos, 'local' => $local]);
+    }
+    
+    public function deletarSaida(string $saida, int $id): void {
+        $this->verificarPermissaoAdmin();
+        (new SaidaModelo())->deletar($saida,$id);
+        $this->mensagem->sucesso('Saída inserida na lista de deletados com sucesso!')->flash();
+        Helpers::redirecionar('saidas/fora');
+
+    }
     
     public function produtos(): void {
-            $categorias = (new Busca())->buscaLimitada(null,null,'categoria','categorias',null,'categoria ASC',null);
-            $tipos = (new Busca())->buscaLimitada(null,null,'tipo','tipo_medicamento',null,'tipo ASC',null);
+         $this->verificarPermissaoAdmin(); 
         $agora = strtotime(date('Y-m-d'));
         $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 30;
-         $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite, null);
-           $quantidade = (new Contar())->contar('produtos',"deletado = 0 OR deletado IS NULL");
-          $edicao = (new Contar())->contar('produtos',"editado = 1");
-          
-          $deletado = (new Contar())->contar('produtos',"deletado = 1");
+        $limite = 40;
+        $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite, null);
+        $quantidade = (new Contar())->contar('produtos',"deletado = 0 OR deletado IS NULL");
+        $edicao = (new Contar())->contar('produtos',"editado = 1");
+        $deletado = (new Contar())->contar('produtos',"deletado = 1");
         $totalRegistros = (new Contar())->contar('produtos');
         $totalPaginas = ceil($totalRegistros / $limite);
        
@@ -334,22 +442,13 @@ if (isset($_POST['pesquisaRegistroVenda'])) {
          $produtos = (new ProdutoModelo())->pesquisa('', $pagina, $limite,null);
     }
         }
-          $ordenação = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-          
-     if (isset($ordenação)) {
-            $produtos = (new ProdutoModelo())->pesquisa('',$pagina,$limite, $ordenação);   
-           
-        }
-       
-
         echo $this->template->renderizar('produtos.html', [ 'titulo' => SITE_NOME.' Produtos', 'produtos' => $produtos,
             'paginaAtual' => $pagina,
-            'totalPaginas' => $totalPaginas,'quantidade' =>$quantidade,'edicao' =>$edicao, 'deletado' => $deletado, 'agora'=> $agora, 'categorias'=> $categorias, 'tipos' => $tipos]);
+            'totalPaginas' => $totalPaginas,'quantidade' =>$quantidade,'edicao' =>$edicao, 'deletado' => $deletado, 'agora'=> $agora]);
     }
-
+    
     public function produto_cadastrar(): void {
-  $categorias = (new Busca())->buscaLimitada(null,null,'categoria','categorias',null,'categoria ASC',null);
-            $tipos = (new Busca())->buscaLimitada(null,null,'tipo','tipo_medicamento',null,'tipo ASC',null);
+        $this->verificarPermissaoAdmin();
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
             (new ProdutoModelo())->armazenar($dados);
@@ -357,13 +456,12 @@ if (isset($_POST['pesquisaRegistroVenda'])) {
             Helpers::redirecionar('produtos');
         }
 
-        echo $this->template->renderizar('formularios/cadastrarproduto.html', [ 'titulo' => 'SGE-SEMSA Produtos', 'categorias'=> $categorias, 'tipos' => $tipos]);
+        echo $this->template->renderizar('formularios/cadastrarproduto.html', [ 'titulo' => 'SGE-SEMSA Produtos']);
     }
 
     public function editar_produto(string $slug, int $id): void {
-         $categorias = (new Busca())->buscaLimitada(null,null,'categoria','categorias',null,'categoria ASC',null);
-            $tipos = (new Busca())->buscaLimitada(null,null,'tipo','tipo_medicamento',null,'tipo ASC',null);
-         if($this->nivel_user > 2){
+         
+       $this->verificarPermissaoAdmin();
         $produtos = (new Busca())->buscaSlug('produtos',$slug);
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados)) {
@@ -373,185 +471,194 @@ if (isset($_POST['pesquisaRegistroVenda'])) {
         }
 
 
-        echo $this->template->renderizar('formularios/editarproduto.html', [ 'titulo' => SITE_NOME.' Produtos', 'produto' => $produtos, 'categorias'=> $categorias, 'tipos' => $tipos]);
-    }
-     else{
-   
-            Helpers::redirecionar('produtos');
-}
+        echo $this->template->renderizar('formularios/editarproduto.html', [ 'titulo' => SITE_NOME.' Produtos', 'produto' => $produtos]);
+    
         }
 
     public function deletar_produto(string $slug, int $id): void {
-        
-         if($this->nivel_user > 2){
+        $this->verificarPermissaoAdmin();
         (new ProdutoModelo())->deletar($id);
         $this->mensagem->sucesso('Produto inserido na lista de deletados com sucesso!')->flash();
-         Helpers::redirecionar('produtos');}
+         Helpers::redirecionar('produtos');
     }
     
     public function produto(string $slug, int $id): void {
-       
+       $this->verificarPermissaoAdmin();
         $produto =   (new Busca())->buscaSlug('produtos',$slug);
-        $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-        $limite = 30;
-      
-          $registros = (new Busca())->busca($pagina, $limite,'registro_vendas',"produto_id = $id",null);
-        $totalRegistros = (new Contar())->contar('registro_vendas', "produto_id = $id");
-
-       
-        $totalPaginas = ceil($totalRegistros / $limite);
+        
+     
         if (!$produto) {
             Helpers::redirecionar("erro404");
         }
-        echo $this->template->renderizar('produto.html', [ 'titulo' => SITE_NOME.' ', 'registros' => $registros, 'produto' => $produto,
-            'paginaAtual' => $pagina,
-            'totalPaginas' => $totalPaginas, 'total' => $totalRegistros]);
+        echo $this->template->renderizar('produto.html', [ 'titulo' => SITE_NOME.' ','produto' => $produto]);
       
+    
+    }
+    public function estoqueLocais(): void {
+        $this->verificarPermissaoAdmin();
+         $locais = (new Busca())->busca(null, null, 'locais', null);
+         
+         $estoque = [];  // Inicializa a variável $estoque
+    $produtos = [];
+    if(isset($_POST['local'])){
+    $pesquisa = $_POST['local'];
+    $estoque = (new Busca())->busca(null,null,'local_estoque',"local_id = $pesquisa",'',null);
+    $produtos = (new Busca())->buscaLimitada(null,null,'id,nome,slug,editado,deletado, fornecedor','produtos',null,'nome ASC',null);
+    
+    }
+        echo $this->template->renderizar('estoqueLocais.html', [ 'titulo' => SITE_NOME.' Estoque', 'produtos'=> $produtos, 'locais' => $locais, 'estoque' => $estoque]);
+    }
+     public function local(): void {
+    $local = UsuarioControlador::usuario()->local;
+    $estoque = [];
+    $nome = null;
+   
+    if ($local == 0) {
+        $estoque = (new Busca())->busca(null, null, 'local_estoque', "", '', null);
+    } else {
+        $nome = (new Busca())->buscaId('locais', $local);
+        
+     
+        $pesquisa = filter_input(INPUT_POST, 'pesquisaProduto', FILTER_SANITIZE_STRING);
+        
+        if ($pesquisa) {
+            $estoque = (new VendaModelo())->pesquisaEstoque($pesquisa, $local);
+            
+            if (empty($estoque)) {
+                $this->mensagem->erro("$pesquisa não encontrado(a), abaixo a lista de todos os registros!")->flash();
+            }
+        } else {
+        
+            $estoque = (new VendaModelo())->pesquisaEstoque('', $local);
+        }
+    }
+    
+
+    $produtos = (new Busca())->buscaLimitada(null, null, 'id,nome,slug,editado,deletado,fornecedor', 'produtos', null, 'nome ASC', null);
+
+    echo $this->template->renderizar('local.html', [
+        'titulo' => SITE_NOME . ' Estoque '. $nome->nome, 'registros' => $estoque, 'produtos' => $produtos, 'nome' => $nome, 'local' => $local
+    ]);
+}  
+    public function editarEstoqueLocal(int $produto): void {
+       
+       $local = UsuarioControlador::usuario()->local;
+       $nome = (new Busca())->buscaId('locais', $local);
+       
+         $registro = (new Busca())->buscaId('local_estoque', $produto);
+         
+         $produtos = (new Busca())->buscaId('produtos',$registro->produto_id);
+      
+       $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            $estoque = $dados['estoque'];
+            (new VendaModelo())->atualizarEstoque($estoque, $registro->id);
+            $this->mensagem->sucesso("Estoque do Produto $produtos->nome Editado com Sucesso de $registro->estoque para $estoque produtos!")->flash();
+            Helpers::redirecionar('local');
+        }
+         echo $this->template->renderizar('formularios/editarEstoqueLocal.html', [ 'titulo' => SITE_NOME.' Editar Estoque', 'produto' => $produtos, 'registro' => $registro, 'local' => $local, 'nome'=> $nome]);
+    }
+    
+     public function pedidoFazer(): void {
+
+        $local = UsuarioControlador::usuario()->local;
+        $produtos = (new Busca())->busca(null,null,'produtos',"deletado != 1 OR deletado IS NULL ",'nome ASC',null);
+       
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)   ) {
+            (new LocalModelo())->pedido($dados, $local);
+          
+            $this->mensagem->sucesso(' pedido com Sucesso!')->flash();
+            Helpers::redirecionar('pedido/fazer');
+        }
+          
+        
+        echo $this->template->renderizar('formularios/fazerPedido.html', [ 'titulo' => SITE_NOME.'Pedido', 'produtos' => $produtos]);
+    }
+    
+    public function pedidos(): void {
+        $this->verificarPermissaoAdmin();
+         $locais = (new Busca())->busca(null,null,'locais','','',null);
+    $registros = (new LocalModelo())->pesquisa('');   
+      
+if (isset($_POST['pesquisaPedidos'])) {
+    $pesquisa = $_POST['pesquisaPedidos'];
+    $registros = (new LocalModelo())->pesquisa($pesquisa);
+    if(empty($registros)){
+          $this->mensagem->erro($pesquisa ."pedido não econtrado!")->flash();
+         $registros = (new LocalModelo())->pesquisa('');   
+    }
+}
+        
+        $vendasAgrupadas = [];
+
+    // Agrupa os registros pela venda (nome_venda) e data
+    foreach ($registros as $registro) {
+           $nomeVenda = $registro['pedido'];
+           
+    $data = $registro['data'];
+  
+
+        if (!isset($vendasAgrupadas[$nomeVenda])) {
+            $vendasAgrupadas[$nomeVenda] = [];
+        }
+
+        if (!isset($vendasAgrupadas[$nomeVenda][$data])) {
+            $vendasAgrupadas[$nomeVenda][$data] = [];
+        }
+
+        $vendasAgrupadas[$nomeVenda][$data][] = $registro;
     }
 
+    echo $this->template->renderizar('pedidos.html', ['titulo' => SITE_NOME.' Pedidos','vendasAgrupadas' => $vendasAgrupadas, 'locais' => $locais]);
+    }
+    
+     public function pedidoAtender(string $pedido): void {
+         $this->verificarPermissaoAdmin();
+         $pedido = (new Busca())->busca(null, null, 'pedidos', "pedido = '{$pedido}'", '', null);
+       $produtos = (new Busca())->buscaLimitada(null, null, 'id,nome', 'produtos', null, null, null);
+       
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)   ) {
+            (new VendaModelo())->venda($dados);
+           (new VendaModelo())->vendaRegistro($dados);
+            $this->mensagem->sucesso('Pedido Atendido')->flash();
+            Helpers::redirecionar('pedidos/');
+        }
+          
+        
+        echo $this->template->renderizar('formularios/pedido.html', [ 'titulo' => SITE_NOME.'Pedido', 'produtos' => $produtos,'pedido'=> $pedido]);
+    }
+    public function pedidoAtendido(string $pedido): void {
+        $this->verificarPermissaoAdmin();
+            (new LocalModelo())->atendido($pedido);
+            $this->mensagem->sucesso('Pedido Atendido')->flash();
+            Helpers::redirecionar('pedidos/');
+     
+    }
+    
     public function usuarios(): void {
-        if($this->usuario->nivel_acesso >1){
-     $usuarios = (new Busca())->busca(null,null,'usuarios','deletado = 0','criado_em DESC',null);
+        $this->verificarPermissaoAdmin();
+     $usuarios = (new Busca())->busca(null,null,'usuario','','',null);
          $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+         $locais = (new Busca())->busca(null,null,'locais','','',null);
         if (isset($dados)) {
             (new UserModelo())->cadastro($dados);
             Helpers::redirecionar('usuarios');
         }
 
-        echo $this->template->renderizar('usuarios.html', [ 'titulo' => SITE_NOME.' Usuários', 'usuarios' => $usuarios]);}
-        else{ 
-             
-            Helpers::redirecionar('entrada');}
-   
-    }
-    public function categorias(): void {
-        if($this->usuario->nivel_acesso >2){
-            $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-            $limite = 30;
-            $deletado = (new Contar())->contar('categorias', 'deletado = 1');
-            $categoriasTotais = (new Contar())->contar('categorias');
-            $totalRegistros = (new Contar())->contar('categorias');
-            $totalPaginas = ceil($totalRegistros / $limite);
-            $categorias= (new Busca())->busca($pagina, $limite, 'categorias', 'deletado != 1 OR deletado IS NULL');
-            $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-            if (isset($dados)) {
-                if( strlen($dados['categoria']) > 3)
-                {
-                    $criador = $this->user;
-                $categoria = $dados['categoria'];
-                $array= [$categoria, $criador];
-                (new Inserir() )->inserir('categorias','categoria,criado_por', $array);
-                Helpers::redirecionar('categorias');}
-                else{
-                    $this->mensagem->erro('Categoria precisa ter pelo menos 4 caracteres!')->flash();
-                }
-            }
-            echo $this->template->renderizar('categorias.html', [ 'titulo' => SITE_NOME.' Categorias', 'paginaAtual' => $pagina,'totalPaginas' => $totalPaginas, 'categorias' => $categorias]);}
-        else{ 
-            Helpers::redirecionar('entrada');  
-        }
-   
-    }
-public function editarCategoria(int $id): void {
-        if($this->usuario->nivel_acesso >2){
-             $categoria = (new Busca())->buscaId('categorias',$id);
-        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-        if (isset($dados)) {
-            $array=[$dados['categoria']];
-            (new Atualizar())->atualizar('categorias', 'categoria = ?', $array, $id);
-            $this->mensagem->sucesso('Categoria '. $categoria->categoria.' editado para '.$dados['categoria'].' com sucesso!')->flash();
-            Helpers::redirecionar('categorias');
-    }
-     echo $this->template->renderizar('formularios/editarCategoria.html', [ 'titulo' => 'SGE-SEMSA Editar Categoria', 'categoria' => $categoria]);
-        }
-        else{ 
-            Helpers::redirecionar('categorias');
-            
-        }
-   
-    }
-    public function deletarCategoria(int $id): void {
-        if($this->usuario->nivel_acesso >2){
-      $deletado = 1;
-$data = date('Y-m-d');
-             $array = [$deletado,$data];
-            (new Atualizar())->atualizar('categorias', 'deletado = ?,deletado_em = ?', $array, $id);
-            $this->mensagem->sucesso('Categoria deletada com sucesso!')->flash();
-            Helpers::redirecionar('categorias');
-    }
-        else{ 
-            Helpers::redirecionar('categorias');
-        }
-   
-    }
-     public function medicamentos(): void {
-        if($this->usuario->nivel_acesso >2){
-            $pagina = isset($_GET['pagina']) ? intval($_GET['pagina']) : 1;
-            $limite = 30;
-            $deletado = (new Contar())->contar('tipo_medicamento', 'deletado = 1');
-            $categoriasTotais = (new Contar())->contar('tipo_medicamento');
-            $totalRegistros = (new Contar())->contar('tipo_medicamento');
-            $totalPaginas = ceil($totalRegistros / $limite);
-            $tipos= (new Busca())->busca($pagina, $limite, 'tipo_medicamento', 'deletado != 1 OR deletado IS NULL');
-            $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-            if (isset($dados)) {
-                if( strlen($dados['tipo']) > 3)
-                {
-                    $criador = $this->user;
-                $categoria = $dados['tipo'];
-                $array= [$categoria, $criador];
-                (new Inserir() )->inserir('tipo_medicamento','tipo,criado_por', $array);
-                Helpers::redirecionar('medicamentos');}
-                else{
-                    $this->mensagem->erro('Tipo do Medicamento precisa ter pelo menos 4 caracteres!')->flash();
-                }
-            }
-            echo $this->template->renderizar('medicamentos.html', [ 'titulo' => SITE_NOME.' Tipos Medicamentos', 'paginaAtual' => $pagina,'totalPaginas' => $totalPaginas, 'tipos' => $tipos]);}
-        else{ 
-            Helpers::redirecionar('entrada');  
-        }
-   
-    }
-public function editarMedicamento(int $id): void {
-        if($this->usuario->nivel_acesso >2){
-             $tipo = (new Busca())->buscaId('tipo_medicamento',$id);
-        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-        if (isset($dados)) {
-            $array=[$dados['tipo']];
-            (new Atualizar())->atualizar('tipo_medicamento', 'tipo = ?', $array, $id);
-            $this->mensagem->sucesso('Tipo Medicamento '. $tipo->tipo.' editado para '.$dados['tipo'].' com sucesso!')->flash();
-            Helpers::redirecionar('medicamentos');
-    }
-     echo $this->template->renderizar('formularios/editarMedicamento.html', [ 'titulo' => 'SGE-SEMSA Editar Tipo Medicamento', 'tipo' => $tipo]);
-        }
-        else{ 
-            Helpers::redirecionar('medicamentos');
-            
-        }
-   
-    }
-    public function deletarMedicamento(int $id): void {
-        if($this->usuario->nivel_acesso >2){
-      $deletado = 1;
-$data = date('Y-m-d');
-             $array = [$deletado,$data];
-            (new Atualizar())->atualizar('tipo_medicamento', 'deletado = ?,deletado_em = ?', $array, $id);
-            $this->mensagem->sucesso('Tipo Medicamento deletado com sucesso!')->flash();
-            Helpers::redirecionar('medicamentos');
-    }
-        else{ 
-            Helpers::redirecionar('medicamentos');
-        }
+        echo $this->template->renderizar('usuarios.html', [ 'titulo' => SITE_NOME.' Usuários', 'usuarios' => $usuarios, 'locais' => $locais]);
+       
    
     }
     public function erro404(): void {
         echo $this->template->renderizar('error404.html', [ 'titulo' => 'Página não Encontrada']);
     }
-
     public function sair(): void {
         $this->sessao->limpar('usuarioId');
         $this->mensagem->sucesso('Você deslogou do sistema!')->flash();
         Helpers::redirecionar('login');
        
     }
+   
 }

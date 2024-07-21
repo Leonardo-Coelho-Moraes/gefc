@@ -1,10 +1,10 @@
 {
-    "name": "gefc/gefc",
-    "description": "Gerenciamento de Estoque e Fluxo de Caixa",
+    "name": "sge/sge",
+    "description": "Sistema de Gerenciamento de Estoque",
     "type": "project",
     "autoload": {
         "psr-4": {
-            "gefc\\": "gefc/"
+            "sge\\": "sge/"
         },
         "files":[
         "gefc/configuracao.php"

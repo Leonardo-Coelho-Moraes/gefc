@@ -1,0 +1,141 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class=" w-full  p-5  justify-start ">
+    <a href="#" class="mb-3 text-gray-900 text-lg ">Registro Saída Fora</a>
+    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
+        <div class=" w-full flex flex-col juntify-center gap-3">
+            
+              <div class="flex gap-3  w-full items-center justify-center"> <a href="{{url('saida/fora/adicionar')}}" class=" border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5 0">Adicionar</a>
+                <form class="relative w-full" action="{{url('saidas/fora/')}}" method="post">
+        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+            </svg>
+        </div>
+        <input type="search" id="pesquisaRegistroVenda" name="pesquisaRegistroVenda"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Dipirona" required>
+           
+    </form>
+                </div>
+               {{flash()}}
+               <div class="flex gap-3 text-sm text-gray-900">   
+                 <p class="text-red-500 font-medium">Vencido</p>
+                 <p class="text-yellow-500 font-medium">Vence dentro de 3 meses.</p>
+            </div>
+
+
+       <div class="relative overflow-x-scroll ">
+        <table class="w-full text-sm text-left text-gray-900">
+          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
+            <tr>
+              
+              <th scope="col" class="px-6 py-3">COD.</th>
+               <th scope="col" class="px-6 py-3">Produto</th>
+               <th scope="col" class="px-6 py-3">Nome Venda</th>
+               <th scope="col" class="px-6 py-3">Local</th>
+               <th scope="col" class="px-6 py-3">Qnt Solicitada</th>
+               <th scope="col" class="px-6 py-3">Qnt</th>
+               
+                <th scope="col" class="px-6 py-3">Data</th>
+                   <th scope="col" class="px-6 py-3">Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+              {%for registro in registros%}
+         
+              <tr class="border-b border-gray-700 text-gray-700 text-md">
+             
+                 <td scope="row" class="px-6 py-4">
+   
+        {{registro.produto_id}}
+   
+</td>
+                  <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
+                          {% set produtoNome= '' %}
+                           {% set produtoFor= '' %}
+                 
+                    
+                    {% for produto in produtos %}
+                        {% if produto.id == registro.produto_id %}
+                            {% set produtoNome = produto.nome %}
+                          {% set produtoFor = produto.fornecedor %}
+                        
+                        {% endif %}
+                    {% endfor %}
+                     {% if registro.deletado == 1   %}
+                       {{produtoNome }} - {{produtoFor}}
+                     {% elseif registro.editado == 1 %}
+                  {{produtoNome }} - {{produtoFor}}
+                              {% else %}
+                               {{produtoNome }} - {{produtoFor}}
+                                 {% endif%}
+                  </td>
+                  <td scope="row" class="px-6 py-4">
+                   {{registro.nome_saida}}
+                     </td>
+                   <td scope="row" class="px-6 py-4">
+                   {{registro.local}}
+                     </td>
+                       </td>
+                  <td scope="row" class="px-6 py-4">
+    {{registro.qnt_solicitada}}
+</td>
+                  <td scope="row" class="px-6 py-4">
+    {{registro.quantidade}}
+</td>
+                      
+                  
+             
+              <td scope="row" class="px-6 py-4">
+                  {{registro.data}}</td>
+             
+              
+             
+              <td scope="row" class="px-6 py-4"><a href="{{url('saidas/fora/editar/'~registro.nome_saida~'/'~registro.id)}}" class="text-blue-800 hover:text-blue-600 hover:font-medium">
+                   Editar
+                  </a>
+                  /
+                  <a href="{{url('saidas/fora/deletar/'~registro.nome_saida~'/'~registro.id)}}"  class="text-red-800 hover:text-red-600 hover:font-medium">
+                  Deletar
+                      
+                  </a>
+                
+              </td>
+              
+            
+              
+            </tr>
+             
+            
+              {%endfor%}
+           
+          </tbody>
+        </table>
+      </div>
+            <nav class='flex items-center justify-center my-2 '>
+  <ul class="flex -space-x-px text-sm">
+      {% if paginaAtual > 1 %}
+    <li>
+      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Anterior</a>
+    </li>
+    {% endif %}
+    {% for pagina in 1..totalPaginas %}
+    <li>
+      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ pagina }}</a>
+    </li>
+{% endfor %}
+      {% if paginaAtual < totalPaginas %} 
+<li>
+      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Próxima</a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+               
+        </div>
+        </div>
+    
+    </div>
+
+
+
+{% endblock %}

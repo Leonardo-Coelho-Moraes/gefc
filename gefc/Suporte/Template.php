@@ -35,12 +35,10 @@ class Template
                          $this->twig->addFunction(new \Twig\TwigFunction('flash', function () {
                 return Helpers::flash();
             })),
-                             $this->twig->addFunction(new \Twig\TwigFunction('usuario', function () {
+                      $this->twig->addFunction(new \Twig\TwigFunction('usuario', function () {
                 return UsuarioControlador::usuario();
             })),
-                        $this->twig->addFunction(new \Twig\TwigFunction('usuarioReduzido', function (string $string = null, int $max = null) {
-                return Helpers::userLogo($string, $max);
-            })),    $this->twig->addFunction(new \Twig\TwigFunction('dataNumero', function (string $data = null) {
+                              $this->twig->addFunction(new \Twig\TwigFunction('dataNumero', function (string $data = null) {
                 return Helpers::converterDataNumero($data);
             })),  $this->twig->addFunction(new \Twig\TwigFunction('validadeProxima', function (string $data = null) {
                 return Helpers::validadeProxima($data);

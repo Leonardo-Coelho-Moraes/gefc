@@ -33,7 +33,7 @@ class AdminLogin extends Controlador {
         echo $this->template->renderizar('login.html', []);
     }
     private function ChecarDados(array $dados):bool {
-        if(empty($dados['usuario'])){
+        if(empty($dados['nome'])){
             $this->mensagem->alerta('Campo usuario é obrigatorio!')->flash();
             return false;}
         if(empty($dados['senha'])){

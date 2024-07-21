@@ -2,7 +2,7 @@
 {% block conteudo %}
 <div class="w-full  p-5 justify-start">
     {{flash()}}
-    {% if usuario().nivel_acesso >1 %}
+    
    
 
     
@@ -23,22 +23,32 @@
                     </label>
                     <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="senha" type="password" name="senha" placeholder="Ex: akmi432mx"  required>
                 </div>
-                 {% if usuario().nivel_acesso ==2 %}
+                
+                
+                   
                 <div class="w-full"  >
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nivelacesso" >
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nivel" >
                         Nível
                     </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nivelacesso" type="number" name="nivelacesso" placeholder="Ex: 1" min="1" max="2" required>
+                    <select id="nivel" class=' block p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500' name="nivel">
+                         <option value="1">Administrador</option>
+                         <option value="2">Local</option>
+                     
+                     </select>
                 </div>
-                  {% endif%}
-                    {% if usuario().nivel_acesso >2 %}
                 <div class="w-full"  >
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="nivelacesso" >
-                        Nível
+                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="local" >
+                        Local
                     </label>
-                    <input class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" id="nivelacesso" type="number" name="nivelacesso" placeholder="Ex: 1" min="1" max="3" required>
+                     <select id="local" class=' block p-2 pl-3 border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500' name="local">
+                         <option value="0">Todos</option>
+                         {%for local in locais%}
+                         <option value="{{local.id}}">{{local.nome}}</option>
+                          {%endfor%}
+                     
+                     </select>
                 </div>
-                  {% endif%}
+               
 
 
                 <button class="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800" type="submit">
@@ -47,7 +57,7 @@
 
             </form>
         </div>
-        {% if usuario().nivel_acesso >2 %}
+       
         <div class="relative w-2/4 shadow-md sm:rounded-lg  overflow-x-auto">
             <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
@@ -67,7 +77,7 @@
                         <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
                             {{usuario.nome}}
                         </td>
-                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{usuario.nivel_acesso}}</td>
+                        <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{{usuario.nivel}}</td>
                        <td scope="row" class="px-6 py-4 flex gap-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"><a href="{{url('usuarios/editar/'~usuario.id)}}" class="w-6 h-6 flex items-center justify-center rounded-full bg-blue-400">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#fff" class="bi bi-pencil" viewBox="0 0 16 16">
   <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
@@ -110,9 +120,9 @@
                 </tbody>
             </table>
         </div>
-        {% endif %}
+     
     </div>
-     {% endif %}
+ 
      
 
 
