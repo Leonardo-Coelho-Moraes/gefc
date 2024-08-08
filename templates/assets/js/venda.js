@@ -1,63 +1,127 @@
+
+
 $(document).ready(function() {
     var counter = 1;
-    $('#submitButton').click(function(event) {
-        // Previne a atualização da página
-        event.preventDefault();
+  var dataContainer = $('#data-container');
+  var lotes = dataContainer.data('lotes');
+   
 
-        // Pega os valores do select e do input number
-        var selectValue = $('#selectField').val();
-        var numberValue = $('#numberField').val();
-        var qntSolic = $('#qntSolic').val();
-        var splitValues = selectValue.split(',');
 
-        // Cria uma nova div e adiciona os campos input dentro dela
-        var newDiv = $('<div class="flex border-b"></div>');
-        newDiv.append('<input type="text" class="flex w-16 border-transparent outline-transparent" name="produto' + counter + '" value="' + splitValues[0] + '" readonly>');
-        newDiv.append('<input type="text" class="flex w-full border-transparent outline-transparent" name="produto_nome' + counter + '" value="' + splitValues[1] + '" readonly>');
-        newDiv.append('<input type="number" class="w-28 flex border-transparent outline-transparent" name="qntSolic' + counter + '" value="' + qntSolic + '" readonly>');
-        newDiv.append('<input type="number" class="w-28 flex border-transparent outline-transparent" name="quantidade' + counter + '" value="' + numberValue + '" readonly>');
-        
-        // Adiciona o botão de exclusão
-        var deleteButton = $('<button type="button" class="hover:text-red-600">Excluir</button>');
-        deleteButton.click(function() {
-            $(this).parent().remove();
-        });
-        newDiv.append(deleteButton);
+  function produtosSelect(lotes) {
+      var $selectField = $('#selectField');
+      $selectField.empty(); // Limpa o selectField
 
-        // Adiciona a nova div dentro do formulário alvo
-        $('#targetForm').append(newDiv);
+      // Adiciona a opção padrão
+      $selectField.append('<option value="">Selecione um produto</option>');
 
-        // Incrementa o contador para os próximos campos
-        counter++;
-    });
+        var validLotes = lotes;
+      // Adiciona os lotes válidos ao selectField
+      validLotes.forEach(function (lote) {
+          var optionValue = `${lote.lote_id};${lote.lote};${lote.nome};${lote.quantidade}`;
+          var optionText = `${lote.lote} - ${lote.nome} Qnt.: ${lote.quantidade} Val.: ${lote.vencimento} ${lote.fornecedor}`;
+          var option = $('<option></option>').val(optionValue).text(optionText);
+          $selectField.append(option);
+      });
+  }
+
+   
+ 
+
+
+  // Preencher o selectField com os dados dos lotes
+  produtosSelect(lotes);
+ function updateSelectField(cod) {
+     var $selectField = $('#selectField');
+     $selectField.empty(); // Limpa o selectField
+
+     // Adiciona a opção padrão
+  
+
+     // Filtra os lotes se o código não estiver vazio
+     var filteredLotes = cod ? lotes.filter(function (lote) {
+         return lote.cod === cod;
+     }) : lotes; // Se cod estiver vazio, mostra todos os lotes
+
+  
+   // Adiciona os lotes ao selectField
+   filteredLotes.forEach(function (lote) {
+       var optionValue = `${lote.lote_id};${lote.lote};${lote.nome};${lote.quantidade}`;
+       var optionText = `${lote.lote} - ${lote.nome} Qnt.: ${lote.quantidade} Val.: ${lote.vencimento} ${lote.fornecedor}`;
+       var option = $('<option></option>').val(optionValue).text(optionText);
+       $selectField.append(option);
+   });
+ }
+
+
+
+
+
+      $('#cod_barras').on('input', function () {
+          var cod = $(this).val();
+          updateSelectField(cod);
+      });
+      $('#selectField').on('change', function () {
+          var selectedValue = $(this).val();
+
+          // Verifica se há valor selecionado
+          if (selectedValue) {
+              var splitValues = selectedValue.split(';');
+
+              // Define o valor máximo do campo number
+              $('#numberField').attr('max', splitValues[3]);
+          } else {
+              // Se não houver seleção, pode definir o valor máximo como vazio ou algum valor padrão
+              $('#numberField').removeAttr('max');
+          }
+      });
+      
+       
+
+
+      // Limpa o campo cod_barras quando uma opção é selecionada
     
-    $('#pedirBotão').click(function(event) {
-        // Previne a atualização da página
-        event.preventDefault();
+      // Limpa o campo cod_barras quando uma opção é selecionada
+    
 
-        // Pega os valores do select e do input number
-        var produtoSelecionar = $('#produtoSelecionar').val();
-        var numberValue = $('#quantidadeSelecionar').val();
 
-        var splitValues = produtoSelecionar.split(',');
+$('#submitButton').click(function(event) {
+    // Previne a atualização da página
+    event.preventDefault();
+    
+     
+    // Pega os valores do select e do input number
+    var selectValue = $('#selectField').val();
+    var numberValue = $('#numberField').val();
+    var qntSolic = $('#qntSolic').val();
+    var splitValues = selectValue.split(';');
 
-        // Cria uma nova div e adiciona os campos input dentro dela
-        var newDiv = $('<div class="flex border-b"></div>');
-        newDiv.append('<input type="text" class="flex w-16 border-transparent outline-transparent" name="produto' + counter + '" value="' + splitValues[0] + '" readonly>');
-        newDiv.append('<input type="text" class="flex w-full border-transparent outline-transparent" name="produto_nome' + counter + '" value="' + splitValues[1] + '" readonly>');
-        newDiv.append('<input type="number" class="w-28 flex border-transparent outline-transparent" name="quantidade' + counter + '" value="' + numberValue + '" readonly>');
-        
-        // Adiciona o botão de exclusão
-        var deleteButton = $('<button type="button" class="hover:text-red-600">Excluir</button>');
-        deleteButton.click(function() {
-            $(this).parent().remove();
-        });
-        newDiv.append(deleteButton);
+    // Cria uma nova div e adiciona os campos input dentro dela
+    var newDiv = $('<div class="form-group d-flex align-items-center border-bottom pb-2 mb-2"></div>');
+    newDiv.append('<input type="hidden"  name="lote' + counter + '" value="' + splitValues[0] + '" readonly>');
+     newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="lote_nome' + counter + '" value="' + splitValues[1] + '" readonly>');
+    newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="produto_nome' + counter + '" value="' + splitValues[2] + '" readonly>');
+    newDiv.append('<input type="number" class="form-control w-25 mx-2" name="qntSolic' + counter + '" value="' + qntSolic + '" readonly>');
+    newDiv.append('<input type="number" class="form-control w-25 mx-2" name="quantidade' + counter + '" value="' + numberValue + '" readonly>');
 
-        // Adiciona a nova div dentro do formulário alvo
-        $('#pedidoForm').append(newDiv);
-
-        // Incrementa o contador para os próximos campos
-        counter++;
+    // Adiciona o botão de exclusão
+    var deleteButton = $('<button type="button" class="btn btn-danger btn-sm">Excluir</button>');
+    deleteButton.click(function() {
+        $(this).parent().remove();
     });
+    newDiv.append(deleteButton);
+
+    // Adiciona a nova div dentro do formulário alvo
+    $('#targetForm').append(newDiv);
+    
+
+    // Incrementa o contador para os próximos campos
+    counter++;
+   
+ $('#sourceForm')[0].reset();
+produtosSelect(lotes);
+});
+ 
+  
+
+   
 });

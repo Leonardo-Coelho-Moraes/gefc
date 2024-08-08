@@ -92,6 +92,29 @@ public static function contarTempo(string $data): string {
     }
 }
 
+    public static function validade(string $data): string
+    {
+        $agora = strtotime(date('Y-m-d'));
+        $tempo = strtotime($data);
+        $diferenca = $tempo - $agora; // Inverte a subtração para obter a diferença correta
+        $dias = abs(round($diferenca / 86400));
+        $semanas = abs(round($diferenca / 604800));
+        $meses = abs(round($diferenca / 2419200));
+        $anos = abs(round($diferenca / 29030400));
+        if ($dias <= 1) {
+            return 'Vencido';
+        }
+        elseif ($dias <= 7) {
+            return $dias == 1 ? '1D' : $dias . 'D';
+        } elseif ($semanas <= 4) {
+            return $semanas == 1 ? '1S' : $semanas . 'S';
+        } elseif ($meses <= 12) {
+            return $meses == 1 ? '1M' : $meses . 'M';
+        } else {
+            return $anos == 1 ? '1A' : $anos . 'A';
+        }
+    }
+
 public static function saudacao(): string {
     $hora = date('H');
    

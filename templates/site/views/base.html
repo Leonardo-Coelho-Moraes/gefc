@@ -2,49 +2,147 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{url('templates/assets/css/style.css')}}">
-    <link rel="stylesheet" href="{{url('templates/assets/css/select2.min.css')}}">
-    <link href="{{url('public/css/tailwind.css')}}" rel="stylesheet">
-    <title>{{titulo}}</title>
-    
-    <link rel="shortcut icon" href="{{url('templates/assets/img/favicon.ico')}}" type="image/x-icon">
-   
-    <link href="{{url('node_modules/flowbite/dist/flowbite.css')}}" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{titulo}}</title>
+  <link rel="stylesheet" href="{{url('templates/assets/css/bootstrap-icons.min.css')}}">
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet"
+    href="{{url('templates/assets/css/fonts.css')}}">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="{{url('templates/assets/css/all.min.css')}}">
+  <link rel="stylesheet" href="{{url('templates/assets/css/select2.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{url('templates/assets/css/adminlte.min.css')}}">
+  <link rel="stylesheet" href="{{url('templates/assets/css/bootstrap.min.css')}}">
+  <link rel="stylesheet" href="{{url('templates/assets/css/jquery.dataTables.min.css')}}">
+  <link rel="stylesheet" href="{{url('templates/assets/css/dataTables.bootstrap5.css')}}">
+  <!-- DataTables Buttons CSS -->
+  <link rel="stylesheet" href="{{url('templates/assets/css/buttons.bootstrap4.min.css')}}">
 
 
 
 
+  <style>
+    .select2-container {
+      z-index: 2050;
+      /* Ajuste este valor conforme necessário */
+    }
+
+    .select2-dropdown {
+      z-index: 2050;
+      /* Ajuste este valor conforme necessário */
+    }
+
+    .break-word {
+      display: block;
+      max-width: 50%;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+  </style>
+
+</head>
+
+<body class="sidebar-mini sidebar-collapse">
+  <!-- Site wrapper -->
+  <div class="wrapper">
 
 
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@200;300;400;500;600;700;800&display=swap" rel="stylesheet">
-<body >
+    <!-- barra Lateral -->
+
+    {% include 'aside.html'%}
+    <!-- /fim da barra Lateral -->
+
+    <!-- Conteudo Do Site -->
+    {% block conteudo %} {% endblock %}
+    <!-- /fim do conteudo -->
 
 
-    <main class="flex flex-row justify-between">{% include 'aside.html'%}
-        <section class="flex flex-col justify-start w-full">
-            {% block conteudo %} {% endblock %}
-        </section>
-    </main>
-   
-    
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.1/flowbite.min.js"></script>
-<script src="{{url('templates/assets/js/venda.js')}}"></script>
-<script src="{{url('templates/assets/js/jquery.min.js')}}"></script>
-<script src="{{url('templates/assets/js/demo.min.js')}}"></script>
-<script src="{{url('templates/assets/js/all.min.js')}}"></script>
-<script src="{{url('templates/assets/js/adminlte.min.js')}}"></script>
-<script src="{{url('templates/assets/js/select2.min.js')}}"></script>
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+  </div>
+  <!-- ./wrapper -->
+
+  <!-- jQuery -->
+  <script src="{{url('templates/assets/js/jquery.min.js')}}"></script>
+  <!-- Bootstrap 4 -->
+
+  <script src="{{url('templates/assets/js/bootstrap.bundle.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/all.min.js')}}"></script>
+  <!-- AdminLTE App -->
+  <script src="{{url('templates/assets/js/adminlte.min.js')}}"></script>
+
+  <!-- AdminLTE for demo purposes -->
+  <script src="{{url('templates/assets/js/demo.js')}}"></script>
+  
+  <script src="{{url('templates/assets/js/select2.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/index.js')}}"></script>
+  <script src="{{url('templates/assets/js/jquery.dataTables.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/dataTables.bootstrap4.min.js')}}"></script>
+  <!-- DataTables Buttons JS -->
+  <script src="{{url('templates/assets/js/dataTables.buttons.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/jszip.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/buttons.html5.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/buttons.print.min.js')}}"></script>
+  <script src="{{url('templates/assets/js/buttons.colVis.min.js')}}"></script>
+  
+
+  <script>
+    $('.campo_select').select2();
+
+    $(document).ready(function () {
+
+      $('#example').DataTable({
+        stateSave: true,
 
 
+        dom: 'Bfrtip', // Define o layout dos botões e elementos
+        buttons: [
+
+          {
+            extend: 'excelHtml5',
+            text: 'Exportar Excel',
+            className: 'btn btn-success'
+          },
+          {
+            extend: 'print',
+            text: 'Imprimir',
+            className: 'btn btn-success',
+            exportOptions: {
+            columns: ':visible'
+            }
+          },
+          {
+            extend: 'colvis',
+            text: 'Escolher colunas',
+            className: 'btn btn-primary'
+          }
+        ],
+        "paging": true,
+        "searching": true,
+        "info": true,
+        "lengthChange": true,
+
+        "pageLength": 40,
+        "language": {
+          "lengthMenu": "Mostrar _MENU_ registros por página",
+          "zeroRecords": "Nenhum registro encontrado",
+          "info": "Mostrando página _PAGE_ de _PAGES_",
+          "infoEmpty": "Nenhum registro disponível",
+          "infoFiltered": "(filtrado de _MAX_ registros no total)",
+          "url": "//cdn.datatables.net/plug-ins/1.10.24/i18n/Portuguese.json"
+        }
+      });
+
+    });
+  </script>
+  
+{% block script %} {% endblock %}
 
 </body>
 

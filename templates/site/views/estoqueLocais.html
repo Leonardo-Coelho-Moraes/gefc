@@ -1,110 +1,136 @@
 {%extends 'base.html'%}
 {% block conteudo %}
-<div class=" w-full  p-5  justify-start ">
-    <p class="mb-3 text-gray-900 text-lg ">Entrada</p>
-    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll overflow-x-auto  " style="max-height:90vh;">
-        <div class=" w-full flex flex-col juntify-center gap-3">
-            
-            
-                
-                <form class="flex  w-full gap-4 items-start justify-start" action="{{url('estoque/locais')}}" method="post">
-       
-       
-                    <label class="block mb-2 text-sm font-medium text-gray-900 dark:text-white" for="local">
-                        Local
-                    </label>
-                      <select name="local" id="local"  class="block w-full p-2  border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" >
-                 <option value=""></option>
-                  {%for local in locais%}
-                  <option value="{{local.id}}">{{local.nome}}</option>
-                   {%endfor%}
- 
-</select>
-              
-                   
-                  
-                    
-       
-                      <input class="border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" type="submit" value="Pesquisar">
-               
-                    
-           
-    </form>
-                
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Estoque Local:</h1>
                 </div>
-            {{flash()}}
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Estoque</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
 
-            
-            
-                
-              <div class="relative overflow-x-scroll ">
-        <table class="w-full text-sm text-left text-gray-900">
-          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
-            <tr><th scope="col" class="px-6 py-3">
-                    ID
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Produto
-                </th>
-               
-                
-                <th scope="col" class="px-6 py-3">
-                    Quantidade
-                </th>
-                
-                 
-            </tr>
-        </thead>
-        <tbody>
-            {%for registro in estoque%}
-            <tr class="border-b border-gray-700 text-gray-700 text-md">
-              <td scope="row" class="px-6 py-4">
-                 {{registro.produto_id}}
-                </td>
-                <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
-    {% for produto in produtos %}
-    
-        {% set produtoNome = '' %}
-        {% set produtoFor = '' %}
-        {% set produtoEditado = '' %}
-        {% set produtoDeletado = '' %}
-        {% set produtoSlug = '' %}
-        {% set produtoId = '' %}
 
-        {% if produto.id == registro.produto_id %}
-            {% set produtoNome = produto.nome %}
-            {% set produtoFor = produto.fornecedor %}
-            {% set produtoEditado = produto.editado %}
-            {% set produtoDeletado = produto.deletado %}
-            {% set produtoSlug = produto.slug %}
-            {% set produtoId = produto.id %}
 
-            {% if registro.editado == 1 %}
-            <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="text-blue-800 hover:text-blue-600 hover:font-medium">{{ produtoNome }} - {{produtoFor}}</a>
-             {% else %}
-                <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="hover:text-blue-600 hover:font-medium">{{ produtoNome }} - {{produtoFor}}</a>
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-</td>
+    {{flash()}}
 
-             
-                <td scope="row" class="px-6 py-4 whitespace-nowrap">
-                 {{registro.estoque}}
-                </td>
-               
-              
-            </tr>
-        {%endfor%}
-          
-        </tbody>
-    </table>
-</div>
-            
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card">
+                        <div class="card-header bg-primary">
+                            <h3 class="card-title">Local</h3>
+                        </div>
+                        <div class="card-body">
+                            <!-- conteudo -->
+                            <form action="{{ url('estoque/locais')}}" method="post">
+                              
+                                <div class="form-group">
+                                    <label>Produto</label>
+                                    <select id="local" class="form-control" name="local">
+                                        {%for local in locais%}
+                                        <option value="{{local.id}}">{{local.nome}}</option>
+                                      
+                                        {%endfor%}
+                                    </select>
+                                </div>
+
+                                <div class="form-group">
+                                    <input class="btn btn-primary" type="submit" value="Buscar">
+                                </div>
+
+
+                            </form>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <!-- /.card-footer-->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
         </div>
+    </section>
+
+
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h3 class="card-title">Estoque local</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="example" class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Lote</th>
+                                <th>Produto</th>
+                                <th>Qnt.</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro  in estoque %}
+                            {% set loteNome = '' %}
+                            {% set ProdutoId = '' %}
+                            {% set ProdutoNome = '' %}
+                            {% for lote in lotes %}
+                            {% if registro.lote_id == lote.id %}
+                            {% set loteNome = lote.lote %}
+                            {% set ProdutoId = lote.produto_id %}
+                            {% for pro in produtos %}
+                            {% if pro.id == ProdutoId %}
+                            {% set ProdutoNome = pro.nome %}
+                            <tr>
+                                <td>{{registro.id}}</td>
+                                 <td>
+                                     <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
+                                         class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                                         {{ loteNome }}
+                                     </a>
+                                 </td>
+                                <td>
+                                    <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
+                                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                                        {{ ProdutoNome }}
+                                    </a>
+                                </td>
+                                <td>{{ registro.estoque }}</td>
+
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                            {% endif %}
+                            {% endfor %}
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.content -->
         </div>
-    
     </div>
+</div>
 
 
 

@@ -1,115 +1,188 @@
 {%extends 'base.html'%}
 {% block conteudo %}
-<div class=" w-full  p-5  justify-start ">
-    <a href="#" class="mb-3 text-gray-900 text-lg ">Produtos</a>
-    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
-        <div class=" w-full flex flex-col juntify-center gap-3">
-            
-            <div class="flex gap-3  w-full items-center justify-center"> <a href="{{url('produtos/produto_cadastrar')}}" class="border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5 ">Cadastrar</a>
-                <form class="relative w-full" id="formPesquisa" action="{{url('produtos')}}" method="post">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Produtos</h1>
         </div>
-        <input type="search" id="pesquisa" name="pesquisa"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Dipirona" required>
-           
-    </form>
-                </div>
-               {{flash()}}
-               <div class="flex gap-3 text-sm text-gray-900">  
-                {%if quantidade >0 %}<p >Produtos: {{quantidade}}</p> {%endif%}  
-                {%if edicao >0 %}<p>Edições: {{edicao}}</p>{%endif%}  
-                {%if deletado >0 %} <p>Deletados: {{deletado}}</p>{%endif%}
-                /
-                <p class="text-red-500 font-medium">Vencido</p>
-                <p class="text-yellow-500 font-medium">Vence dentro de 3 meses.</p>
-            </div>
-               
-
-
-      <div class="relative overflow-x-scroll ">
-        <table class="w-full text-sm text-left text-gray-900">
-          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
-            <tr>
-              <th scope="col" class="px-6 py-3">ID</th>
-              <th scope="col" class="px-6 py-3">Nome</th>
-               <th scope="col" class="px-6 py-3">Cod</th>
-                <th scope="col" class="px-6 py-3">Estoque</th>
-                <th scope="col" class="px-6 py-3">Validade</th>
-                 <th scope="col" class="px-6 py-3">Ação</th>
-            </tr>
-          </thead>
-          <tbody>
-              {%for produto in produtos%}
-         
-             <tr class="border-b border-gray-700 text-gray-700 text-md">
-              <td scope="row" class="px-6 py-4">{{ produto.id }}</td>
-              <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
-              {% if produto.deletado == 1  %}
-              <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="text-red-800 hover:text-red-600 hover:font-medium">{{ produto.nome }} - {{produto.fornecedor}}</a>
-              {% elseif produto.editado == 1 %}
-              <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="text-blue-800 hover:text-blue-600 hover:font-medium">{{ produto.nome }} - {{produto.fornecedor}} </a>
-            {% else %}
-               <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}">{{ produto.nome }} - {{produto.fornecedor}}</a>
-            {% endif %}
-            
-    
-</td>
-               
-               <td scope="row" class="px-6 py-4">{{produto.cod_barras}}</td>        
-              <td scope="row" class="px-6 py-4">{{produto.quantidade_estoque}}</td> 
-           
-                
-              {% if agora >= dataNumero(produto.validade) %}
-              <td scope="row" class="px-6 py-4 text-red-500">{{produto.validade}}</td
-              >{% elseif validadeProxima(produto.validade) < 7257600 %}
-              <td scope="row" class="px-6 py-4 text-yellow-500">{{produto.validade}}</td>
-              {% else %}
-               <td scope="row" class="px-6 py-4">{{produto.validade}}</td>
-              {%endif%}
-            
-              <td scope="row" class="px-6 py-4 flex gap-1 font-medium text-gray-900 whitespace-nowrap dark:text-white"><a href="{{url('produtos/editar/'~produto.slug~'/'~produto.id)}}" class="hover:text-blue-600 text-blue-800">Editar</a>
-                  /
-                  <a href="{{url('produtos/deletar/'~produto.slug~'/'~produto.id)}}"  class="hover:text-red-600 text-red-800">Deletar</a>
-                
-              </td>
-              
-              
-              
-            </tr>
-             
-            
-              {%endfor%}
-           
-          </tbody>
-        </table>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Produtos</li>
+          </ol>
+        </div>
       </div>
-           <nav class='flex items-center justify-center my-2 '>
-  <ul class="flex -space-x-px text-sm">
-      {% if paginaAtual > 1 %}
-    <li>
-      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Anterior</a>
-    </li>
-    {% endif %}
-    {% for pagina in 1..totalPaginas %}
-    <li>
-      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ pagina }}</a>
-    </li>
-{% endfor %}
-      {% if paginaAtual < totalPaginas %} 
-<li>
-      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Próxima</a>
-    </li>
-    {% endif %}
-  </ul>
-</nav>
-               
-        </div>
-        </div>
-    
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <form action="{{url('produtos')}}" class='col' method="post">
+          <div class="input-group">
+            <input type="search" name='pesquisa' class="form-control form-control-md" placeholder="Pesquisar">
+            <div class="input-group-append">
+              <button type="submit" class="btn btn-md btn-primary">
+                <i class="fa fa-search"></i>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
     </div>
+  </div>
+
+  {{flash()}}
 
 
+
+
+
+
+  <div class="modal fade" id="editarProduto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Editar Produto</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="card-body">
+            <form action="{{ url('produtos/') }}" method="post">
+              <input id="produto_id" type="hidden" name="produto_id">
+              <div class="form-group">
+                <label>Produto</label>
+                <input class="form-control" id="produto_edit" type="text" name="produto_edit" placeholder="Ex: Dipirona"
+                  required>
+              </div>
+              <div class="form-group">
+                <label>Unidade de Contagem</label>
+                <select name="unicont_edit" id="unicont_edit" class="form-control">
+                  <option value="unidade">Unidade</option>
+                  <option value="caixa">Caixa</option>
+                  <option value="pacote">Pacote</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <input class="btn btn-primary form-control" type="submit" value="Editar">
+              </div>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Cadastrar Produto</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" style="display: none;">
+              <!-- /.conteudo-->
+              <form action="{{url('produtos/produto_cadastrar')}}" method="post">
+
+                <div class="form-group">
+                  <label>
+                    Produto
+                  </label>
+                  <input class="form-control" id="produto" type="text" name="produto" placeholder="Ex: Dipirona"
+                    required></div>
+
+
+                <div class="form-group">
+                  <label>
+                    Unidade de Contagem
+                  </label>
+                  <select name="unicont" id="unicont" class="form-control">
+                    <option value="unidade">Unidade</option>
+                    <option value="caixa">Caixa</option>
+                    <option value="pacote">Pacote</option>
+
+
+                  </select>
+                </div>
+                <div class="form-group">
+                  <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
+
+                </div>
+
+
+
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-primary">
+          <h3 class="card-title">Produtos</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <table id="example" class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+
+                <th>ID</th>
+                <th style="width: 600px;">Nome</th>
+                <th>Ação</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {%for produto in produtos%}
+              
+              <tr data-id="{{ produto.id }}" data-nome="{{ produto.nome }}">
+                <td>{{produto.id}}</td>
+                <td class="text-wrap" style="width:600px;"><a href="{{url('produtos/'~produto.slug~'/'~produto.id)}}"
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover ">{{produto.nome }}</a>
+                </td>
+
+                <td class="d-flex justify-content-center"> <button class="btn btn-primary editProduto"
+                    data-bs-toggle="modal" data-bs-target="#editarProduto">Editar</button></td>
+              </tr>
+              {%endfor%}
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
 
 {% endblock %}

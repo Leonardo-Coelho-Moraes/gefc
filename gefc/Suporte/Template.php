@@ -38,6 +38,9 @@ class Template
                       $this->twig->addFunction(new \Twig\TwigFunction('usuario', function () {
                 return UsuarioControlador::usuario();
             })),
+            $this->twig->addFunction(new \Twig\TwigFunction('validade', function (string $data = null) {
+                return Helpers::validade($data);
+            })),
                               $this->twig->addFunction(new \Twig\TwigFunction('dataNumero', function (string $data = null) {
                 return Helpers::converterDataNumero($data);
             })),  $this->twig->addFunction(new \Twig\TwigFunction('validadeProxima', function (string $data = null) {

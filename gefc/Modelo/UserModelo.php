@@ -37,7 +37,7 @@ public function login(array $dados):bool {
    $usuario = $dados['nome'];
    $senha = $dados['senha'];
     
-    $query = "SELECT * FROM `usuario` WHERE nome = :usuario AND senha = :senha";
+    $query = "SELECT * FROM usuario WHERE nome = :usuario AND senha = :senha";
     
     $stmt = Conexao::getInstancia()->prepare($query);
     $stmt->bindValue(':usuario', $usuario, PDO::PARAM_STR);
@@ -59,17 +59,29 @@ Helpers::redirecionar('');
 
 
   public function atualizar(array $dados, int $id): void {
-      $resultados = Helpers::validadarDados($dados);
-       $dadosArray = array(
-    'nome' => $resultados['usuariocad'] ,
-    'senha' => $resultados['senha'],
-    'nivel_acesso' => $resultados['nivelacesso']
-);
-  
-   
-    (new Atualizar())->atualizar('usuarios', "nome = ?, senha = ?, nivel_acesso = ?", $dadosArray, $id);
+    
+        $conexao = Conexao::getInstancia();
+        $query = "UPDATE usuario SET nome = :nome, senha = :senha, nivel = :nivel, local = :local WHERE usuario.id = :id";
+
+        $stmt = $conexao->prepare($query);
+        $stmt->bindParam(':nome', $dados['usuariocad']);
+        $stmt->bindParam(':senha', $dados['senha']);
+        $stmt->bindParam(':nivel', $dados['nivelacesso']);
+        $stmt->bindParam(':local', $dados['local']);
+        $stmt->bindParam(':id', $id);
+        $stmt->execute();
 }
 
+    public function deletar(int $id)
+    {
+        $conexao = Conexao::getInstancia();
+        $query = "DELETE FROM usuario WHERE usuario.id = :id";
+
+        $stmt = $conexao->prepare($query);
+        $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+        
+    }
 
 
 

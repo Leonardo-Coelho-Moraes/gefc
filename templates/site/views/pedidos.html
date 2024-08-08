@@ -1,42 +1,68 @@
 {%extends 'base.html'%}
 {% block conteudo %}
-<div class=" w-full  p-5  justify-start ">
-    <a href="#" class="mb-3 text-gray-900 text-lg ">Pedidos</a>
-    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
-        <div class=" w-full flex flex-col juntify-center gap-3">
-            
-            <div class="flex gap-3 text-gray-900 w-full items-center justify-center text-sm"> 
-                <form class="relative w-full" action="{{url('pedidos')}}" method="post">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>
-        </div>
-        <input type="text" id="pesquisaPedidos" name="pesquisaPedidos"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500 " placeholder="Pesquisar" required>
-           
-    </form>
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Pedidos</h1>
                 </div>
-            {{flash()}}
-           
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Pedidos</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
 
-         
+    {{flash()}}
 
-    {% for nomeVenda, vendasPorData in vendasAgrupadas %}
-    {% for data, registros in vendasPorData %}
-        {% set localNome = '' %}
-        {% for local in locais %}
-            {% if local.id == registros[0].local %}
-                {% set localNome = local.nome %}
-            {% endif %}
-        {% endfor %}
-        
-        <div  class="flex justify-between gap-2 items-center p-4 mb-2 text-green-800 rounded-lg bg-green-50"><a href='{{ url('pedidos/'~nomeVenda) }}'>{{ localNome }}, {{ nomeVenda }} em {{ data }}</a> <a href='{{ url('pedidos/atender/'~nomeVenda) }}' class='p-1 bg-green-400 rounded-lg'>Atendido</a> </div>
-    {% endfor %}
-{% endfor %}
 
-        </div>
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h3 class="card-title">Pedidos</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                   {% for nomeVenda, vendasPorData in vendasAgrupadas %}
+                   {% for data, registros in vendasPorData %}
+                   {% set localNome = '' %}
+                   {% for local in locais %}
+                   {% if local.id == registros[0].local %}
+                   {% set localNome = local.nome %}
+                   {% endif %}
+                   {% endfor %}
+                   <div class="callout callout-info mb-2">
+                        <div class="d-flex justify-content-between">
+                            <h5>{{ localNome }}</h5> 
+                            <a href="{{ url('pedidos/atender/'~nomeVenda) }}" class="close outline-none">x</a>
+                        </div>
+                       
+
+                       <a href="{{ url('pedidos/'~nomeVenda) }}"> {{ nomeVenda }} em {{ data }}</a>
+                       {% set hasProdutos = true %}
+                   </div>
+                   {% endfor %}
+                   {% endfor %}
+                    {% if not hasLotes %}
+                    <p>Todos os Pedidos Atendidos</p>
+                    {% endif %}
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.content -->
         </div>
     </div>
+</div>
 
 
 

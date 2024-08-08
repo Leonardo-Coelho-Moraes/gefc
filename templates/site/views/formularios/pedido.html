@@ -1,97 +1,113 @@
 {%extends 'base.html'%}
 {% block conteudo %}
-<div class="flex w-full p-5 flex-col justify-start  ">
-    <div class="mb-3 ">
-    <nav class="flex" aria-label="Breadcrumb">
-  <ul class="inline-flex items-center space-x-1 md:space-x-3">
-    <li class="inline-flex items-center">
-      <a href="{{url('')}}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-        <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-          <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-        </svg>
-        Início
-      </a>
-    </li>
-    <li>
-      <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <a href="{{url('pedidos/')}}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"> 
-            Pedidos</a>
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>{{pedido}}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{url('pedidos')}}">Pedidos</a></li>
+            <li class="breadcrumb-item active">{{pedido}}</li>
+          </ol>
+        </div>
       </div>
-    </li>
-      <li aria-current="page">
-      <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">{{pedido[0].pedido}}</span>
-      </div>
-    </li>
-    <li aria-current="page">
-      <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">Atender</span>
-      </div>
-    </li>
-  </ul></nav>
-  </div>
-    <div class=" w-full flex  justify-start items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
-             {{flash()}}
-        <div class=" w-full" >
-             
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Lista Pedido</h3>
+            </div>
+            <div class="card-body" >
+
+
+              <form action="{{ url('pedidos/' ~ pedido) }}" method="post">
+                <div class="row form-group">
+                  <div class="col">
+                       <p>Produto</p>
+                  </div>
+                  <div class="col-4">
+                    <p>Lote</p>
+                  </div>
+                  <div class="col-1">
+                    <p>Solicitado</p>
+                  </div>
+                  <div class="col-1">
+                    <p>Liberado</p>
+                  </div>
+                   </div>
+                   {% set num = 1 %}
+                  {%for produto in produtos%}
+                  
+                    <div class="row form-group">
+                        <input type="hidden" id="pedido" name="pedido{{num}}"  value="{{produto.pedido_id}}" class="form-control">
+                      <div class="col">
+                        <input type="text" id="produto" name="produto{{num}}" class="form-control" value="{{produto.nome}}" readonly>
+                      </div>
+                      <div class="col-4">
+                       
+                        <select id="lote{{num}}" class="form-control" name="lote{{num}}">
+                          {% set hasLotes = false %}
+                          {% for lote in lotes %}
+                          {% if produto.produto_id == lote.produto_id %}
+                          <option value="{{lote.id}}">{{lote.lote}} - Qnt.: {{lote.quantidade}} Val.:
+                            {{lote.vencimento}} {{lote.fornecedor}}</option>
+                          {% set hasLotes = true %}
+                          {% endif %}
+                          {% endfor %}
+                          {% if not hasLotes %}
+                          <option value="">Estoque zerado</option>
+                          {% endif %}
+                        </select>
+                      </div>
+                      <div class="col-1">
+                        <input type="number" id="qntSolic" name="qntSolic{{num}}" class="form-control"
+                          value="{{produto.qnt_solicitada}}" readonly>
+                      </div>
+                      <div class="col-1">
+                        <input type="text" id="quantidade" name="quantidade{{num}}" min="1" class="form-control" >
+                      </div>
+                    </div>
+                     {% set num = num + 1 %}
+                    
+                  {%endfor%}
+
                
-             
-               
-    <form action="{{ url('pedidos/' ~ pedido[0].pedido) }}" method="post" class="flex text-sm  flex-col gap-1">
-        <div class="flex mb-3  justify-between  border-b ">
-            <p>Produto</p>
-            <p>Quantidade Solicitada</p>
-            <p>Quantidade Liberada</p>
-        </div>
-    {% set num = 1 %}
-    {% for ped in pedido %}
-    {% set produtoNome= '' %}
-    {% for produto in produtos %}
-                        {% if produto.id == ped.produto_id %}
-                            {% set produtoNome = produto.nome %}
-                         
-                        {% endif %}
-                        {% endfor%}
-        <div class="flex gap-2 justify-between border-b items-center">
-            <p>{{ produtoNome }}</p>
-            <p>{{ ped.quantidade }}</p>
-            <input type="hidden" value="{{ ped.produto_id }}" name="produto{{ num }}">
-            <input type="hidden" value="{{ ped.quantidade }}" name="qntSolic{{ num }}">   
-            <input type="number" class="border  border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" name="quantidade{{ num }}">
-        </div>
-        {% set num = num + 1 %}
-    {% endfor %}
-    <input type="hidden" value="{{ pedido[0].local }}" name="local">
-    <input class="border mt-3 border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" id="atendido" type="submit" value="Atendido">
-</form>
+                
+                 <input type="hidden" value="{{ produtos[0].local }}" name="local">
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary" >Enviar</button>
+                </div>
 
-            
-           
-   
- 
+              </form>
+
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
         </div>
-        
-
-
-             
-</div>
-    <script>
-        $(document).ready(function() {
-            $('.select').select2({
-                placeholder: 'Selecione um produto',
-                allowClear: true
-            });
-           
-        });
-    </script>
+      </div>
     </div>
+  </section>
+
+
+</div>
+
 {% endblock %}

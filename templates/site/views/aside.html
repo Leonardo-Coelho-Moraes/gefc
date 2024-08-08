@@ -1,57 +1,162 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+  <a href="#" class="brand-link">
 
-<aside class=" aside flex flex-col shrink-0  text-white h-screen flex flex-col items-center   overflow-hidden text-gray-400 bg-gray-900  overflow-y-scroll" >
- 
-    <a class="flex items-center w-full px-3 mt-3" href="#">
-        <img src="{{url('templates/assets/img/Product.svg')}}" alt="Logo Sistema" width="28" height="28"/>
+    <span class="brand-text font-weight-light">SGE CAF</span>
 
-        <span class="ml-2 text-sm font-bold">SGE-SEMSA</span>
-    </a>
-    <div class="w-full  px-2">
-        <div class="flex flex-col items-center w-full mt-3 mb-3 border-t border-b border-gray-700 text-sm font-medium">
-             {% if usuario().nivel == 1 %}
-            <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300" href="{{url('entrada')}}">Entrada</a>
-            <a class="flex items-center w-full h-10 px-2 mt-2 text-gray-200 hover:bg-gray-700 rounded " href="{{url('vendas')}}">Saída</a>
-          <a class="flex items-center w-full h-10 px-2 mt-2 text-gray-200 hover:bg-gray-700 rounded " href="{{url('registro/vendas')}}">Registro Saídas</a>
-            <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300 " href="{{url('produtos')}}">Produtos</a>          
-            <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300" href="{{url('relatorio')}}">Relatório</a>
-            <a class="flex items-center w-full h-10 px-2 mt-2 text-gray-200 hover:bg-gray-700 rounded " href="{{url('saidas/fora/')}}">Saídas Fora</a>
-            <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300" href="{{url('registro/saida/fora')}}">Registro Saída Fora</a>
-             <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300" href="{{url('media')}}">Média</a>
-              <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300" href="{{url('estoque/locais')}}">Estoque de Locais</a>
-             <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300 " href="{{url('usuarios')}}">Usuários</a>
-             <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300 " href="{{url('pedidos')}}"> Pedidos</a>
-             {% endif %}
-             
-            
-             {% if local != 0%}
-             <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300 " href="{{url('local')}}">Estoque {{nome.nome}}</a>
-              <a class="flex items-center w-full h-10 px-2 mt-2 rounded hover:bg-gray-700 hover:text-gray-300 " href="{{url('pedido/fazer')}}">Fazer Pedido</a>
-              
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Sidebar user (optional) -->
+    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+      <div class="image">
+        <img src="{{url('templates/assets/img/avatar5.png')}}" class="img-circle elevation-2" alt="User Image">
+      </div>
+      <div class="info">
+        <a href="#" class="d-block">Leo</a>
+      </div>
+    </div>
+
+
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+ {% if usuario().local == 0  and usuario().nivel == 1 %}
+        <li class="nav-item"><a href="#" class="nav-link"><i class=" nav-icon bi bi-box-arrow-right"></i>
+            <p>Entrada Produtos<i class="right fas fa-angle-left"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item"><a href="{{url('entrada')}}" class="nav-link"><i
+                  class=" nav-icon bi bi-box-arrow-right"></i>
+                <p>Entrada Produtos</p>
+              </a></li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon bi bi-box-arrow-left"></i>
+            <p>Saidas Local Registrado<i class="right fas fa-angle-left"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{{url('vendas')}}" class="nav-link"><i class="nav-icon bi bi-box-arrow-left"></i>
+                <p>Saída por Nome</p>
+              </a></li>
+            <li class="nav-item"><a href="{{url('registro/vendas')}}" class="nav-link"><i
+                  class="nav-icon bi bi-box-arrow-left"></i>
+                <p>Saídas Por Produto</p>
+              </a></li>
+          </ul>
+        </li>
+        <li class="nav-item"><a href="#" class="nav-link"><i class=" nav-icon bi bi-box-arrow-left"></i>
+            <p>Saidas Local Não Registrado<i class="right fas fa-angle-left"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
+
+            <li class="nav-item">
+              <a href="{{url('saidas/fora/')}}" class="nav-link"><i class="nav-icon  bi bi-box-arrow-left"></i>
+                <p>Saídas por Nome</p>
+              </a></li>
+            <li class="nav-item">
+              <a href="{{url('registro/saida/fora')}}" class="nav-link"><i class="nav-icon  bi bi-box-arrow-left"></i>
+                <p>Saídas Por Produto</p>
+              </a></li>
+          </ul>
+        </li>
+
+
+        <li class="nav-item">
+          <a href="{{url('produtos')}}" class="nav-link"><i class="nav-icon fa-solid fa-table"></i>
+            <p>Produtos</p>
+          </a></li>
+          <li class="nav-item">
+            <a href="{{url('lotes')}}" class="nav-link"><i class="nav-icon fa-solid fa-table"></i>
+              <p>Lotes</p>
+            </a></li>
+
+       
+
+
+
+        <li class="nav-item">
+          <a href="{{url('usuarios')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
+            <p>Usuários</p>
+          </a></li>
           
-             {%endif%}
-             
-             
-             <div id="avatarButton" data-dropdown-toggle="userDropdown" data-dropdown-placement="bottom-start" class=" self-start ml-4 relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full cursor-pointer" ><span class="font-medium text-gray-600 "> {{ usuario().nome|slice(0, 2)|upper }}</span></div>
-
-<!-- Dropdown menu -->
-<div id="userDropdown" class="z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-    <div class="px-4 py-3 text-sm text-gray-900 dark:text-white">
-      <div>{{saudacao()}}</div>
-          
-      <div class="font-medium truncate">Olá, {{usuario().nome}}</div>
-    </div>
-   
-    <div class="py-1">
-      <a href="{{url('sair')}}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sair</a>
-    </div>
-</div>
-             
-            
-        </div>
-
-    </div>
+        
 
 
-  
+        <li class="nav-item"><a href="#" class="nav-link">
+          <i class="nav-icon bi bi-geo-alt-fill"></i>
+            <p>Locais<i class="right fas fa-angle-left"></i></p>
+          </a>
+          <ul class="nav nav-treeview">
 
+            <li class="nav-item">
+              <a href="{{url('pedidos')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
+                <p>Pedidos</p>
+              </a></li>
+            <li class="nav-item">
+              <a href="{{url('saidas/hospital')}}" class="nav-link"><i class="nav-icon  bi bi-box-arrow-left"></i>
+                <p>Registro Saidas Hospital</p>
+              </a></li>
+           
+            <li class="nav-item">
+              <a href="{{url('estoque/locais')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
+                <p>Estoque dos Locais</p>
+              </a></li>
+          </ul>
+        </li>
+ {%endif%}
+           {% if usuario().local != 0 and  usuario().nivel == 2 %}
+           <li class="nav-item"><a href="#" class="nav-link">
+              <i class="mav-icon bi bi-geo-alt-fill"></i>
+              <p>{{nome.nome}}<i class="right fas fa-angle-left"></i></p>
+             </a>
+             <ul class="nav nav-treeview">
+
+               {% if usuario().local == 3 %}
+               <li class="nav-item">
+                 <a href="{{ url('saida/hospital') }}" class="nav-link">
+                   <i class="nav-icon bi bi-box-arrow-left"></i>
+                   <p>Fazer Saída Hospital</p>
+                 </a>
+               </li>
+
+               <li class="nav-item">
+                 <a href="{{ url('saidas/hospital') }}" class="nav-link">
+                   <i class="nav-icon bi bi-box-arrow-left"></i>
+                   <p>Registro Saidas Hospital</p>
+                 </a>
+               </li>
+               {% endif %}
+
+               <li class="nav-item">
+                 <a href="{{url('local')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
+                   <p>Estoque {{nome.nome}}</p>
+                 </a></li>
+               <li class="nav-item">
+                 <a href="{{url('pedido/fazer')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
+                   <p>Fazer Pedido</p>
+                 </a></li>
+             </ul>
+           </li>
+           {%endif%}
+
+        <li class="nav-item">
+          <a href="{{url('sair')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
+            <p>Sair</p>
+          </a></li>
+
+
+
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
 </aside>

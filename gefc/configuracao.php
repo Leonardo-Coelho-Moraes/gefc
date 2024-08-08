@@ -1,6 +1,6 @@
 <?php 
 date_default_timezone_set('America/Manaus');
-define('SITE_NOME', 'SGE - ');
+define('SITE_NOME', 'SGE CAF - ');
 define('URL_PRODUCAO', 'https://gefc.com.br');
 define('URL_SITE', 'gefc/');
 define('URL_DESENVOLVIMENTO', 'http://localhost/gefc');

@@ -21,7 +21,7 @@ class Conexao {
     public static function getInstancia(): PDO {
         if (empty(self::$instancia)) {
             try {
-                self::$instancia = new PDO('mysql:host='.DB_HOST.';dbname='.DB_NOME.'',DB_USUARIO,DB_SENHA,[
+                self::$instancia = new PDO('mysql:host='.DB_HOST.';port=3306;dbname='.DB_NOME.'',DB_USUARIO,DB_SENHA,[
                 
                     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                     //converte em objeto ai voce pode acessar assim '->pessoas' ao inves de ['pessoas']

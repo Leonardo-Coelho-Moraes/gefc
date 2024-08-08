@@ -18,29 +18,34 @@ class Mensagem {
 
 
     public function sucesso(string $mensagem):Mensagem {
-        $this->css = 'p-4 flex items-center justify-between  text-sm text-green-800 rounded-lg bg-green-50 dark:bg-gray-800 dark:text-green-400';
+        $this->css = 'alert alert-success d-flex align-items-center justify-content-between';
         $this->texto = $this->filtrar($mensagem);
         return $this;
     }
     public function erro(string $mensagem):Mensagem {
-        $this->css = 'p-4 flex items-center justify-between  text-sm text-red-800 rounded-lg bg-red-50 dark:bg-gray-800 dark:text-red-400';
+        $this->css = 'alert alert-danger d-flex align-items-center justify-content-between';
         $this->texto = $this->filtrar($mensagem);
         return $this;
     }
     public function alerta(string $mensagem):Mensagem {
-        $this->css = 'p-4 flex items-center justify-between   text-sm text-yellow-800 rounded-lg bg-yellow-50 dark:bg-gray-800 dark:text-yellow-300';
+        $this->css = 'alert alert-warning d-flex align-items-center justify-content-between';
         $this->texto = $this->filtrar($mensagem);
         return $this;
     }
     public function informa(string $mensagem):Mensagem {
-        $this->css = 'p-4 flex items-center justify-between  text-sm text-blue-800 rounded-lg bg-blue-50 dark:bg-gray-800 dark:text-blue-400';
+        $this->css = 'alert alert-primary d-flex align-items-center justify-content-between';
         $this->texto = $this->filtrar($mensagem);
         return $this;
     }
    
 
     public function renderizar(): string {
-        return "<div class='{$this->css}' >{$this->texto}</div>";
+        
+        return " <div class='content'><div class='container-fluid'><div class='{$this->css}' role='alert'>
+  {$this->texto}
+  <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
+</div></div></div>";
+       
     }
 
     private function filtrar(string $mensagem): string {

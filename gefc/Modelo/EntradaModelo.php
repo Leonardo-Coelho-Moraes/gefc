@@ -18,73 +18,82 @@ use gefc\Nucleo\Conexao;
 use PDO;
 class EntradaModelo {
 public function entrada(array $dados): void {
-    $id = Helpers::validarNumero($dados['produto']);
-    $quantidade = Helpers::validarNumero($dados['quantidade']);
-
-    // Verificar se a quantidade é válida
-    if ($quantidade <= 0) {
-        $mensagem = (new Mensagem)->erro('A quantidade precisa ser maior ou igual a 1')->flash();
-        Helpers::redirecionar('entrada/adicionar');
-        return; // Encerre a função se a quantidade for inválida
-    }
+    $data = date('Y-m-d');
+   (new Inserir())->inserir('registro_entrada', 'lote_id, quantidade, data', [$dados['lote'], $dados['quantidade'], $data]);
+   
     
-    $dadosArray = ['quantidade' => $quantidade];
-    $query = "UPDATE produtos SET quantidade_estoque = quantidade_estoque + :quantidade WHERE id = :id";
+    $query = "UPDATE lote SET quantidade = quantidade + :qnt WHERE id = :id";
     $stmt = Conexao::getInstancia()->prepare($query);
-    $stmt->bindParam(':quantidade', $quantidade, PDO::PARAM_INT);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->bindParam(':qnt', $dados['quantidade'], PDO::PARAM_INT);
+    $stmt->bindParam(':id', $dados['lote'], PDO::PARAM_INT);
 
     $stmt->execute();
 }
-public function atualizar(array $dados, int $id): void {
-      
-        $busca = (new Busca())->buscaId('produtos',$dados['produto']);
-       $dadosArray = [
-           'produto' => $dados['produto'],
-           'produto_nome' => $busca->nome,
-           'quantidade' => $dados['quantidade'],
-           'editado' => 1
-          
-       ];
-       (new Atualizar())->atualizar('registro_entrada', "produto_id = ?,produto_nome = ?,quantidade = ?, editado = ?",$dadosArray ,$id); //observe que mudei de $id para id = $id
-       //!!! muito importante, deve fazer uma equação pra edição da quantidade no estoque,
-       
-}
-
- public function entradaRegisto(array $dados): void {
-       $resultados = Helpers::validadarDados($dados);
-                
-                $busca = (new Busca())->buscaId('produtos',$dados['produto']);
-               $array = array('produto' => $resultados['produto'] ,'produto_nome' => $busca->nome ,'quantidade' =>   $resultados['quantidade']);
-      if ($resultados['quantidade'] < 1) {
-           $mensagem = (new Mensagem)->erro('A quantidade precisa ser maior ou igual 1')->flash();
-           Helpers::redirecionar('entrada/adicionar');
-           return;
-        }
-       (new Inserir())->inserir('registro_entrada', 'produto_id ,produto_nome, quantidade', $array);
-      
-}
-
-   public function pesquisa(string $buscar, ?int $pagina, ?int $limite) {
-    $conexao = Conexao::getInstancia();
-    // Calcular o valor de início com base na página e no limite
-    $inicio = ($pagina !== null && $limite !== null) ? (($pagina - 1) * $limite) : 0;
-
-    $query = "SELECT * FROM registro_entrada
-              WHERE (produto_nome LIKE :buscar)
-              ORDER BY data DESC
-              LIMIT :limite OFFSET :inicio";  // Adicionado LIMIT e OFFSET
-              
-    $stmt = $conexao->prepare($query);
-    $stmt->bindValue(':buscar', '%' . $buscar . '%', PDO::PARAM_STR);
-    $stmt->bindValue(':limite', $limite, PDO::PARAM_INT);
-    $stmt->bindValue(':inicio', $inicio, PDO::PARAM_INT);
-    $stmt->execute();
+public function atualizar(array $dados): void {
+    // Define a query de atualização
+    $query = "UPDATE registro_entrada SET quantidade = :quantidade, editado = :editado WHERE id = :id";
     
-    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $resultado;
+    // Prepara a query para execução
+    $stmt = Conexao::getInstancia()->prepare($query);
+    $editado = 1;
+    // Vincula os parâmetros
+    $stmt->bindParam(':quantidade', $dados['quantidade_editada'], PDO::PARAM_INT);
+    $stmt->bindParam(':editado', $editado, PDO::PARAM_INT);
+    $stmt->bindParam(':id', $dados['registro_id'], PDO::PARAM_INT);
+    
+    // Executa a query
+    $stmt->execute();
 }
 
+
+
+    public function pesquisa(?string $dePesquisa = '1970-01-01', ?string $atePesquisa = '2099-12-31', ?string $produto = '',  ?string $fornecedor = '')
+    {
+
+        $conexao = Conexao::getInstancia();
+
+        // Construção da query com cláusula WHERE dinâmica
+        $query = "
+    SELECT 
+        registro_entrada.id AS registro_id,
+        registro_entrada.quantidade,
+        registro_entrada.data,
+        lote.lote,
+        lote.fornecedor,
+        lote.vencimento,
+        lote.produto_id,
+        produtos.nome,
+        produtos.slug
+    FROM 
+        registro_entrada
+    JOIN 
+        lote ON registro_entrada.lote_id = lote.id
+    JOIN 
+        produtos ON lote.produto_id = produtos.id
+
+    WHERE 
+        (registro_entrada.data >= :de AND registro_entrada.data <= :ate AND produtos.nome LIKE :produto AND lote.fornecedor LIKE :fornecedor)
+        
+        
+    ";
+
+        // Preparação da consulta
+        $stmt = $conexao->prepare($query);
+        $stmt->bindValue(':de', $dePesquisa, PDO::PARAM_STR);
+        $stmt->bindValue(':ate', $atePesquisa, PDO::PARAM_STR);
+        $stmt->bindValue(':produto', '%' . $produto . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':fornecedor', '%' . $fornecedor . '%', PDO::PARAM_STR);
+
+
+
+        // Execução da consulta
+        $stmt->execute();
+
+        // Obtenção dos resultados
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
 
 
 }

@@ -1,127 +1,240 @@
 {%extends 'base.html'%}
 {% block conteudo %}
-<div class=" w-full  p-5  justify-start ">
-    <p class="mb-3 text-gray-900 text-lg ">Entrada</p>
-    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll overflow-x-auto  " style="max-height:90vh;">
-        <div class=" w-full flex flex-col juntify-center gap-3">
-            
-            <div class="flex gap-3 text-gray-900 w-full items-center justify-center text-sm"> <a href="{{url('entrada/adicionar')}}" class=" border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5 ">Adicionar</a>
-                
-                <form class="relative w-full" action="{{url('entrada')}}" method="post">
-        <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <svg class="w-4 h-4 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
-            </svg>
-        </div>
-        <input type="text" id="pesquisaEntrada" name="pesquisaEntrada"  class="block w-full p-2 pl-10   border border-gray-300 rounded-lg hover:bg-gray-50 hover:border-blue-300 focus:ring-blue-500 focus:border-blue-500" placeholder="Pesquisar" required></form>
-                
-                </div>
-            {{flash()}}
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
 
-            
-            <div class="flex gap-2 text-sm items-center text-gray-900 justify-start"> 
-               {%if total >0 %}  <p>Entradas: {{total}}</p>{%endif%}
-                  {%if soma >0 %}  <p >Soma de todas entradas: {{soma}} produtos</p>{%endif%}
-                  {%if editado >0 %} <p>Edições: {{editado}}</p>{%endif%}
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Entrada Produtos</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Entrada Produtos</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Adicionar Entrada</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
             </div>
+            <div class="card-body" style="display: none;">
+              <!-- /.conteudo-->
+              <form action="{{url('entrada')}}" method="post">
 
-              <div class="relative overflow-x-scroll ">
-        <table class="w-full text-sm text-left text-gray-900">
-          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
-            <tr><th scope="col" class="px-6 py-3">
-                    ID
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Produto
-                </th>
-               
-                
-                <th scope="col" class="px-6 py-3">
-                    Quantidade
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Data
-                </th>
-                 
-                <th scope="col" class="px-6 py-3">
-                    Ação
-                </th>
-                 
-            </tr>
-        </thead>
-        <tbody>
-            {%for registro in registros%}
-            <tr class="border-b border-gray-700 text-gray-700 text-md">
-              <td scope="row" class="px-6 py-4">
-                 {{registro.produto_id}}
-                </td>
-                <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
-    {% for produto in produtos %}
-    
-        {% set produtoNome = '' %}
-        {% set produtoFor = '' %}
-        {% set produtoEditado = '' %}
-        {% set produtoDeletado = '' %}
-        {% set produtoSlug = '' %}
-        {% set produtoId = '' %}
+                <div class="form-group">
+                  <label>Lotes</label>
+                  <select class="form-control campo_select" name='lote' style="width: 100%">
+                    {%for pro in produtos%}{%for lote in lotes%}
+                    {%if pro.id == lote.produto_id%}
 
-        {% if produto.id == registro.produto_id %}
-            {% set produtoNome = produto.nome %}
-            {% set produtoFor = produto.fornecedor %}
-            {% set produtoEditado = produto.editado %}
-            {% set produtoDeletado = produto.deletado %}
-            {% set produtoSlug = produto.slug %}
-            {% set produtoId = produto.id %}
+                    <option value="{{lote.id}}">{{lote.lote}} - {{pro.nome}}</option>{%endif%}
+                    {%endfor%}{%endfor%}
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>Quantidade</label>
+                  <input class="form-control" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12"
+                    min="1" required>
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn btn-primary">Adicionar</button>
+                </div>
 
-            {% if registro.editado == 1 %}
-            <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="text-blue-800 hover:text-blue-600 hover:font-medium">{{ produtoNome }} - {{produtoFor}}</a>
-             {% else %}
-                <a href="{{ url('produtos/' ~ produtoSlug ~ '/' ~ produtoId) }}" class="hover:text-blue-600 hover:font-medium">{{ produtoNome }} - {{produtoFor}}</a>
-            {% endif %}
-        {% endif %}
-    {% endfor %}
-</td>
+              </form>
+            </div>
+            <!-- /.card-body -->
 
-             
-                <td scope="row" class="px-6 py-4 whitespace-nowrap">
-                 {{registro.quantidade}}
-                </td>
-                <td scope="row" class="px-6 py-4 whitespace-nowrap">
-                   {{registro.data}}
-                </td> 
-                <td scope="row" class="px-6 py-4 whitespace-nowrap">
-                   <a href="{{url('entrada/editar/'~registro.id)}}" class="hover:text-blue-600 text-blue-800">Editar</a>
-                </td>
-              
-            </tr>
-        {%endfor%}
-          
-        </tbody>
-    </table>
-</div>
-             <nav class='flex items-center justify-center my-2 '>
-  <ul class="flex -space-x-px text-sm">
-      {% if paginaAtual > 1 %}
-    <li>
-      <a href="?pagina={{ paginaAtual - 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-l-lg hover:bg-gray-100 hover:text-gray-700">Anterior</a>
-    </li>
-    {% endif %}
-    {% for pagina in 1..totalPaginas %}
-    <li>
-      <a href="?pagina={{ pagina }}" class="flex items-center justify-center px-3 h-8 border border-gray-300 hover:bg-gray-100 hover:text-gray-700">{{ pagina }}</a>
-    </li>
-{% endfor %}
-      {% if paginaAtual < totalPaginas %} 
-<li>
-      <a href="?pagina={{ paginaAtual + 1 }}" class="flex items-center justify-center px-3 h-8 ml-0 leading-tight text-gray-500 border border-gray-300 rounded-r-lg hover:bg-gray-100 hover:text-gray-700">Próxima</a>
-    </li>
-    {% endif %}
-  </ul>
-</nav>
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
         </div>
-        </div>
-    
+      </div>
     </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Editar Entrada</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" style="display: none;" id="form_edit_entrada">
+              <!-- /.conteudo-->
+              <form action="{{url('entrada')}}" method="post">
+                <input class="form-control" id="registro_id" name="registro_id" type="hidden">
+                <div class="form-group">
+                  <label>Lote</label>
+
+                  <input class="form-control" id="produtoNome" name="produto_nome" type="text" readonly>
+
+                </div>
+                <div class="form-group">
+                  <label>Quantidade</label>
+                  <input class="form-control " id="quantidade_editada" min='1' type="number" name="quantidade_editada"
+                    required>
+                </div>
+                <div class="form-group">
+                  <button type="submit" class="btn btn btn-primary">Atualizar</button>
+                </div>
+
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Relatório</h3>
+
+
+          </div>
+          <div class="card-body">
+
+            <form action="{{url('entrada')}}" method="post">
+              <input type="hidden" name="relatorio" id="relatorio" value="relatorio">
+              <div class=" row form-group">
+                <div class="col-2"> <label>De:</label>
+                  <input type="date" id="dePesquisa" name="dePesquisa" class="form-control" required>
+                </div>
+                <div class="col-2"> <label>Até:</label>
+                  <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
+                </div>
+
+                <div class="col-5"> <label>Produtos:</label>
+                  <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
+                    placeholder="Deixe vazio para pesquisar todos os Produtos"></div>
+                <div class="col-2"> <label>Fornecedor:</label>
+                  <input type="text" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
+                    placeholder="Deixe vazio para pesquisar todos os Fornecedores"></div>
+               
+
+              </div>
+
+              <div class=" form-group">
+                <button type="submit" class="btn btn-primary form-control ">Buscar</button>
+              </div>
+
+
+            </form>
+
+
+          </div>
+          <!-- /.card-body -->
+
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+
+  {{flash()}}
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Entrada de Produtos</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <table id="example" class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Lote</th>
+                <th>Produto</th>
+                <th>Quantidade</th>
+                <th>Fornecedor</th>
+                <th>Data</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              {% set total = 0%}
+              {% for registro in registros %}
+           
+            
+
+              <tr data-id="{{ registro.registro_id }}" data-produto-nome="{{registro.nome}}" data-lote="{{registro.lote}}"
+                data-quantidade="{{ registro.quantidade }}">
+                <td>{{ registro.registro_id}}</td>
+                <td>{{ registro.lote}}</td>
+                <td>{{ registro.nome}}</td>
+                <td>{{ registro.quantidade }}</td>
+
+                 <td>{{ registro.fornecedor }}</td>
+                {% set total  = total + registro.quantidade %}
+                <td>{{ registro.data }}</td>
+                <td><button class="btn btn-primary btn-sm editar-btn">Editar</button></td>
+              </tr>
+             
+              {% endfor %}
+               <tr>
+                 <td>10000</td>
+                 <td></td>
+                 <td></td>
+                 <td>Total: {{ total }}</td>
+                 <td></td>
+                 <td></td>
+                 <td></td>
+               </tr>
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
 
 
 

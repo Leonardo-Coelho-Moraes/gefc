@@ -1,105 +1,171 @@
 {%extends 'base.html'%}
 {% block conteudo %}
-<div class=" w-full  p-5  justify-start ">
-    <div class="mb-3 ">
-    <nav class="flex" aria-label="Breadcrumb">
-  <ul class="inline-flex items-center space-x-1 md:space-x-3">
-    <li class="inline-flex items-center">
-      <a href="{{url('')}}" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
-        <svg class="w-3 h-3 mr-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
-          <path d="m19.707 9.293-2-2-7-7a1 1 0 0 0-1.414 0l-7 7-2 2a1 1 0 0 0 1.414 1.414L2 10.414V18a2 2 0 0 0 2 2h3a1 1 0 0 0 1-1v-4a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v4a1 1 0 0 0 1 1h3a2 2 0 0 0 2-2v-7.586l.293.293a1 1 0 0 0 1.414-1.414Z"/>
-        </svg>
-        Início
-      </a>
-    </li>
-    <li>
-      <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <a href="{{url('vendas')}}" class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white"> 
-            Saída</a>
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Saída: {{venda}}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{url('vendas')}}">Saídas</a></li>
+            <li class="breadcrumb-item active">{{venda}}</li>
+          </ol>
+        </div>
       </div>
-    </li>
-    <li aria-current="page">
-      <div class="flex items-center">
-        <svg class="w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/>
-        </svg>
-        <span class="ml-1 text-sm font-medium text-gray-500 md:ml-2 dark:text-gray-400">{{venda}}</span>
-      </div>
-    </li>
-  </ul></nav>
-  </div>
-    <div class=" w-full   justify-center items-start gap-8 overflow-y-scroll   " style="max-height:90vh;">
-        <div class=" w-full flex flex-col juntify-center gap-3">
-            <div class="flex gap-4">
-                 <a href="{{url('vendas/'~venda~'/local')}}"  class=" flex border border-gray-300 justify-center items-center rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" target="_blank">Editar Local</a>
-                  <a href="{{ url('vendas/adicionar/' ~ venda ~ '/' ~ local) }}"  class=" flex border border-gray-300 justify-center items-center rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" target="_blank">Adicionar Produto</a>
-                 <a href="{{url('relatorio/imprimir/'~venda~'')}}"  class=" flex border border-gray-300 justify-center items-center rounded-lg hover:bg-gray-50 hover:border-blue-300 px-5 py-2.5" target="_blank">Imprimir Saída</a>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+
+  {{flash()}}
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Adicionar Produto A Saída</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
             </div>
-            
- 
-            {{flash()}}
-            <p>Local: {{local}}</p>
-               <div class="relative overflow-x-scroll ">
-        <table class="w-full text-sm text-left text-gray-900">
-          <thead class="text-xs text-gray-900 uppercase border-b  border-gray-700">
-            <tr>
-              
-                <th scope="col" class="px-6 py-3">
-                    Produto
-                </th>
-               
-                <th scope="col" class="px-6 py-3">
-                    Qnt Solicitada
-                </th>
-                <th scope="col" class="px-6 py-3">
+            <div class="card-body" style="display: none;">
+              <!-- conteudo -->
+              <form action="{{ url('vendas/'~venda)}}" method="post">
+                <input  type="hidden" name="adicionar_produto">
+                <input type="hidden" name="data" value="{{registros[0].data}}">
+                <input type="hidden" name="local" value="{{registros[0].local}}">
+                <input type="hidden" name="venda" value="{{venda}}">
+                <div class="form-group">
+                  <label>Produto</label>
+                 <select id="lote" class="campo_select form-control" style="width: 100%" name="lote">
+                   {%for pro in produtos%}{%for lote in lotes%}
+                   {%if pro.id == lote.produto_id%}
+
+                   <option value="{{lote.id}}">{{lote.lote}} -
+                     {{pro.nome}} Qnt.: {{lote.quantidade}} Val.: {{lote.vencimento}}</option>{%endif%}
+
+                   {%endfor%}{%endfor%}
+                 </select>
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    Quantidade Solicitada
+                  </label>
+                  <input class="form-control" id="qntSolic" type="number" name="qntSolic" placeholder="Ex: 12" min="1"
+                    required>
+                </div>
+                <div class="form-group">
+                  <label>
                     Quantidade
-                </th>
-                  
-                <th scope="col" class="px-6 py-3">
-                    Ação
-                </th>
-            </tr>
-        </thead>
-        <tr class=" text-gray-700 text-md">
-            {% for registro in registros %}
-                <td scope="row" class="px-6 py-4 max-w-[30vw] break-words">
-            {% for produto in produtos %}
-                {% if registro.produto_id == produto.id %}
-                    <a href="{{ url('produtos/'~produto.slug~'/'~produto.id) }}" class="hover:text-blue-600 hover:font-medium">
-                        {{ produto.nome }} - {{ produto.fornecedor }}
-                    </a>
-                {% endif %}
-            {% endfor %}
-        </td>
-                <td scope="row" class="px-6 py-4 whitespace-nowrap">
-                        {{ registro.qnt_solicitada }}
-                    </td>
-                    <td scope="row" class="px-6 py-4 whitespace-nowrap">
-                        {{ registro.quantidade }}
-                    </td>
-                   
-                     
-              <td scope="row" class="px-6 py-4 whitespace-nowrap"><a href="{{url('vendas/editar/'~venda~'/'~registro.id)}}" class="hover:text-blue-600 text-blue-800">
-                   Editar
-                  </a>
-                  / 
-                  <a href="{{url('vendas/deletar/'~venda~'/'~registro.id)}}"  class="hover:text-red-600 text-red-800">Deletar</a>
-                  
-              </td>
-              
-                </tr>
-            {% endfor %}
-   
-    </tbody>
-    </table>
-</div>
-            
+                  </label>
+                  <input class="form-control" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12"
+                    min="1" required>
+                </div>
+                <div class="form-group">
+                  <input class="btn btn-primary" type="submit" value="Adicionar">
+                </div>
+
+
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
         </div>
-        </div>
+      </div>
     </div>
+  </section>
+
+
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-primary">
+          <h3 class="card-title">Saída: {{venda}} Local: {{local[0].nome}}</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <table id="example" class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>Produto</th>
+                <th>Lote</th>
+                <th>Qnt. Solicitada</th>
+                <th>Qnt.</th>
+                
+              
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for registro in registros %}
+              {% set loteNome = '' %}
+              {% set ProdutoId = '' %}
+              {% set ProdutoNome = '' %}
+              {% for lote in lotes %}
+              {% if registro.lote_id == lote.id %}
+              {% set loteNome = lote.lote %}
+              {% set ProdutoId = lote.produto_id %}
+              {% for pro in produtos %}
+              {% if pro.id == ProdutoId %}
+              {% set ProdutoNome = pro.nome %}
+              <tr>
+                <td>
+                  <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                    {{ ProdutoNome }}
+                  </a>
+                </td>
+                <td>
+                  <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                    {{ loteNome }}
+                  </a>
+                </td>
+                <td>{{ registro.qnt_solicitada }}</td>
+                <td>{{ registro.quantidade }}</td>
+                
+              </tr>
+              {% endif %}
+              {% endfor %}
+              {% endif %}
+              {% endfor %}
+              {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
+
+
+
+
+
 
 
 

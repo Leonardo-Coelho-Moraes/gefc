@@ -1,0 +1,418 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Lotes</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Lotes</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+   <section class="content">
+     <div class="container-fluid">
+       <div class="row">
+         <div class="col-12">
+           <!-- Default box -->
+           <div class="card ">
+             <div class="card-header bg-primary">
+               <h3 class="card-title">Cadastrar Produto</h3>
+
+               <div class="card-tools">
+                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                   <i class="fas fa-plus"></i>
+                 </button>
+
+               </div>
+             </div>
+             <div class="card-body" >
+               <!-- /.conteudo-->
+               <form action="{{url('produtos/produto_cadastrar')}}" method="post">
+
+                 <div class="form-group">
+                   <label>
+                     Produto
+                   </label>
+                   <input class="form-control" id="produto" type="text" name="produto" placeholder="Ex: Dipirona"
+                     required></div>
+
+
+                 <div class="form-group">
+                   <label>
+                     Unidade de Contagem
+                   </label>
+                   <select name="unicont" id="unicont" class="form-control">
+                     <option value="unidade">Unidade</option>
+                     <option value="caixa">Caixa</option>
+                     <option value="pacote">Pacote</option>
+
+
+                   </select>
+                 </div>
+                 <div class="form-group">
+                   <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
+
+                 </div>
+
+
+
+               </form>
+             </div>
+             <!-- /.card-body -->
+
+             <!-- /.card-footer-->
+           </div>
+           <!-- /.card -->
+         </div>
+       </div>
+     </div>
+   </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card ">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Cadastrar Lote</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" >
+              <!-- /.conteudo-->
+              <form action="{{ url('lotes/') }}" method="post">
+
+                <div class="form-group">
+                  <label>Produto</label>
+                  <select id="produto" class="campo_select form-control" style="width: 100%" name="produto" autofocus>
+                    {% for produto in produtos %}
+                    <option value="{{ produto.id }},{{ produto.nome }}">{{ produto.nome }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+                <div class="form-group row">
+                 
+                 <div class="col">
+                   <label>Lote</label>
+                   <input class="form-control" id="lote" type="text" name="lote" placeholder="Ex: 1234567890" required>
+                 </div>
+                 <div class="col">
+                   <label>Fornecedor</label>
+                   
+                     <select name="fornecedor" id="fornecedor" class="form-control" required>
+                      <option value="Fornecedor">Fornecedor</option>
+                      <option value="CEMA">CEMA</option>
+                      
+                     </select>
+                 </div>
+                 
+                </div>
+                <div class="row form-group">
+                  
+                  <div class="col">
+                    <label>Quantidade</label>
+                    <input class="form-control" id="quantidade" type="number" name="quantidade" min='0' required>
+                  </div>
+                  
+                  <div class="col">
+                    <label>Preço</label>
+                    <input class="form-control" id="preco" type="number" step="0.01" min="0.1" name="preco" placeholder="32,55"
+                      required>
+                  </div>
+                  <div class="col">
+                    <label>Preço Comercial</label>
+                    <input class="form-control" id="preco_comercial" type="number" step="0.01" min="0.1" name="preco_comercial"
+                      placeholder="32,55" required>
+                  </div>
+                  
+                  <div class="col">
+                    <label>Vencimento</label>
+                    <input class="form-control" id="vencimento" type="date" name="vencimento" placeholder="Ex: Dipirona"
+                      required>
+                  </div>
+                </div>
+                <div class="row form-group">
+                  <div class="col">
+
+                    <label>Localização</label>
+                    <input class="form-control" id="localizacao" type="text" name="localizacao"
+                      placeholder="Ex: Palet g12" required>
+                  </div>
+                  <div class="col">
+
+                    <label>Cod. Barras</label>
+                    <input class="form-control" id="cod" type="number" name="cod" placeholder="Ex: 1234567890" required>
+                  </div>
+                </div>
+              
+                <div class="form-group">
+                  <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
+                </div>
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Editar Lote</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" id="form_edit_lote" style="display: none;">
+              <!-- /.conteudo-->
+              <form action="{{ url('lotes/') }}" method="post">
+                <input id="lote_id" type="hidden" name="lote_id">
+
+                <div class="form-group">
+                  <label>Produto</label>
+                  <select id="produto_edit" class="campo_select form-control" style="width: 100%" name="produto_edit">
+                    {% for lote in lotes %}
+                    <option value="{{ lote.produto_id }},{{ lote.nome }}">{{ lote.nome }}</option>
+                    {% endfor %}
+                  </select>
+                  <span class="error invalid-feedback " style="display: block">Faça a procura pelo Produto
+                    Manual!!!</span>
+                </div>
+                <div class="row form-group">
+                   <div class="col">
+                     <label>Cod. Barras</label>
+                     <input class="form-control" id="cod_edit" type="text" name="cod_edit"
+                       placeholder="Ex: 1234567890"
+                       required>
+                   </div>
+                  <div class="col">
+                    <label>Lote</label>
+                    <input class="form-control" id="lote_edit" type="text" name="lote_edit" placeholder="Ex: 1234567890"
+                      required>
+                  </div>
+                   <div class="col">
+                     <label>Fornecedor</label>
+                     <input class="form-control" id="fornecedor_edit" type="text" name="fornecedor_edit"
+                       placeholder="Ex: Cema" required>
+                   </div>
+                  
+                  
+                </div>
+                 <div class="row form-group">
+                   <div class="col">
+                     <label>Quantidade</label>
+                     <input class="form-control" id="quantidade_edit" type="number" name="quantidade_edit" min='0'
+                       required>
+                   </div>
+
+                   <div class="col">
+                     <label>Preço</label>
+                     <input class="form-control" id="preco_edit" type="number" step="0.01" min="0.1" name="preco_edit"
+                       placeholder="32,55" required>
+                   </div>
+                   <div class="col">
+                     <label>Preço Comercial</label>
+                     <input class="form-control" id="preco_comercial_edit" type="number" step="0.01" min="0.1"
+                       name="preco_comercial_edit" placeholder="32,55" required>
+                   </div>
+                   <div class="col">
+
+                     <label>Localização</label>
+                     <input class="form-control" id="localizacao_edit" type="text" name="localizacao_edit"
+                       placeholder="Ex: Palet g12" required>
+                   </div>
+                   <div class="col">
+                     <label>Vencimento</label>
+                     <input class="form-control" id="vencimento_edit" type="date" name="vencimento_edit"
+                       placeholder="Ex: Dipirona" required>
+                   </div>
+                 </div>
+                <div class="form-group">
+                  <input class="btn btn-primary form-control" type="submit" value="Editar">
+                </div>
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Relatório</h3>
+
+
+            </div>
+            <div class="card-body">
+
+              <form action="{{url('lotes')}}" method="post">
+                <input type="hidden" name="relatorio" id="relatorio" value="relatorio">
+                <div class=" row form-group">
+                  <div class="col-2"> <label>Validade De:</label>
+                    <input type="date" id="dePesquisa" name="dePesquisa" class="form-control" required>
+                  </div>
+                  <div class="col-2"> <label>Validade Até:</label>
+                    <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
+                  </div>
+
+                  <div class="col-5"> <label>Produtos:</label>
+                    <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
+                      placeholder="Deixe vazio para pesquisar todos os Produtos"></div>
+                  <div class="col-2"> <label>Fornecedor:</label>
+                    <input type="text" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
+                      placeholder="Deixe vazio para pesquisar todos os Fornecedores"></div>
+
+                  
+
+                </div>
+
+                <div class=" form-group">
+                  <button type="submit" class="btn btn-primary form-control ">Buscar</button>
+                </div>
+
+
+              </form>
+
+
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-primary">
+          <h3 class="card-title">Lotes</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <table id="example" class="text-sm table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+
+                <th>ID</th>
+                <th>Cod. Barras</th>
+                <th>Lote</th>
+                <th >Produto</th>
+                <th>Qnt.</th>
+                <th>Fornecedor</th>
+                <th>Preco</th>
+                <th>Preço Comercial</th>
+                <th>Local</th>
+                <th>Validade</th>
+                <th>Ação</th>
+
+              </tr>
+            </thead>
+            <tbody>
+              {%set qnt = 0%}
+               {%set registros = 0%}
+              {%set precoComercial = 0%}
+              {%set preco = 0%}
+              {%for lote in lotes%}
+
+              <tr data-id="{{ lote.id }}" data-lote="{{lote.lote}}" data-quantidade="{{ lote.quantidade }}"
+                data-fornecedor="{{ lote.fornecedor }}" data-preco="{{ lote.preco }}"
+                data-preco-comercial="{{ lote.preco_comercial }}"
+                data-vencimento="{{ lote.vencimento }}"
+                data-cod-barras="{{ lote.cod }}" data-localizacao="{{lote.localizacao}}">
+                <td>{{lote.id}}</td>
+                <td>{{lote.cod}}</td>
+                <td>{{lote.lote}}</td>
+                
+                <td class="text-wrap" style="width:600px;"><a href="{{url('produtos/'~lote.slug~'/'~lote.produto_id)}}"
+                    class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover ">{{lote.nome }}</a>
+                </td>
+               
+                <td>{{lote.quantidade}}</td>
+                {%set qnt = qnt + lote.quantidade%}
+                <td>{{lote.fornecedor}}</td>
+                <td>{{lote.preco}} R$</td>
+                 {%set preco = preco + lote.preco %}
+                <td>{{lote.preco_comercial}} R$</td>
+                 {%set precoComercial = precoComercial + lote.preco_comercial %}
+                 <td>{{lote.localizacao}}</td>
+                <td>{{lote.vencimento}}</td>
+                {%set registros = registros + 1%}
+                <td class="d-flex justify-content-center"> <button class="btn btn-primary editLote">Editar</button></td>
+              </tr>
+
+              {%endfor%}
+              <tr>
+                <td>10000</td>
+                <td>Registros: {{registros}}</td>
+
+                
+                <td></td>
+                <td>Custo: {{preco}}R$ / Comercial : {{precoComercial}}R$</td>
+                <td>Total: {{ qnt }}</td>
+
+ <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
+
+{% endblock %}
