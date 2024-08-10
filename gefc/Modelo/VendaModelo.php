@@ -238,7 +238,6 @@ class VendaModelo
         lote.lote,
         lote.quantidade,
         lote.vencimento,
-
         lote.fornecedor,
         lote.produto_id,
         produtos.nome,

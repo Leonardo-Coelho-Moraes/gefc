@@ -65,7 +65,7 @@
                           {% set hasLotes = false %}
                           {% for lote in lotes %}
                           {% if produto.produto_id == lote.produto_id %}
-                          <option value="{{lote.id}}">{{lote.lote}} - Qnt.: {{lote.quantidade}} Val.:
+                          <option value="{{lote.id}}">{{lote.lote}} - Qnt.: {{lote.quantidade}} {{produto.unidade_contagem}} Val.:
                             {{lote.vencimento}} {{lote.fornecedor}}</option>
                           {% set hasLotes = true %}
                           {% endif %}

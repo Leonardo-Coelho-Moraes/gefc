@@ -132,6 +132,7 @@ public function atendido(string $pedido) {
             pedidos.produto_id,
             pedidos.local,
             produtos.nome,
+            produtos.unidade_contagem,
             pedidos.qnt_solicitada
         FROM 
             pedidos
