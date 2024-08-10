@@ -107,16 +107,14 @@
                             <tr data-id="{{registro.local_estoque_id }}" data-produto="{{ registro.nome }}">
                                 <td>{{ registro.local_estoque_id }}</td>
                                 <td>
-                                    <a href="#"
-                                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                                    
                                         {{ registro.lote }}
-                                    </a>
+                                   
                                 </td>
                                 <td>
-                                    <a href="{{ url('produtos/' ~ registro.slug ~ '/' ~ registro.produto_id) }}"
-                                        class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                                   
                                         {{ registro.nome }}
-                                    </a>
+                                   
                                 </td>
                                 
                                 <td>{{ registro.estoque }}</td>

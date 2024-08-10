@@ -12,10 +12,10 @@
           <h1>Lotes</h1>
         </div>
         <div class="col-sm-6">
-          <ol class="breadcrumb float-sm-right">
+          <ul class="breadcrumb float-sm-right">
             <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
             <li class="breadcrumb-item active">Lotes</li>
-          </ol>
+          </ul>
         </div>
       </div>
     </div><!-- /.container-fluid -->
@@ -157,11 +157,7 @@
                     <input class="form-control" id="localizacao" type="text" name="localizacao"
                       placeholder="Ex: Palet g12" required>
                   </div>
-                  <div class="col">
-
-                    <label>Cod. Barras</label>
-                    <input class="form-control" id="cod" type="number" name="cod" placeholder="Ex: 1234567890" required>
-                  </div>
+                  
                 </div>
               
                 <div class="form-group">
@@ -211,12 +207,7 @@
                     Manual!!!</span>
                 </div>
                 <div class="row form-group">
-                   <div class="col">
-                     <label>Cod. Barras</label>
-                     <input class="form-control" id="cod_edit" type="text" name="cod_edit"
-                       placeholder="Ex: 1234567890"
-                       required>
-                   </div>
+                  
                   <div class="col">
                     <label>Lote</label>
                     <input class="form-control" id="lote_edit" type="text" name="lote_edit" placeholder="Ex: 1234567890"
@@ -342,7 +333,7 @@
               <tr>
 
                 <th>ID</th>
-                <th>Cod. Barras</th>
+               
                 <th>Lote</th>
                 <th >Produto</th>
                 <th>Qnt.</th>
@@ -365,10 +356,9 @@
               <tr data-id="{{ lote.id }}" data-lote="{{lote.lote}}" data-quantidade="{{ lote.quantidade }}"
                 data-fornecedor="{{ lote.fornecedor }}" data-preco="{{ lote.preco }}"
                 data-preco-comercial="{{ lote.preco_comercial }}"
-                data-vencimento="{{ lote.vencimento }}"
-                data-cod-barras="{{ lote.cod }}" data-localizacao="{{lote.localizacao}}">
+                data-vencimento="{{ lote.vencimento }}" data-localizacao="{{lote.localizacao}}">
                 <td>{{lote.id}}</td>
-                <td>{{lote.cod}}</td>
+              
                 <td>{{lote.lote}}</td>
                 
                 <td class="text-wrap" style="width:600px;"><a href="{{url('produtos/'~lote.slug~'/'~lote.produto_id)}}"
@@ -394,7 +384,7 @@
                 <td>Registros: {{registros}}</td>
 
                 
-                <td></td>
+              
                 <td>Custo: {{preco}}R$ / Comercial : {{precoComercial}}R$</td>
                 <td>Total: {{ qnt }}</td>
 

@@ -2,8 +2,9 @@
   <!-- Brand Logo -->
   <a href="#" class="brand-link">
 
-    <span class="brand-text font-weight-light">SGE CAF</span>
-
+    
+    <img src="{{url('templates/assets/img/logo.png')}}" alt="Logo"  class="brand-image elevation-9" >
+<span class="brand-text font-weight-light">SGE CAF</span>
   </a>
 
   <!-- Sidebar -->
@@ -24,45 +25,47 @@
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
  {% if usuario().local == 0  and usuario().nivel == 1 %}
-        <li class="nav-item"><a href="#" class="nav-link"><i class=" nav-icon bi bi-box-arrow-right"></i>
+ <li class="nav-item">
+   <a href="{{url('')}}" class="nav-link"><i class="nav-icon fas fa-tachometer-alt"></i>
+     <p>Início</p>
+   </a></li>
+        <li class="nav-item"><a href="#" class="nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i>
             <p>Entrada Produtos<i class="right fas fa-angle-left"></i></p>
           </a>
           <ul class="nav nav-treeview">
 
-            <li class="nav-item"><a href="{{url('entrada')}}" class="nav-link"><i
-                  class=" nav-icon bi bi-box-arrow-right"></i>
+            <li class="nav-item"><a href="{{url('entrada')}}" class="nav-link"><i class="fa-solid fa-arrow-right-to-bracket"></i>
                 <p>Entrada Produtos</p>
               </a></li>
           </ul>
         </li>
 
 
-        <li class="nav-item"><a href="#" class="nav-link"><i class="nav-icon bi bi-box-arrow-left"></i>
+        <li class="nav-item"><a href="#" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
             <p>Saidas Local Registrado<i class="right fas fa-angle-left"></i></p>
           </a>
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="{{url('vendas')}}" class="nav-link"><i class="nav-icon bi bi-box-arrow-left"></i>
+              <a href="{{url('vendas')}}" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
                 <p>Saída por Nome</p>
               </a></li>
-            <li class="nav-item"><a href="{{url('registro/vendas')}}" class="nav-link"><i
-                  class="nav-icon bi bi-box-arrow-left"></i>
+            <li class="nav-item"><a href="{{url('registro/vendas')}}" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
                 <p>Saídas Por Produto</p>
               </a></li>
           </ul>
         </li>
-        <li class="nav-item"><a href="#" class="nav-link"><i class=" nav-icon bi bi-box-arrow-left"></i>
+        <li class="nav-item"><a href="#" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
             <p>Saidas Local Não Registrado<i class="right fas fa-angle-left"></i></p>
           </a>
           <ul class="nav nav-treeview">
 
             <li class="nav-item">
-              <a href="{{url('saidas/fora/')}}" class="nav-link"><i class="nav-icon  bi bi-box-arrow-left"></i>
+              <a href="{{url('saidas/fora/')}}" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
                 <p>Saídas por Nome</p>
               </a></li>
             <li class="nav-item">
-              <a href="{{url('registro/saida/fora')}}" class="nav-link"><i class="nav-icon  bi bi-box-arrow-left"></i>
+              <a href="{{url('registro/saida/fora')}}" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
                 <p>Saídas Por Produto</p>
               </a></li>
           </ul>
@@ -70,7 +73,7 @@
 
 
         <li class="nav-item">
-          <a href="{{url('produtos')}}" class="nav-link"><i class="nav-icon fa-solid fa-table"></i>
+          <a href="{{url('produtos')}}" class="nav-link"><i class="nav-icon fas fa-barcode"></i>
             <p>Produtos</p>
           </a></li>
           <li class="nav-item">
@@ -91,7 +94,7 @@
 
 
         <li class="nav-item"><a href="#" class="nav-link">
-          <i class="nav-icon bi bi-geo-alt-fill"></i>
+          <i class="fa-solid fa-location-crosshairs"></i>
             <p>Locais<i class="right fas fa-angle-left"></i></p>
           </a>
           <ul class="nav nav-treeview">
@@ -101,7 +104,7 @@
                 <p>Pedidos</p>
               </a></li>
             <li class="nav-item">
-              <a href="{{url('saidas/hospital')}}" class="nav-link"><i class="nav-icon  bi bi-box-arrow-left"></i>
+              <a href="{{url('saidas/hospital')}}" class="nav-link"><i class="fa-solid fa-arrow-left"></i>
                 <p>Registro Saidas Hospital</p>
               </a></li>
            
@@ -112,9 +115,9 @@
           </ul>
         </li>
  {%endif%}
-           {% if usuario().local != 0 and  usuario().nivel == 2 %}
+           {% if usuario().local != 0 and  usuario().nivel >= 2 %}
            <li class="nav-item"><a href="#" class="nav-link">
-              <i class="mav-icon bi bi-geo-alt-fill"></i>
+             <i class="fa-solid fa-location-crosshairs"></i>
               <p>{{nome.nome}}<i class="right fas fa-angle-left"></i></p>
              </a>
              <ul class="nav nav-treeview">
@@ -122,14 +125,14 @@
                {% if usuario().local == 3 %}
                <li class="nav-item">
                  <a href="{{ url('saida/hospital') }}" class="nav-link">
-                   <i class="nav-icon bi bi-box-arrow-left"></i>
+                   <i class="fa-solid fa-arrow-left"></i>
                    <p>Fazer Saída Hospital</p>
                  </a>
                </li>
 
                <li class="nav-item">
                  <a href="{{ url('saidas/hospital') }}" class="nav-link">
-                   <i class="nav-icon bi bi-box-arrow-left"></i>
+                   <i class="fa-solid fa-arrow-left"></i>
                    <p>Registro Saidas Hospital</p>
                  </a>
                </li>
@@ -148,8 +151,9 @@
            {%endif%}
 
         <li class="nav-item">
-          <a href="{{url('sair')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
-            <p>Sair</p>
+          <a href="{{url('sair')}}" class="nav-link"  alt='Deslogar'><i id="Deslogar" class="fa-solid fa-door-open"></i>
+          <p>Sair</p>
+            
           </a></li>
 
 

@@ -21,16 +21,16 @@ class LoteModelo {
  public function armazenar(array $dados): void {
     (new Inserir())->inserir(
         'lote',
-        'lote, produto_id, quantidade, fornecedor,cod,preco,preco_comercial,localizacao, vencimento',
-        [$dados['lote'],$dados['produto'],$dados['quantidade'],$dados['fornecedor'], $dados['cod'], $dados['preco'], $dados['preco_comercial'], $dados['localizacao'], $dados['vencimento']]
+        'lote, produto_id, quantidade, fornecedor,preco,preco_comercial,localizacao, vencimento',
+        [$dados['lote'],$dados['produto'],$dados['quantidade'],$dados['fornecedor'], $dados['preco'], $dados['preco_comercial'], $dados['localizacao'], $dados['vencimento']]
     );
 }
 
  public function atualizar(array $dados): void {
 
     (new Atualizar())->atualizar(
-        'lote', "lote = ?, produto_id = ?, quantidade = ?, fornecedor = ?,cod = ?, preco =?,preco_comercial =?,localizacao =?, vencimento = ?",
-        [$dados['lote_edit'],$dados['produto_edit'],$dados['quantidade_edit'],$dados['fornecedor_edit'], $dados['cod_edit'], $dados['preco_edit'], $dados['preco_comercial_edit'], $dados['localizacao_edit'], $dados['vencimento_edit']],
+        'lote', "lote = ?, produto_id = ?, quantidade = ?, fornecedor = ?, preco =?,preco_comercial =?,localizacao =?, vencimento = ?",
+        [$dados['lote_edit'],$dados['produto_edit'],$dados['quantidade_edit'],$dados['fornecedor_edit'], $dados['preco_edit'], $dados['preco_comercial_edit'], $dados['localizacao_edit'], $dados['vencimento_edit']],
         $dados['lote_id']
     );
 }
@@ -43,7 +43,7 @@ public function pesquisa(?string $dePesquisa = '1970-01-01', ?string $atePesquis
     $query = "
     SELECT  
     lote.id,
-        lote.cod,
+        
         lote.lote,
         produtos.id AS produto_id,
          produtos.nome,

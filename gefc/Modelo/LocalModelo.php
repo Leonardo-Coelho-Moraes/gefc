@@ -178,11 +178,12 @@ public function atendido(string $pedido) {
         local_estoque.id AS local_estoque_id,
         local_estoque.estoque,
         lote.lote,
-        lote.cod,
+        
         lote.id AS lote_id,
         lote.produto_id,
         lote.vencimento,
          lote.fornecedor,
+         produtos.unidade_contagem,
         produtos.nome
     FROM 
         local_estoque
@@ -240,6 +241,7 @@ public function atendido(string $pedido) {
         lote.vencimento,
          lote.fornecedor,
         produtos.nome,
+        produtos.unidade_contagem,
         lote.fornecedor,
         usuario.nome AS username
     FROM 

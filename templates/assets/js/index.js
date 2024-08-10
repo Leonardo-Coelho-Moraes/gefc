@@ -1,6 +1,7 @@
 
    $(document).ready(function() {
 
+    
      
        $('.editarEstoqueLocal').on('click', function() {
         // Pega a linha da tabela correspondente ao botão clicado
@@ -22,7 +23,7 @@
 
         // Captura os dados da linha
         var LoteId = row.data('id');
-        var cod = row.data('cod-barras');
+
         var lote = row.data('lote');
         var quantidade = row.data('quantidade');
         var fornecedor = row.data('fornecedor');
@@ -32,7 +33,7 @@
         var vencimento = row.data('vencimento');
         // Exibe os dados no formulário de edição
         $('#lote_id').val(LoteId);
-        $('#cod_edit').val(cod);
+      
         $('#lote_edit').val(lote);
         
         $('#quantidade_edit').val(quantidade);

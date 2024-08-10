@@ -150,7 +150,7 @@ public function pesquisaHospital(string $buscar) {
         registro_saida_sem_local.local,
         lote.lote,
         lote.fornecedor,
-        lote.cod,
+  
         lote.preco,
         lote.produto_id,
         produtos.nome,

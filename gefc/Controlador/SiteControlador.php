@@ -7,7 +7,6 @@ namespace gefc\Controlador;
  *
  * @author Leonardo
  */
-// mostrar todos os dados do lote, pallet
 use gefc\Modelo\Busca;
 use gefc\Modelo\Contar;
 use gefc\Modelo\UserModelo;
@@ -55,7 +54,6 @@ class SiteControlador extends Controlador
    
     public function index(): void
     {
-
         Helpers::redirecionar('entrada');
     }
 

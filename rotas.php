@@ -55,13 +55,13 @@ SimpleRouter::get(URL_SITE.'sair','SiteControlador@sair');
 
 SimpleRouter::start();
 } catch (Pecee\SimpleRouter\Exceptions\NotFoundHttpException $ex) {
-    if(Helpers::localhost()){
-        echo $ex;
-        //  Helpers::redirecionar('erro404'); e exclua o else para redirecionar e não exibir erros!
-    }
-  
-    else{
-     Helpers::redirecionar('erro404');}
+    if (Helpers::localhost()) {  
+        Helpers::redirecionar('erro404');  
+    } else {  
+        // Você pode redirecionar ou mostrar uma página de erro  
+        Helpers::redirecionar('erro404'); // A mesma atitude no ambiente de produção  
+    }  
+
      
      
 }

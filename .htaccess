@@ -3,5 +3,6 @@ RewriteCond %{SCRIPT_FILENAME} !-f
 RewriteCond %{SCRIPT_FILENAME} !-d
 RewriteCond %{SCRIPT_FILENAME} !-l
 RewriteBase /gefc
-
+# Proibir a listagem de diretórios  
+Options -Indexes  
 RewriteRule ^(.*)$ index.php [QSA,L]

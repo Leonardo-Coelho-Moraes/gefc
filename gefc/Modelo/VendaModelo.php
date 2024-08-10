@@ -185,7 +185,7 @@ class VendaModelo
         registro_vendas.qnt_solicitada,
         registro_vendas.data,
         lote.lote,
-        lote.cod,
+
         lote.fornecedor,
         lote.preco,
         lote.produto_id,
@@ -238,10 +238,11 @@ class VendaModelo
         lote.lote,
         lote.quantidade,
         lote.vencimento,
-        lote.cod,
+
         lote.fornecedor,
         lote.produto_id,
         produtos.nome,
+        produtos.unidade_contagem,
         produtos.id
     FROM 
         lote

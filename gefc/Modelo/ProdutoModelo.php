@@ -22,7 +22,7 @@ class ProdutoModelo {
     {
         $resultados = Helpers::validadarDados($dados);
 
-        $dadosArray = ['nome' => Helpers::Mudar($dados['produto'], [';'], ','), 'slug' => Helpers::Mudar(Helpers::slug($resultados['produto']) . '-' . uniqid(), [',', '.', '%', '/'], '_'), 'unidade_contagem' => $dados['unicont']];
+        $dadosArray = ['nome' => Helpers::Mudar($dados['produto'], [';'], ','), 'slug' => Helpers::Mudar(Helpers::slug($resultados['produto']) . '-' . uniqid(), [',', '.', '%', '/',' ', '+', '-','(',')'], '_'), 'unidade_contagem' => $dados['unicont']];
 
         if (strlen($dadosArray['nome']) < 2) {
             $mensagem = (new Mensagem)->erro('Preencha todos os campos corretamente, os números precisam ser maiores ou iguais a um e os nomes maiores ou iguais a 2 para as informações serem redundantes!')->flash();
@@ -45,7 +45,7 @@ class ProdutoModelo {
         // Criação do array de dados
         $dadosArray = [
             $dados['produto_edit'],
-            Helpers::Mudar(Helpers::slug($resultados['produto_edit']) . '-' . uniqid(), [',', '.', '%', '/', '?'], ''),
+            Helpers::Mudar(Helpers::slug($resultados['produto_edit']) . '-' . uniqid(), [',', '.', '%', '/', '?',' ', '+','-','(',')'], ''),
             $dados['unicont_edit'],
         ];
 
