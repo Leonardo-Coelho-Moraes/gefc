@@ -28,7 +28,7 @@ class SaidaModelo {
             $index = str_replace('lote', '', $key);
             $loteId = intval($value);
             $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
-
+                abs($quantidade);
                 $query = "UPDATE lote SET quantidade = quantidade - :qnt WHERE id = :id";
                 $stmt = Conexao::getInstancia()->prepare($query);
                 $stmt->bindParam(':qnt', $quantidade, PDO::PARAM_INT);
@@ -52,7 +52,8 @@ public function vendaRegistro(array $dados): void {
             $loteId = intval($value);
             $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
             $qntSolic = isset($dados['qntSolic' . $index]) ? intval($dados['qntSolic' . $index]) : 0;
-
+                abs($quantidade);
+                abs($qntSolic);
             if ($quantidade > 0) {
 
 
@@ -79,10 +80,11 @@ public function vendaRegistro(array $dados): void {
 
 public function adicionarAVenda(array $dados): void {
 
-
+        $quantidade = abs($dados['quantidade']);
+        $qntSolic = abs($dados['qntSolic']);
         $query = "UPDATE lote SET quantidade = quantidade - :qnt WHERE id = :id";
         $stmt = Conexao::getInstancia()->prepare($query);
-        $stmt->bindParam(':qnt', $dados['quantidade'], PDO::PARAM_INT);
+        $stmt->bindParam(':qnt', $quantidade, PDO::PARAM_INT);
         $stmt->bindParam(':id', $dados['lote'], PDO::PARAM_INT);
 
         $stmt->execute();
@@ -95,8 +97,8 @@ public function adicionarAVenda(array $dados): void {
         // Vincular os parâmetros
         $stmt->bindParam(':nome_venda', $dados['venda']);
         $stmt->bindParam(':lote', $dados['lote']);
-        $stmt->bindParam(':quantidade', $dados['quantidade']);
-        $stmt->bindParam(':qnt_solicitada', $dados['qntSolic']);
+        $stmt->bindParam(':quantidade', $quantidade);
+        $stmt->bindParam(':qnt_solicitada', $qntSolic);
         $stmt->bindParam(':local_id', $dados['local']);
         $stmt->bindParam(':datar', $dados['data']);
         $stmt->execute();
@@ -185,5 +187,16 @@ public function pesquisaHospital(string $buscar) {
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $resultado;
+    }
+
+    public function atualizarVenda(array $dados): void
+    {
+
+        $query = "UPDATE registro_saida_sem_local SET quantidade = :qnt WHERE id = :id";
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->bindParam(':qnt', $dados['quantidade_editada'], PDO::PARAM_INT);
+        $stmt->bindParam(':id', $dados['registro_id'], PDO::PARAM_INT);
+
+        $stmt->execute();
     }
 }

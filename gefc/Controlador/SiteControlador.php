@@ -18,6 +18,7 @@ use gefc\Modelo\ProdutoModelo;
 use gefc\Modelo\SaidaModelo;
 use gefc\Nucleo\Controlador;
 use gefc\Modelo\VendaModelo;
+use gefc\Modelo\Deletar;
 use gefc\Nucleo\Helpers;
 use gefc\Nucleo\Sessao;
 
@@ -46,7 +47,7 @@ class SiteControlador extends Controlador
     }
     private function verificarPermissaoAdmin()
     {
-        if ($this->nivel_user != 1) {
+        if ($this->nivel_user > 3) {
 
             Helpers::redirecionar('local');
         }
@@ -61,10 +62,10 @@ class SiteControlador extends Controlador
     {
         $this->verificarPermissaoAdmin();
         //ok 100% testado!!!!
-        $lotes = (new Busca())->busca(null, null, 'lote', '', null);
-        $produtos = (new Busca())->buscaLimitada(null, null, 'id,nome,slug', 'produtos', null, 'nome ASC');
-        $registros = (new EntradaModelo())->pesquisa('1970-01-01', '2099-12-31', '', '');
-       
+        $lotes = (new LoteModelo())->pesquisaEntrada();
+        $data = date('Y-m-d');
+        $registros = (new EntradaModelo())->pesquisa($data, $data, '', '');
+        $produtos = (new Busca())->busca(null, null, 'produtos', "");
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados['registro_id'])) {
             (new EntradaModelo())->atualizar($dados);
@@ -81,73 +82,58 @@ class SiteControlador extends Controlador
             $registros = (new EntradaModelo())->pesquisa($dados['dePesquisa'], $dados['atePesquisa'], $dados['produtoPesquisa'], $dados['fornecedorPesquisa']);
         }
 
-        echo $this->template->renderizar('entrada.html', ['titulo' => SITE_NOME . ' Entrada', 'registros' => $registros, 'produtos' => $produtos, 'lotes' => $lotes]);
+        echo $this->template->renderizar('entrada.html', ['titulo' => SITE_NOME . ' Entrada', 'registros' =>$registros, 'lotes' =>$lotes, 'produtos' => $produtos]);
     }
-
-    public function vendas(): void
+    public function deletarEntrada(int $id): void
     {
         $this->verificarPermissaoAdmin();
-        $locais = (new Busca())->busca(null, null, 'locais', '', '', null);
-        $lotes = (new VendaModelo())->pesquisaFormulario();
-        $lotesArray = json_encode($lotes);
-
-        $registros = (new Busca())->busca(null, null, 'registro_vendas', "", null, null);
-
-        $vendasAgrupadas = [];
-
-        // Agrupa os registros pela venda (nome_venda) e data
-        foreach ($registros as $registro) {
-            $nomeVenda = $registro['nome_venda'];
-
-            $data = $registro['data'];
-
-
-            if (!isset($vendasAgrupadas[$nomeVenda])) {
-                $vendasAgrupadas[$nomeVenda] = [];
-            }
-
-            if (!isset($vendasAgrupadas[$nomeVenda][$data])) {
-                $vendasAgrupadas[$nomeVenda][$data] = [];
-            }
-
-            $vendasAgrupadas[$nomeVenda][$data][] = $registro;
-        }
-
-        echo $this->template->renderizar('vendas.html', [
-            'titulo' => SITE_NOME . ' Saídas',
-            'vendasAgrupadas' => $vendasAgrupadas, 'locais' => $locais, 'lotesarray' => $lotesArray
-        ]);
+        (new Deletar())->deletar($id,'registro_entrada');
+        $this->mensagem->sucesso('Entrada Deletada com Sucesso!')->flash();
+        Helpers::redirecionar('entrada/');
     }
+    public function deletarProdutos(int $id): void
+    {
+        $this->verificarPermissaoAdmin();
+        (new Deletar())->deletar($id, 'produtos');
+        $this->mensagem->sucesso('Produto Deletado com Sucesso!')->flash();
+        Helpers::redirecionar('produtos/');
+    }
+    public function deletarSaida(int $id): void
+    {
+        $this->verificarPermissaoAdmin();
+        (new Deletar())->deletar($id, 'registro_vendas');
+        $this->mensagem->sucesso('Saída deletada, edite no seu estoque a diferença que você deletou!')->flash();
+        Helpers::redirecionar('registro/vendas/');
+    }
+    public function deletarSaidaFora(int $id): void
+    {
+        $this->verificarPermissaoAdmin();
+        (new Deletar())->deletar($id, 'registro_saida_sem_local');
+        $this->mensagem->sucesso('Saída deletada, edite no seu estoque a diferença que você deletou!')->flash();
+        Helpers::redirecionar('registro/saida/fora/');
+    }
+   
 
     public function venda(string $nome): void
     {
         $this->verificarPermissaoAdmin();
-        $locais = (new Busca())->busca(null, null, 'locais', "", null);
-        $lotes = (new Busca())->busca(null, null, 'lote', 'quantidade > 0', null, null);
-        $produtos = (new Busca())->busca(null, null, 'produtos', "", 'nome ASC', null);
-        //$registros = (new Busca())->buscarVenda( $nome);
-        $registros = (new Busca())->busca(null, null, 'registro_vendas', "nome_venda =  '{$nome}' ", null, null);
-
-
+        $registros = (new VendaModelo())->pesquisaSaida($nome);
+        $lotes = (new VendaModelo())->pesquisaFormulario();
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados['adicionar_produto'])) {
             (new VendaModelo())->adicionarAVenda($dados);
             $this->mensagem->sucesso('Produto adiconado a venda com Sucesso.')->flash();
             Helpers::redirecionar('vendas/' . $nome);
         }
-        
-
-        $localId = $registros[0]['local'];
-        if (!empty($localId)) {
-            $local = (new Busca())->busca(null, null, 'locais', "id = $localId", null);
-        } else {
-            $local = [];
-        }
-
-
-        echo $this->template->renderizar('venda.html', ['titulo' => SITE_NOME . ' ' . $nome, 'registros' => $registros, 'produtos' => $produtos, 'venda' => $nome, 'local' => $local, 'locais' => $locais, 'lotes' => $lotes]);
+        elseif (isset($dados['registro_id'])) {
+            (new VendaModelo())->atualizarVenda($dados);
+            $this->mensagem->alerta('Registro Editado com Sucesso. Corrija a quantidade de estoque do produto pra mais ou para menos!')->flash();
+            Helpers::redirecionar("vendas/".$nome);
+        } 
+        echo $this->template->renderizar('venda.html', ['titulo' => SITE_NOME . ' ' . $nome, 'registros' => $registros, 'venda' => $nome, 'lotes' => $lotes ]);
     }
 
+  
     public function venda_adicionar(): void
     {
         $this->verificarPermissaoAdmin();
@@ -156,8 +142,10 @@ class SiteControlador extends Controlador
         if (isset($dados)) {
             (new VendaModelo())->venda($dados);
             (new VendaModelo())->vendaRegistro($dados);
+            (new VendaModelo())->deletarProdutosSemEstoque();
             $this->mensagem->sucesso('Saída Feita com Sucesso!')->flash();
-            Helpers::redirecionar('vendas');
+            Helpers::redirecionar('registro/vendas');
+
         }
     }
 
@@ -166,11 +154,11 @@ class SiteControlador extends Controlador
         
         $this->verificarPermissaoAdmin();
         $locais = (new Busca())->busca(null, null, 'locais', '', '', null);
-
+        $data = date('Y-m-d');
         $lotes = (new VendaModelo())->pesquisaFormulario();
         $lotesArray =json_encode($lotes);
 
-        $pesquisa = (new VendaModelo())->pesquisa('1970-01-01', '2099-12-31', '', '','');
+        $pesquisa = (new VendaModelo())->pesquisa($data, $data, '', '','');
 
         // Chamar o modelo para realizar a pesquisa
         if(isset($_POST['relatorio'])){
@@ -180,54 +168,16 @@ class SiteControlador extends Controlador
         echo $this->template->renderizar('registroVendas.html', ['titulo' => SITE_NOME . 'Saídas por Produto', 'locais' => $locais, 'lotes' => $lotes, 'pesquisas'=> $pesquisa, 'lotesarray' => $lotesArray]);
     }
 
-    public function saidasFora(): void
-    {
-        $this->verificarPermissaoAdmin();
-       
-        $registros = (new Busca())->busca(null, null, 'registro_saida_sem_local', "", null, null);
 
-        $lotes = (new VendaModelo())->pesquisaFormulario();
-        $lotesArray = json_encode($lotes);
-        
-
-        $vendasAgrupadas = [];
-
-        // Agrupa os registros pela venda (nome_venda) e data
-        foreach ($registros as $registro) {
-            $nomeVenda = $registro['nome_saida'];
-            $data = $registro['data'];
-            $local = $registro['local'];
-
-            if (!isset($vendasAgrupadas[$nomeVenda])) {
-                $vendasAgrupadas[$nomeVenda] = [];
-            }
-
-            if (!isset($vendasAgrupadas[$nomeVenda][$data])) {
-                $vendasAgrupadas[$nomeVenda][$data] = [];
-            }
-
-            if (!isset($vendasAgrupadas[$nomeVenda][$data][$local])) {
-                $vendasAgrupadas[$nomeVenda][$data][$local] = [];
-            }
-
-            $vendasAgrupadas[$nomeVenda][$data][$local][] = $registro;
-        }
-
-
-        echo $this->template->renderizar('saidasFora.html', [
-            'titulo' => SITE_NOME . ' Saídas Fora Por Nome',
-            'vendasAgrupadas' => $vendasAgrupadas, 'lotesarray' => $lotesArray
-        ]);
-    }
 
     public function saidaFora(string $nome): void
     {
         $this->verificarPermissaoAdmin();
-        $locais = (new Busca())->busca(null, null, 'locais', "", null);
-        $lotes = (new Busca())->busca(null, null, 'lote', 'quantidade > 0', null, null);
-        $produtos = (new Busca())->busca(null, null, 'produtos', "", '', null);
-        $registros = (new Busca())->busca(null, null, 'registro_saida_sem_local', "nome_saida =  '{$nome}' ", null, null);
-        $local = $registros[0]['local'];
+      
+       
+        $lotes = (new VendaModelo())->pesquisaFormulario();
+        $registros = (new VendaModelo())->pesquisaSaidaSem($nome);
+      
 
        
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
@@ -235,18 +185,22 @@ class SiteControlador extends Controlador
             (new SaidaModelo())->adicionarAVenda($dados);
             $this->mensagem->sucesso('Produto adiconado a venda com Sucesso.')->flash();
             Helpers::redirecionar('saidas/fora/' . $nome);
-        }
+        } elseif (isset($dados['registro_id'])) {
+            (new SaidaModelo())->atualizarVenda($dados);
+            $this->mensagem->alerta('Registro Editado com Sucesso. Corrija a quantidade de estoque do produto pra mais ou para menos!')->flash();
+            Helpers::redirecionar('saidas/fora/' . $nome);
+        } 
 
-        echo $this->template->renderizar('saidaFora.html', ['titulo' => SITE_NOME . ' ' . $nome, 'registros' => $registros, 'produtos' => $produtos, 'saida' => $nome, 'local' => $local, 'locais' => $locais, 'lotes' => $lotes]);
+        echo $this->template->renderizar('saidaFora.html', ['titulo' => SITE_NOME . ' ' . $nome, 'registros' => $registros,'saida' => $nome,'lotes' => $lotes]);
     }
 
     public function registroSaidaFora(): void
     {
         $this->verificarPermissaoAdmin();
-
+        $data = date('Y-m-d');
         $lotes = (new VendaModelo())->pesquisaFormulario();
         $lotesArray = json_encode($lotes);
-        $pesquisa = (new SaidaModelo())->pesquisa('1970-01-01', '2099-12-31', '', '','');
+        $pesquisa = (new SaidaModelo())->pesquisa($data, $data, '', '','');
 
         // Chamar o modelo para realizar a pesquisa
         if (isset($_POST['relatorio'])) {
@@ -266,7 +220,7 @@ class SiteControlador extends Controlador
             (new SaidaModelo())->venda($dados);
             (new SaidaModelo())->vendaRegistro($dados);
             $this->mensagem->sucesso('Saída Fora Feita com Sucesso!')->flash();
-            Helpers::redirecionar('saidas/fora/');
+            Helpers::redirecionar('registro/saida/fora/');
         }
     }
 
@@ -287,7 +241,7 @@ class SiteControlador extends Controlador
 
 
         $agora = strtotime(date('Y-m-d'));
-        $produtos = (new ProdutoModelo())->pesquisa('');
+        $produtos = (new ProdutoModelo())->pesquisa('Az-rtrgd4');
 
         $pesquisa = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
 
@@ -304,11 +258,17 @@ class SiteControlador extends Controlador
     public function lotes(): void
     {
         $this->verificarPermissaoAdmin();
+       
 
         $produto = filter_input(INPUT_POST, 'produto', FILTER_DEFAULT);
         if (isset($produto)) {
             $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-            if (isset($dados)) {
+            if (isset($dados['entrada'])) {
+                (new LoteModelo())->armazenarEntrada($dados);
+                $this->mensagem->sucesso('Lote Adicionado com Sucesso.')->flash();
+                Helpers::redirecionar('entrada');
+            }
+            else {
                 (new LoteModelo())->armazenar($dados);
                 $this->mensagem->sucesso('Lote Adicionado com Sucesso.')->flash();
                 Helpers::redirecionar('lotes');
@@ -323,14 +283,24 @@ class SiteControlador extends Controlador
                 Helpers::redirecionar('lotes');
             }
         }
-        $lotes = (new LoteModelo())->pesquisa('1970-01-01', '2099-12-31', '', '');
+        $lotes = (new LoteModelo())->pesquisa('', '', '');
         if (isset($_POST['relatorio'])) {
             $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-            $lotes = (new LoteModelo())->pesquisa($dados['dePesquisa'], $dados['atePesquisa'], $dados['produtoPesquisa'],  $dados['fornecedorPesquisa']);
+            $lotes = (new LoteModelo())->pesquisa($dados['codPesquisa'], $dados['produtoPesquisa'],  $dados['fornecedorPesquisa'], 100000);
         }
       
-        $produtos = (new Busca())->busca(null,null,'produtos',"produtos.slug != ''");
+        $produtos = (new Busca())->busca(null,null,'produtos',"");
         echo $this->template->renderizar('lotes.html', ['titulo' => SITE_NOME . ' Lotes', 'lotes' => $lotes,'produtos'=> $produtos]);
+    }
+
+    public function teste(): void
+    {
+        
+        $lotes = (new LoteModelo())->pesquisa('1970-01-01', '2099-12-31', '', '');
+        $lotesArray = json_encode($lotes);
+
+       
+        echo $this->template->renderizar('lotesgerar.html', ['titulo' => SITE_NOME . ' Lotes', 'lotes' => $lotes, 'lotesArray' => $lotesArray]);
     }
 
     public function produto_cadastrar(): void
@@ -365,15 +335,11 @@ class SiteControlador extends Controlador
         $locais = (new Busca())->busca(null, null, 'locais', null);
 
         $estoque = [];  // Inicializa a variável $estoque
-        $produtos = [];
-        $lotes = [];
         if (isset($_POST['local'])) {
             $pesquisa = $_POST['local'];
-            $estoque = (new Busca())->busca(null, null, 'local_estoque', "local_id = $pesquisa", '', null);
-            $produtos = (new Busca())->buscaLimitada(null, null, 'id,nome,slug', 'produtos', null, 'nome ASC', null);
-            $lotes = (new Busca ())->busca(null,null,'lote','', null,null);
+            $estoque = (new LocalModelo())->estoqueLocal($pesquisa);
         }
-        echo $this->template->renderizar('estoqueLocais.html', ['titulo' => SITE_NOME . ' Estoque', 'produtos' => $produtos, 'locais' => $locais, 'estoque' => $estoque, 'lotes' => $lotes]);
+        echo $this->template->renderizar('estoqueLocais.html', ['titulo' => SITE_NOME . ' Estoque',  'locais' => $locais, 'estoque' => $estoque]);
     }
     public function local(): void
     {
@@ -383,6 +349,7 @@ class SiteControlador extends Controlador
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if (isset($dados['estoque'])) {   
             (new VendaModelo())->atualizarEstoque($dados);
+             
             $this->mensagem->sucesso("Estoque do Produto Editado.")->flash();
             Helpers::redirecionar('local');
         }
@@ -403,6 +370,51 @@ class SiteControlador extends Controlador
         }
 
         echo $this->template->renderizar('formularios/fazerPedido.html', ['titulo' => SITE_NOME . 'Pedido', 'produtos' => $produtos, 'nome' => $nome]);
+    }
+
+    public function entradaLocal(): void
+    {
+
+        $local = UsuarioControlador::usuario()->local;
+        //$local = UsuarioControlador::usuario()->local;
+        $nome = (new Busca())->buscaId('locais', $local);
+        $recebidos = (new LocalModelo())->recebidos($local);
+        $vendasAgrupadas = [];
+
+        // Agrupa os registros pela venda (nome_venda) e data
+        foreach ($recebidos as $registro) {
+            $nomeVenda = $registro['nome_entrada'];
+
+            $data = $registro['data'];
+
+
+            if (!isset($vendasAgrupadas[$nomeVenda])) {
+                $vendasAgrupadas[$nomeVenda] = [];
+            }
+
+            if (!isset($vendasAgrupadas[$nomeVenda][$data])) {
+                $vendasAgrupadas[$nomeVenda][$data] = [];
+            }
+
+            $vendasAgrupadas[$nomeVenda][$data][] = $registro;
+        }
+
+        echo $this->template->renderizar('entradaLocal.html', ['titulo' => SITE_NOME . ' Entradas ' . $nome->nome, 'nome' => $nome,'vendasAgrupadas' => $vendasAgrupadas, 'local' => $local]);
+    }
+    public function confirmacaoLocal(string $entrada, int $local): void
+    {
+
+        $entradas = (new LocalModelo())->confirmacao($local, $entrada);
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) {
+            
+            (new LocalModelo())->confirmado($dados);
+            $this->mensagem->sucesso('Produtos Confirmados com Sucesso')->flash();
+            Helpers::redirecionar('local/entrada/');
+        }
+
+
+        echo $this->template->renderizar('confirmacao.html', ['titulo' => SITE_NOME . 'Confirmar Entrada', 'entradas' => $entradas, 'entrada' => $entrada,'local'=>$local ]);
     }
 
     public function pedidos(): void
@@ -507,10 +519,10 @@ class SiteControlador extends Controlador
 
     public function registroSaidasHospital(): void
     {
-
+        $data = date('Y-m-d');
         $local = UsuarioControlador::usuario()->local;
         $nome = (new Busca())->buscaId('locais', $local);
-        $registros = (new LocalModelo())->saidasHospital('1970-01-01', '2099-12-31', '', '', '');
+        $registros = (new LocalModelo())->saidasHospital($data, $data, '', '', '');
         if (isset($_POST['relatorio'])) {
             $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
             $registros = (new LocalModelo())->saidasHospital($dados['dePesquisa'], $dados['atePesquisa'], $dados['produtoPesquisa'], $dados['localPesquisa'], $dados['fornecedorPesquisa']);
@@ -525,7 +537,8 @@ class SiteControlador extends Controlador
         $usuarios = (new Busca())->busca(null, null, 'usuario', '', '', null);
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         $locais = (new Busca())->busca(null, null, 'locais', '', '', null);
-        if (isset($dados)) {
+        $usuario = UsuarioControlador::usuario()->nivel;
+        if (isset($dados) AND $usuario == 1) {
             (new UserModelo())->cadastro($dados);
             Helpers::redirecionar('usuarios');
         }

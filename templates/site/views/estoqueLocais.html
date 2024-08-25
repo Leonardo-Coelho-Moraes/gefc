@@ -79,8 +79,8 @@
                     <table id="example" class="table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>Id</th>
-                                <th>Lote</th>
+                            
+                                <th>Cod:</th>
                                 <th>Produto</th>
                                 <th>Qnt.</th>
 
@@ -89,37 +89,24 @@
                         </thead>
                         <tbody>
                             {% for registro  in estoque %}
-                            {% set loteNome = '' %}
-                            {% set ProdutoId = '' %}
-                            {% set ProdutoNome = '' %}
-                            {% for lote in lotes %}
-                            {% if registro.lote_id == lote.id %}
-                            {% set loteNome = lote.lote %}
-                            {% set ProdutoId = lote.produto_id %}
-                            {% for pro in produtos %}
-                            {% if pro.id == ProdutoId %}
-                            {% set ProdutoNome = pro.nome %}
+                           
                             <tr>
-                                <td>{{registro.id}}</td>
+                           
                                  <td>
-                                     <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
-                                         class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                                         {{ loteNome }}
-                                     </a>
+                                     
+                                         {{ registro.lote_id }}
+                                 
                                  </td>
                                 <td>
-                                    <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
+                                    <a href="{{ url('produtos/' ~ registro.slug ~ '/' ~ registro.produto_id) }}"
                                         class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                                        {{ ProdutoNome }}
+                                        {{ registro.nome }}
                                     </a>
                                 </td>
                                 <td>{{ registro.estoque }}</td>
 
                             </tr>
-                            {% endif %}
-                            {% endfor %}
-                            {% endif %}
-                            {% endfor %}
+                        
                             {% endfor %}
 
                         </tbody>

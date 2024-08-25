@@ -269,6 +269,37 @@ public function atendido(string $pedido) {
         return $resultado;
     }
 
+    public function estoqueLocal(string $pesquisa)
+    {
+        $conexao = Conexao::getInstancia();
+
+        $query = "
+    SELECT 
+        local_estoque.id,
+        local_estoque.lote_id,
+        local_estoque.estoque,
+        produtos.nome,
+        produtos.slug,
+        lote.produto_id
+    FROM 
+        local_estoque
+    JOIN 
+        lote ON local_estoque.lote_id = lote.id
+    JOIN 
+        produtos ON lote.produto_id = produtos.id
+         WHERE 
+        (local_estoque.local_id = :pesquisa)
+        
+    ";
+
+        $stmt = $conexao->prepare($query);
+        $stmt->bindValue(':pesquisa', $pesquisa, PDO::PARAM_INT);
+
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+
     public function pesquisaPedir()
     {
         $conexao = Conexao::getInstancia();
@@ -295,7 +326,100 @@ public function atendido(string $pedido) {
         return $resultado;
     }
 
+    public function recebidos(int $local)
+    {
+        $conexao = Conexao::getInstancia();
 
+        $query = "
+    SELECT 
+        registro_recebimento_local.id AS registro_recebimento_local_id,
+        registro_recebimento_local.data,
+        registro_recebimento_local.nome_entrada
+    FROM 
+        registro_recebimento_local
+    WHERE 
+        (registro_recebimento_local.local = :local AND registro_recebimento_local.exibir = 0  )
+    ";
+
+        $stmt = $conexao->prepare($query);
+
+        $stmt->bindValue(':local',$local, PDO::PARAM_INT);
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+    public function confirmacao(int $local, string $entrada)
+    {
+        $conexao = Conexao::getInstancia();
+
+        $query = "
+    SELECT 
+        registro_recebimento_local.id AS registro_recebimento_local_id,
+        registro_recebimento_local.lote_id,
+        registro_recebimento_local.quantidade,
+        registro_recebimento_local.nome_entrada,
+        produtos.nome
+    FROM 
+        registro_recebimento_local
+    JOIN 
+        lote ON registro_recebimento_local.lote_id = lote.id
+    JOIN 
+        produtos ON lote.produto_id = produtos.id
+    WHERE 
+        (registro_recebimento_local.local = :local AND registro_recebimento_local.nome_entrada = :entrada)
+    ";
+
+        $stmt = $conexao->prepare($query);
+
+        $stmt->bindValue(':local', $local, PDO::PARAM_INT);
+        $stmt->bindValue(':entrada', $entrada, PDO::PARAM_STR);
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+
+    public function confirmado(array $dados): void
+    {
+        // Verifique se os dados foram fornecidos corretamente
+
+        foreach ($dados as $key => $value) {
+            if (strpos($key, 'lote') === 0) {
+                $index = str_replace('lote', '', $key);
+                $loteId = intval($value);
+                $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
+                $produto = $dados['produto' . $index];
+                abs($quantidade);
+                if ($quantidade > 0) {
+                    $updateConQuery = "UPDATE registro_recebimento_local SET quantidade_confirmada = ?, confirmado = ?, exibir = ? WHERE id = ?";
+                    $stmtUpdateCon = Conexao::getInstancia()->prepare($updateConQuery);
+                    $stmtUpdateCon->execute([$quantidade, 1,1, $produto]);
+
+                    // Verifique se o produto já existe na tabela local_estoque
+                    $localId = intval($dados['local']);
+                    $query = "SELECT estoque FROM local_estoque WHERE lote_id = ? AND local_id = ?";
+                    $stmt = Conexao::getInstancia()->prepare($query);
+                    $stmt->execute([$loteId, $localId]);
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if ($result) {
+                        // Produto já existe no local, atualize o estoque
+                        $estoqueAtual = intval($result['estoque']);
+                        $novoEstoque = $estoqueAtual + $quantidade;
+                        abs($novoEstoque);
+                        $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE lote_id = ? AND local_id = ?";
+                        $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
+                        $stmtUpdate->execute([$novoEstoque, $loteId, $localId]);
+                    } else {
+                        // Produto não existe no local, insira um novo registro
+                        $insertQuery = "INSERT INTO local_estoque (local_id, lote_id, estoque) VALUES (?, ?, ?)";
+                        $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
+                        $stmtInsert->execute([$localId, $loteId, $quantidade]);
+                    }
+                }
+
+            }
+        }
+    }
 
 
 }

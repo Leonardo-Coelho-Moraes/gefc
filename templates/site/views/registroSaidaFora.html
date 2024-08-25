@@ -98,7 +98,7 @@
         <!-- Default box -->
         <div class="card">
           <div class="card-header bg-primary">
-            <h3 class="card-title">Relatório</h3>
+            <h3 class="card-title">Pesquisa</h3>
 
 
           </div>
@@ -196,7 +196,12 @@
                </a>
              </td>
              <td>{{ registro.fornecedor }}</td>
-             <td>{{ registro.nome_saida }}</td>
+             <td>
+              <a href="{{ url('saidas/fora/'~registro.nome_saida) }}"
+                class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                {{ registro.nome_saida }}
+              </a>
+             </td>
 
 
              <td>{{ registro.local}}</td>

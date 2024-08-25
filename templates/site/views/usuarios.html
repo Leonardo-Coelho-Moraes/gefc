@@ -65,7 +65,9 @@
                                           class='form-control'
                                           name="nivel">
                                           <option value="1">Administrador</option>
-                                          <option value="2">Local</option>
+                                          <option value="2">Entrada</option>
+                                          <option value="3">Saída</option>
+                                          <option value="4">Local</option>
 
                                       </select>
                                   </div>
@@ -126,58 +128,49 @@
                                 <th>Nome</th>
                                 <th>Acesso</th>
                                 <th>Local</th>
+                                 <th>Senha</th>
                                 <th>Ação</th>
                             
                             </tr>
                         </thead>
                         <tbody>
-                                {%set nomeLocal = ''%}
-                              {%for usuario in usuarios%}
-                                 {%for local in locais%}
-                                 {%if local.id == usuario.local%}
-                                 
-                                   {%if usuario.local == 0%}
-                                    {%set nomeLocal = 'Todos'%}
-                                    {%else%}
-                                     {%set nomeLocal = local.nome%}
-                                    {%endif%}
-                                 {%endif%}
-                                 {%endfor%}
-                              <tr>
-
-                                  <td>
-                                      {{usuario.id}}
-                                  </td>
-                                  <td>
-                                      {{usuario.nome}}
-                                  </td>
-                                  <td>
-                                      {{usuario.nivel}}</td>
-                                     
-                                      
-                                     
-                                       <td>
-                                           {{nomeLocal}}
-                                       </td>
-                                       
-                                  <td>
-                                   
-                                      <a href="{{url('usuarios/editar/'~usuario.id)}}"
-                                          class="btn btn-primary">
-                                          Editar
-                                      </a>
-                                      / <a href="{{url('usuarios/deletar/'~usuario.id)}}" 
-                                          class="btn btn-danger">
-                                          Deletar
-                                      </a>
-
-                                  </td>
-                              </tr>
-
-                              
- {%endfor%}
-                              
-                         
+                            {% for usuario in usuarios %}
+                            {% set nomeLocal = 'Administração' %} {# Valor padrão #}
+                            {% for local in locais %}
+                            {% if local.id == usuario.local %}
+                            {% if usuario.local != 1 %}
+                            {% set nomeLocal = local.nome %}
+                            {% else %}
+                            {% set nomeLocal = 'Todos' %}
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                            <tr>
+                                <td>{{ usuario.id }}</td>
+                                <td>{{ usuario.nome }}</td>
+                               {% set nivel = 'indeterminado' %}
+                                 {% if usuario.nivel == 1 %}
+                                 {% set nivel = 'Administrador' %}
+                                 {% elseif usuario.nivel == 2 %}
+                                 {% set nivel = 'Entrada' %}
+                                 {% elseif usuario.nivel == 3 %}
+                                 {% set nivel = 'Saída' %}
+                                 {% elseif usuario.nivel == 4 %}
+                                 {% set nivel = 'Local' %}
+                                  {% endif %}
+                                <td>{{ nivel }}</td>
+                                  
+                                <td>{{ nomeLocal }}</td>
+                                <td>{{ usuario.senha }}</td>
+                                <td>
+                                    <a href="{{ url('usuarios/editar/' ~ usuario.id) }}"
+                                        class="btn btn-primary">Editar</a>
+                                    /
+                                    <a href="{{ url('usuarios/deletar/' ~ usuario.id) }}"
+                                        class="btn btn-danger">Deletar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                     </table>
                 </div>

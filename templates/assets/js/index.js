@@ -23,7 +23,10 @@
 
         // Captura os dados da linha
         var LoteId = row.data('id');
-
+        var produto = row.data('produto');
+        var nome = row.data('nome');
+        
+        
         var lote = row.data('lote');
         var quantidade = row.data('quantidade');
         var fornecedor = row.data('fornecedor');
@@ -34,8 +37,9 @@
         // Exibe os dados no formulário de edição
         $('#lote_id').val(LoteId);
       
+      $('#select2-produto_edit-container').text(nome);
         $('#lote_edit').val(lote);
-        
+        $('#produto_edit').val(produto);
         $('#quantidade_edit').val(quantidade);
         $('#fornecedor_edit').val(fornecedor);
         $('#preco_edit').val(preco);
@@ -78,4 +82,22 @@
           $('#form_edit_entrada').css('display', 'block');
 
         });
+         $('.editarSaida').on('click', function () {
+           // Pega a linha da tabela correspondente ao botão clicado
+           var row = $(this).closest('tr');
+          console.log('oi');
+
+           // Captura os dados da linha
+           var registroId = row.data('id');
+           var produtoNome = row.data('nome');
+           var lote = row.data('lote');
+           var quantidade = row.data('quantidade');
+
+           // Exibe os dados no parágrafo
+           $('#registro_id').val(registroId);
+           $('#produtoNome').val('COD:'+lote + " - " + produtoNome);
+           $('#quantidade_editada').val(quantidade);
+           $('#form_edit_saida').css('display', 'block');
+
+         });
       });

@@ -21,23 +21,7 @@
     </div><!-- /.container-fluid -->
   </section>
 
-  <div class="content">
-    <div class="container-fluid">
-      <div class="row mb-2">
-        <form action="{{url('produtos')}}" class='col' method="post">
-          <div class="input-group">
-            <input type="search" name='pesquisa' class="form-control form-control-md" placeholder="Pesquisar">
-            <div class="input-group-append">
-              <button type="submit" class="btn btn-md btn-primary">
-                <i class="fa fa-search"></i>
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
-  </div>
-
+ 
   {{flash()}}
 
 
@@ -141,6 +125,22 @@
   </section>
 
 
+ <div class="content">
+   <div class="container-fluid">
+     <div class="row mb-2">
+       <form action="{{url('produtos')}}" class='col' method="post">
+         <div class="input-group">
+           <input type="search" name='pesquisa' class="form-control form-control-md" placeholder="Pesquise um produto para Exibir dados.">
+           <div class="input-group-append">
+             <button type="submit" class="btn btn-md btn-primary">
+               <i class="fa fa-search"></i>
+             </button>
+           </div>
+         </div>
+       </form>
+     </div>
+   </div>
+ </div>
 
 
   <!-- Main content -->
@@ -172,7 +172,11 @@
                 </td>
 
                 <td class="d-flex justify-content-center"> <button class="btn btn-primary editProduto"
-                    data-bs-toggle="modal" data-bs-target="#editarProduto">Editar</button></td>
+                    data-bs-toggle="modal" data-bs-target="#editarProduto">Editar</button>
+                     {%if usuario().nivel == 1%}<a
+                      href="{{url('produtos/deletar/'~produto.id)}}" class="btn btn-danger btn-sm">Deletar</a>
+                      {%endif%}
+                    </td>
               </tr>
               {%endfor%}
             </tbody>

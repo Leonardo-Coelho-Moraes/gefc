@@ -102,7 +102,7 @@
           <!-- Default box -->
           <div class="card">
             <div class="card-header bg-primary">
-              <h3 class="card-title">Relatório</h3>
+              <h3 class="card-title">Pesquisa</h3>
 
 
             </div>
@@ -117,7 +117,6 @@
                   <div class="col-2"> <label>Até:</label>
                     <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
                   </div>
-
                   <div class="col-5"> <label>Produtos:</label>
                     <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
                       placeholder="Deixe vazio para pesquisar todos os Produtos"></div>
@@ -187,12 +186,7 @@
 
             <tr>
               <td>{{ registro.registro_id }}</td>
-              <td>
-                <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
-                  class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
-                  {{ registro.lote }}
-                </a>
-              </td>
+              <td>{{ registro.lote }}</td>
               <td>
                 <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
                   class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
@@ -200,7 +194,11 @@
                 </a>
               </td>
               <td>{{ registro.fornecedor }}</td>
-              <td>{{ registro.nome_venda }}</td>
+              <td><a href="{{ url('vendas/' ~ registro.nome_venda) }}"
+                  class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0
+                  link-underline-opacity-75-hover">{{ registro.nome_venda }} </a>
+                  
+              </td>
 
 
               <td>{{ registro.local}}</td>

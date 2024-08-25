@@ -10,14 +10,17 @@ SimpleRouter::get(URL_SITE . 'index.php', function() {
     });
 
 SimpleRouter::match(['get','post'],URL_SITE.'entrada/','SiteControlador@entrada');
-
-SimpleRouter::match(['get','post'],URL_SITE.'vendas/','SiteControlador@vendas');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'entrada/deletar/{id}', 'SiteControlador@deletarEntrada');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/deletar/{id}', 'SiteControlador@deletarProdutos');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'saida/deletar/{id}', 'SiteControlador@deletarSaida');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'saida/fora/deletar/{id}', 'SiteControlador@deletarSaidaFora');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/{nome}/','SiteControlador@venda');
 SimpleRouter::match(['get','post'],URL_SITE.'registro/vendas','SiteControlador@registroVendas');
 
 SimpleRouter::match(['get','post'],URL_SITE.'venda/adicionar','SiteControlador@venda_adicionar');
 SimpleRouter::match(['get','post'],URL_SITE.'venda/editar/{id}','SiteControlador@venda_editar');
 SimpleRouter::match(['get','post'],URL_SITE.'estoque/locais/','SiteControlador@estoqueLocais');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'entradas/locais/', 'SiteControlador@entradaLocais');
 SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/','SiteControlador@saidasFora');
 SimpleRouter::match(['get','post'],URL_SITE.'saidas/fora/{nome}/','SiteControlador@saidaFora');
 SimpleRouter::match(['get','post'],URL_SITE.'registro/saida/fora','SiteControlador@registroSaidaFora');
@@ -36,6 +39,9 @@ SimpleRouter::match(['get','post'],URL_SITE.'produtos','SiteControlador@produtos
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/produto_cadastrar','SiteControlador@produto_cadastrar');
 SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/{slug}/{id}', 'SiteControlador@produto');
 SimpleRouter::match(['get','post'],URL_SITE.'local/','SiteControlador@local');
+SimpleRouter::match(['get','post'],URL_SITE.'local/entrada/', 'SiteControlador@entradaLocal');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'local/{entrada}/{local}', 'SiteControlador@confirmacaoLocal');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'teste/', 'SiteControlador@teste');
 SimpleRouter::match(['get','post'],URL_SITE.'saida/hospital','SiteControlador@saidaHospital');
 SimpleRouter::match(['get','post'],URL_SITE.'saidas/hospital','SiteControlador@registroSaidasHospital');
 

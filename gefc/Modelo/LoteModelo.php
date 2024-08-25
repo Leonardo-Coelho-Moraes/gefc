@@ -18,13 +18,31 @@ use gefc\Modelo\Atualizar;
 use gefc\Modelo\Inserir;
 class LoteModelo {
   
- public function armazenar(array $dados): void {
+ public function armazenarEntrada(array $dados): void {
     (new Inserir())->inserir(
         'lote',
         'lote, produto_id, quantidade, fornecedor,preco,preco_comercial,localizacao, vencimento',
         [$dados['lote'],$dados['produto'],$dados['quantidade'],$dados['fornecedor'], $dados['preco'], $dados['preco_comercial'], $dados['localizacao'], $dados['vencimento']]
     );
+
+        $queryBusca = "SELECT MAX(id) AS recente FROM lote" ;
+        $stmt1 = Conexao::getInstancia()->prepare($queryBusca);
+        $stmt1->execute();
+
+        $resultado = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+        $recente = $resultado[0]['recente'];
+        $data = date('Y-m-d');
+        (new Inserir())->inserir('registro_entrada', 'lote_id, quantidade, data', [$recente, $dados['quantidade'], $data]);
 }
+    public function armazenar(array $dados): void
+    {
+        (new Inserir())->inserir(
+            'lote',
+            'lote, produto_id, quantidade, fornecedor,preco,preco_comercial,localizacao, vencimento',
+            [$dados['lote'], $dados['produto'], $dados['quantidade'], $dados['fornecedor'], $dados['preco'], $dados['preco_comercial'], $dados['localizacao'], $dados['vencimento']]
+        );
+
+    }
 
  public function atualizar(array $dados): void {
 
@@ -37,43 +55,67 @@ class LoteModelo {
 
 
 
-public function pesquisa(?string $dePesquisa = '1970-01-01', ?string $atePesquisa = '2099-12-31', ?string $produto = '', ?string $fornecedor = '') {
-    $conexao = Conexao::getInstancia();
+    public function pesquisa(?string $codPesquisa = '', ?string $produto = '', ?string $fornecedor = '', int $limite = 10)
+    {
+        $conexao = Conexao::getInstancia();
 
-    $query = "
+        $query = "  
+    SELECT  
+        lote.id,  
+        lote.lote,  
+        produtos.id AS produto_id,  
+        produtos.nome,  
+        lote.quantidade,  
+        lote.fornecedor,  
+        lote.preco,  
+        lote.preco_comercial,  
+        lote.vencimento,  
+        lote.localizacao,  
+        lote.produto_id,   
+        produtos.slug  
+    FROM   
+        lote  
+    JOIN   
+        produtos ON lote.produto_id = produtos.id  
+    WHERE  
+        (lote.id LIKE :cod AND  produtos.nome LIKE :produto AND lote.fornecedor LIKE :fornecedor)  
+    ORDER BY   
+        lote.id DESC   
+    LIMIT :limite  
+    ";
+
+        $stmt = $conexao->prepare($query);
+        $stmt->bindValue(':cod', '%' . $codPesquisa . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':produto', '%' . $produto . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':fornecedor', '%' . $fornecedor . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':limite', $limite, PDO::PARAM_INT); // Binding do limite como inteiro  
+        $stmt->execute();
+
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
+
+    public function pesquisaEntrada()
+    {
+        $conexao = Conexao::getInstancia();
+
+        $query = "
     SELECT  
     lote.id,
-        
+
         lote.lote,
-        produtos.id AS produto_id,
-         produtos.nome,
-         lote.quantidade,
-         lote.fornecedor,
-         lote.preco,
-         lote.preco_comercial,
-         lote.vencimento,
-         lote.localizacao,
-         lote.produto_id, 
-         produtos.slug
+        produtos.nome
         FROM 
         lote
         JOIN 
-         produtos ON lote.produto_id = produtos.id
-        WHERE
-        (lote.vencimento >= :de AND lote.vencimento <= :ate AND produtos.nome LIKE :produto AND lote.fornecedor LIKE :fornecedor)
-        ORDER BY lote.vencimento ASC
-              ";
+         produtos ON lote.produto_id = produtos.id";
 
-    $stmt = $conexao->prepare($query);
-        $stmt->bindValue(':de', $dePesquisa, PDO::PARAM_STR);
-        $stmt->bindValue(':ate', $atePesquisa, PDO::PARAM_STR);
-        $stmt->bindValue(':produto', '%' . $produto . '%', PDO::PARAM_STR);
-        $stmt->bindValue(':fornecedor', '%' . $fornecedor . '%', PDO::PARAM_STR);
-    $stmt->execute();
-    
-    $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return $resultado;
-}
+        $stmt = $conexao->prepare($query);
+        $stmt->execute();
+
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return $resultado;
+    }
 
 
 

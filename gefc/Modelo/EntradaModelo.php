@@ -59,6 +59,7 @@ public function atualizar(array $dados): void {
         registro_entrada.quantidade,
         registro_entrada.data,
         lote.lote,
+        registro_entrada.lote_id,
         lote.fornecedor,
         lote.vencimento,
         lote.produto_id,

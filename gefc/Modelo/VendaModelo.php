@@ -22,6 +22,26 @@ use gefc\Modelo\Atualizar;
 class VendaModelo
 {
 
+
+    function deletarProdutosSemEstoque()
+    {
+        $querySelect = "SELECT id FROM local_estoque WHERE estoque = 0";
+        $stmt = Conexao::getInstancia()->prepare($querySelect);
+        $stmt->execute();
+
+        $produtosSemEstoque = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
+        if (!empty($produtosSemEstoque)) {
+            $queryDelete = "DELETE FROM local_estoque WHERE id = :id";
+            $stmtDelete = Conexao::getInstancia()->prepare($queryDelete);
+
+            foreach ($produtosSemEstoque as $id) {
+                $stmtDelete->bindParam(':id', $id, PDO::PARAM_INT);
+                $stmtDelete->execute();
+            }
+        } 
+    }
+
     
 
     public function venda(array $dados): void
@@ -33,7 +53,7 @@ class VendaModelo
                 $index = str_replace('lote', '', $key);
                 $loteId = intval($value);
                 $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
-
+abs($quantidade);
                 if ($quantidade > 0) {
 
                     $query = "UPDATE lote SET quantidade = quantidade - :qnt WHERE id = :id";
@@ -42,34 +62,44 @@ class VendaModelo
                     $stmt->bindParam(':id', $loteId, PDO::PARAM_INT);
 
                     $stmt->execute();
-
+                   
                     // Verifique se o produto já existe na tabela local_estoque
-                    $localId = intval($dados['local']);
-                    $query = "SELECT estoque FROM local_estoque WHERE lote_id = ? AND local_id = ?";
-                    $stmt = Conexao::getInstancia()->prepare($query);
-                    $stmt->execute([$loteId, $localId]);
-                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+                   // $localId = intval($dados['local']);
+                  //  $query = "SELECT estoque FROM local_estoque WHERE lote_id = ? AND local_id = ?";
+                  //  $stmt = Conexao::getInstancia()->prepare($query);
+                  //  $stmt->execute([$loteId, $localId]);
+                  //  $result = $stmt->fetch(PDO::FETCH_ASSOC);
 
-                    if ($result) {
+                    //if ($result) {
                         // Produto já existe no local, atualize o estoque
-                        $estoqueAtual = intval($result['estoque']);
-                        $novoEstoque = $estoqueAtual + $quantidade;
-                        $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE lote_id = ? AND local_id = ?";
-                        $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
-                        $stmtUpdate->execute([$novoEstoque, $loteId, $localId]);
-                    } else {
+                       // $estoqueAtual = intval($result['estoque']);
+                       // $novoEstoque = $estoqueAtual + $quantidade;
+                       // abs($novoEstoque);
+                       // $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE lote_id = ? AND local_id = ?";
+                       // $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
+                       // $stmtUpdate->execute([$novoEstoque, $loteId, $localId]);
+                    //} else {
                         // Produto não existe no local, insira um novo registro
-                        $insertQuery = "INSERT INTO local_estoque (local_id, lote_id, estoque) VALUES (?, ?, ?)";
-                        $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
-                        $stmtInsert->execute([$localId, $loteId, $quantidade]);
-                    }
+                      //  $insertQuery = "INSERT INTO local_estoque (local_id, lote_id, estoque) VALUES (?, ?, ?)";
+                       // $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
+                       // $stmtInsert->execute([$localId, $loteId, $quantidade]);
+                   // }
                 }
             }
         }
     }
 
 
+    public function atualizarVenda(array $dados): void
+    {
 
+                    $query = "UPDATE registro_vendas SET quantidade = :qnt WHERE id = :id";
+                    $stmt = Conexao::getInstancia()->prepare($query);
+                    $stmt->bindParam(':qnt', $dados['quantidade_editada'], PDO::PARAM_INT);
+                    $stmt->bindParam(':id', $dados['registro_id'], PDO::PARAM_INT);
+
+                    $stmt->execute();    
+    }
 
 
     public function vendaRegistro(array $dados): void
@@ -78,6 +108,7 @@ class VendaModelo
         $data = date("Y-m-d");
         $ano = date("Y");
         $nomeVenda = 'saida' . uniqid() . $ano;
+        $nomeEntrada = 'entrada' . uniqid() . $data;
 
 
         foreach ($dados as $key => $value) {
@@ -86,7 +117,8 @@ class VendaModelo
                 $loteId = intval($value);
                 $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
                 $qntSolic = isset($dados['qntSolic' . $index]) ? intval($dados['qntSolic' . $index]) : 0;
-
+                    abs($quantidade);
+                    abs($qntSolic);
                 if ($quantidade > 0) {
                     // Insere os dados no banco de dados para este produto
                     $array = array(
@@ -112,6 +144,11 @@ class VendaModelo
                     $stmt->bindParam(':data', $array['data']);
 
                         $stmt->execute();
+
+                    
+                    $insertLocal = "INSERT INTO registro_recebimento_local (lote_id, nome_entrada, quantidade,local) VALUES (?, ?, ?,?)";
+                    $stmtLocal = Conexao::getInstancia()->prepare($insertLocal);
+                    $stmtLocal->execute([$loteId, $nomeEntrada, $quantidade, $array['local']]);
                   
                 }
             }
@@ -123,10 +160,14 @@ class VendaModelo
     
     public function adicionarAVenda(array $dados): void
     {
+        $data = date("Y-m-d");
+        $nomeEntrada = 'entrada' . uniqid() . $data;
+        $quantidade = abs($dados['quantidade']);
+        $qntSolic = abs($dados['qntSolic']);
 
         $query = "UPDATE lote SET quantidade = quantidade - :qnt WHERE id = :id";
         $stmt = Conexao::getInstancia()->prepare($query);
-        $stmt->bindParam(':qnt', $dados['quantidade'], PDO::PARAM_INT);
+        $stmt->bindParam(':qnt', $quantidade, PDO::PARAM_INT);
         $stmt->bindParam(':id', $dados['lote'], PDO::PARAM_INT);
 
         $stmt->execute();
@@ -140,14 +181,16 @@ class VendaModelo
         // Vincular os parâmetros
         $stmt->bindParam(':nome_venda', $dados['venda']);
         $stmt->bindParam(':lote', $dados['lote']);
-        $stmt->bindParam(':quantidade', $dados['quantidade']);
-        $stmt->bindParam(':qnt_solicitada', $dados['qntSolic']);
+        $stmt->bindParam(':quantidade', $quantidade);
+        $stmt->bindParam(':qnt_solicitada', $qntSolic);
         $stmt->bindParam(':local_id', $dados['local']);
         $stmt->bindParam(':datar', $dados['data']);
         $stmt->execute();
 
-
-
+        $insertLocal = "INSERT INTO registro_recebimento_local (lote_id, nome_entrada, quantidade,local) VALUES (?, ?, ?,?)";
+        $stmtLocal = Conexao::getInstancia()->prepare($insertLocal);
+        $stmtLocal->execute([$dados['lote'], $nomeEntrada, $quantidade, $dados['local']]);
+/*
         $localId = intval($dados['local']);
         $query = "SELECT estoque FROM local_estoque WHERE lote_id = ? AND local_id = ?";
         $stmt = Conexao::getInstancia()->prepare($query);
@@ -157,7 +200,7 @@ class VendaModelo
         if ($result) {
             // Produto já existe no local, atualize o estoque
             $estoqueAtual = intval($result['estoque']);
-            $novoEstoque = $estoqueAtual + $dados['quantidade'];
+            $novoEstoque = $estoqueAtual + $quantidade;
             $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE lote_id = ? AND local_id = ?";
             $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
             $stmtUpdate->execute([$novoEstoque, $dados['lote'], $localId]);
@@ -165,8 +208,9 @@ class VendaModelo
             // Produto não existe no local, insira um novo registro
             $insertQuery = "INSERT INTO local_estoque (local_id, lote_id, estoque) VALUES (?, ?, ?)";
             $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
-            $stmtInsert->execute([$localId, $dados['lote'], $dados['quantidade']]);
+            $stmtInsert->execute([$localId, $dados['lote'], $quantidade]);
         }
+            */
     }
 
 
@@ -224,7 +268,93 @@ class VendaModelo
 
         return $resultado;
     }
+    public function pesquisaSaida(string $saida)
+    {
 
+        $conexao = Conexao::getInstancia();
+
+        // Construção da query com cláusula WHERE dinâmica
+        $query = "
+    SELECT 
+        registro_vendas.id AS registro_id,
+        registro_vendas.nome_venda,
+        registro_vendas.quantidade,
+        registro_vendas.qnt_solicitada,
+        registro_vendas.data,
+        lote.lote,
+        registro_vendas.lote_id,
+        lote.produto_id,
+        produtos.nome,
+        registro_vendas.local,
+        locais.nome AS localNome
+    FROM 
+        registro_vendas
+    JOIN 
+        lote ON registro_vendas.lote_id = lote.id
+    JOIN 
+        produtos ON lote.produto_id = produtos.id
+        JOIN 
+        locais ON registro_vendas.local = locais.id
+    WHERE 
+        (registro_vendas.nome_venda = :saida)    
+    ";
+
+        // Preparação da consulta
+        $stmt = $conexao->prepare($query);
+ 
+        $stmt->bindValue(':saida', $saida , PDO::PARAM_STR);
+
+        // Execução da consulta
+        $stmt->execute();
+
+        // Obtenção dos resultados
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
+
+    public function pesquisaSaidaSem(string $saida)
+    {
+
+        $conexao = Conexao::getInstancia();
+
+        // Construção da query com cláusula WHERE dinâmica
+        $query = "
+    SELECT 
+        registro_saida_sem_local.id AS registro_id,
+        registro_saida_sem_local.nome_saida,
+        registro_saida_sem_local.quantidade,
+        registro_saida_sem_local.qnt_solicitada,
+        registro_saida_sem_local.data,
+        lote.lote,
+        registro_saida_sem_local.lote_id,
+        lote.produto_id,
+        produtos.nome,
+        registro_saida_sem_local.local
+    FROM 
+        registro_saida_sem_local
+    JOIN 
+        lote ON registro_saida_sem_local.lote_id = lote.id
+    JOIN 
+        produtos ON lote.produto_id = produtos.id
+
+    WHERE 
+        (registro_saida_sem_local.nome_saida = :saida)    
+    ";
+
+        // Preparação da consulta
+        $stmt = $conexao->prepare($query);
+
+        $stmt->bindValue(':saida', $saida, PDO::PARAM_STR);
+
+        // Execução da consulta
+        $stmt->execute();
+
+        // Obtenção dos resultados
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
 
     public function pesquisaFormulario()
     {
@@ -247,6 +377,7 @@ class VendaModelo
         lote
     JOIN 
         produtos ON lote.produto_id = produtos.id
+        
     WHERE 
         lote.quantidade > 0 
         AND lote.vencimento >= $data
