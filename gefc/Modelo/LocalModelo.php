@@ -14,6 +14,8 @@ use gefc\Controlador\UsuarioControlador;
 use gefc\Nucleo\Mensagem;
 use gefc\Nucleo\Helpers;
 use gefc\Nucleo\Conexao;
+use gefc\Modelo\Inserir;
+
 use PDO;
 class LocalModelo {
     
@@ -353,7 +355,7 @@ public function atendido(string $pedido) {
         $conexao = Conexao::getInstancia();
 
         $query = "
-    SELECT 
+SELECT 
         registro_recebimento_local.id AS registro_recebimento_local_id,
         registro_recebimento_local.lote_id,
         registro_recebimento_local.quantidade,
@@ -419,6 +421,80 @@ public function atendido(string $pedido) {
 
             }
         }
+    }
+    public function abastecer(array $dados): void
+    {
+        // Verifique se os dados foram fornecidos corretamente
+
+        foreach ($dados as $key => $value) {
+            if (strpos($key, 'lote') === 0) {
+                $index = str_replace('lote', '', $key);
+                $loteId = intval($value);
+                $quantidade = isset($dados['quantidade' . $index]) ? intval($dados['quantidade' . $index]) : 0;
+             
+                abs($quantidade);
+                if ($quantidade > 0) {
+                 
+                    $localId = intval($dados['local']);
+                    $query = "SELECT estoque FROM local_estoque WHERE lote_id = ? AND local_id = ?";
+                    $stmt = Conexao::getInstancia()->prepare($query);
+                    $stmt->execute([$loteId, $localId]);
+                    $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                    if ($result) {
+                        // Produto já existe no local, atualize o estoque
+                        $estoqueAtual = intval($result['estoque']);
+                        $novoEstoque = $estoqueAtual + $quantidade;
+                        abs($novoEstoque);
+                        $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE lote_id = ? AND local_id = ?";
+                        $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
+                        $stmtUpdate->execute([$novoEstoque, $loteId, $localId]);
+                    } else {
+                        // Produto não existe no local, insira um novo registro
+                        $insertQuery = "INSERT INTO local_estoque (local_id, lote_id, estoque) VALUES (?, ?, ?)";
+                        $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
+                        $stmtInsert->execute([$localId, $loteId, $quantidade]);
+                    }
+                }
+            }
+        }
+    }
+    public function abastecerLote(array $dados): void
+    {
+        (new Inserir())->inserir(
+            'lote',
+            'lote, produto_id, quantidade, fornecedor,preco,preco_comercial,localizacao, vencimento',
+            [$dados['lote'], $dados['produto'], 0, $dados['fornecedor'], $dados['preco'], $dados['preco_comercial'], $dados['localizacao'], $dados['vencimento']]
+        );
+        $queryBusca = "SELECT MAX(id) AS recente FROM lote";
+        $stmt1 = Conexao::getInstancia()->prepare($queryBusca);
+        $stmt1->execute();
+
+        $resultado = $stmt1->fetchAll(PDO::FETCH_ASSOC);
+        $loteId = $resultado[0]['recente'];
+
+        $localId = intval($dados['localL']);
+        $query = "SELECT estoque FROM local_estoque WHERE lote_id = ? AND local_id = ?";
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->execute([$loteId, $localId]);
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result) {
+            // Produto já existe no local, atualize o estoque
+            $estoqueAtual = intval($result['estoque']);
+            $novoEstoque = $estoqueAtual + $dados['quantidade'];
+            abs($novoEstoque);
+            $updateQuery = "UPDATE local_estoque SET estoque = ? WHERE lote_id = ? AND local_id = ?";
+            $stmtUpdate = Conexao::getInstancia()->prepare($updateQuery);
+            $stmtUpdate->execute([$novoEstoque, $loteId, $localId]);
+        } else {
+            // Produto não existe no local, insira um novo registro
+            $insertQuery = "INSERT INTO local_estoque (local_id, lote_id, estoque) VALUES (?, ?, ?)";
+            $stmtInsert = Conexao::getInstancia()->prepare($insertQuery);
+            $stmtInsert->execute([$localId, $loteId, $dados['quantidade']]);
+        }
+        
+       
     }
 
 

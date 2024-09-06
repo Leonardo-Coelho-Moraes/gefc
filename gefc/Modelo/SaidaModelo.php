@@ -12,6 +12,7 @@ namespace gefc\Modelo;
  */
 
 use gefc\Nucleo\Mensagem;
+use gefc\Controlador\UsuarioControlador;
 use gefc\Nucleo\Helpers;
 use gefc\Nucleo\Conexao;
 use gefc\Modelo\Busca;
@@ -43,8 +44,18 @@ public function vendaRegistro(array $dados): void {
         // Verifica se há dados enviados
         $data = date("Y-m-d");
     $ano = date("Y");
-    $nomeVenda = 'saida' . uniqid(). $ano;
-   
+
+        $query = "
+    SELECT nome_saida
+    FROM registro_saida_sem_local 
+    WHERE id = (SELECT MAX(id) FROM registro_saida_sem_local)
+";
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $nomeVenda = $resultado['nome_saida'];
+        $nomeVendaNumero = intval($nomeVenda) + 1;
+        $usuario =  UsuarioControlador::usuario()->id;
 
     foreach ($dados as $key => $value) {
         if (strpos($key, 'lote') === 0) {
@@ -57,15 +68,16 @@ public function vendaRegistro(array $dados): void {
             if ($quantidade > 0) {
 
 
-                $query = "INSERT INTO registro_saida_sem_local (nome_saida, lote_id, quantidade, qnt_solicitada, local, data) 
-                          VALUES (:nome_venda, :loteId, :quantidade, :qnt_solicitada, :local, :data)";
+                $query = "INSERT INTO registro_saida_sem_local (nome_saida, lote_id, quantidade, qnt_solicitada, local, data, usuario) 
+                          VALUES (:nome_venda, :loteId, :quantidade, :qnt_solicitada, :local, :data,:usuario)";
                     $stmt = Conexao::getInstancia()->prepare($query);
-                    $stmt->bindParam(':nome_venda', $nomeVenda);
+                    $stmt->bindParam(':nome_venda', $nomeVendaNumero);
                     $stmt->bindParam(':loteId', $loteId);
                     $stmt->bindParam(':quantidade', $quantidade);
                     $stmt->bindParam(':qnt_solicitada', $qntSolic);
                     $stmt->bindParam(':local', $dados['local']);
                     $stmt->bindParam(':data', $data);
+                    $stmt->bindParam(':usuario', $usuario);
                     $stmt->execute();
                
             }
@@ -147,12 +159,14 @@ public function pesquisaHospital(string $buscar) {
         registro_saida_sem_local.id AS registro_id,
         registro_saida_sem_local.nome_saida,
         registro_saida_sem_local.quantidade,
+ registro_saida_sem_local.lote_id,
         registro_saida_sem_local.qnt_solicitada,
         registro_saida_sem_local.data,
         registro_saida_sem_local.local,
+     
         lote.lote,
         lote.fornecedor,
-  
+        
         lote.preco,
         lote.produto_id,
         produtos.nome,
@@ -163,6 +177,7 @@ public function pesquisaHospital(string $buscar) {
         lote ON registro_saida_sem_local.lote_id = lote.id
     JOIN 
         produtos ON lote.produto_id = produtos.id
+       
 
     WHERE 
         (registro_saida_sem_local.data >= :de AND registro_saida_sem_local.data <= :ate AND produtos.nome LIKE :produto AND registro_saida_sem_local.local LIKE :local AND lote.fornecedor LIKE :fornecedor)

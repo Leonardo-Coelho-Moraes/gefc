@@ -18,6 +18,7 @@ use gefc\Nucleo\Conexao;
 use gefc\Modelo\Busca;
 use PDO;
 use gefc\Modelo\Atualizar;
+use gefc\Controlador\UsuarioControlador;
 
 class VendaModelo
 {
@@ -106,11 +107,21 @@ abs($quantidade);
     {
         // Verifica se há dados enviados
         $data = date("Y-m-d");
-        $ano = date("Y");
-        $nomeVenda = 'saida' . uniqid() . $ano;
-        $nomeEntrada = 'entrada' . uniqid() . $data;
 
 
+        $query = "
+    SELECT nome_venda 
+    FROM registro_vendas 
+    WHERE id = (SELECT MAX(id) FROM registro_vendas)
+";
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->execute();
+        $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
+        $nomeVenda = $resultado['nome_venda'];
+        $nomeVendaNumero = intval($nomeVenda) + 1;
+        $nomeEntrada = 'e' . uniqid();
+      $usuario=  UsuarioControlador::usuario()->id;
+ 
         foreach ($dados as $key => $value) {
             if (strpos($key, 'lote') === 0) {
                 $index = str_replace('lote', '', $key);
@@ -122,17 +133,18 @@ abs($quantidade);
                 if ($quantidade > 0) {
                     // Insere os dados no banco de dados para este produto
                     $array = array(
-                        'nome_venda' => $nomeVenda,
+                        'nome_venda' => $nomeVendaNumero,
                         'lote' => $loteId,
                         'quantidade' => $quantidade,
                         'qnt_solicitada' => $qntSolic,
                         'local' => $dados['local'],
-                        'data' => $data
+                        'data' => $data,
+                        'usuario' => $usuario
 
                     );
 
-                    $query = "INSERT INTO registro_vendas (nome_venda, lote_id, quantidade, qnt_solicitada, local, data) 
-                          VALUES (:nome_venda, :lote, :quantidade, :qnt_solicitada, :local, :data)";
+                    $query = "INSERT INTO registro_vendas (nome_venda, lote_id, quantidade, qnt_solicitada, local, data, usuario) 
+                          VALUES (:nome_venda, :lote, :quantidade, :qnt_solicitada, :local, :data, :usuario)";
 
                    
                         $stmt = Conexao::getInstancia()->prepare($query);
@@ -142,6 +154,7 @@ abs($quantidade);
                         $stmt->bindParam(':qnt_solicitada', $array['qnt_solicitada']);
                         $stmt->bindParam(':local', $array['local']);
                     $stmt->bindParam(':data', $array['data']);
+                    $stmt->bindParam(':usuario', $array['usuario']);
 
                         $stmt->execute();
 
@@ -229,7 +242,7 @@ abs($quantidade);
         registro_vendas.qnt_solicitada,
         registro_vendas.data,
         lote.lote,
-
+	registro_vendas.lote_id,
         lote.fornecedor,
         lote.preco,
         lote.produto_id,
@@ -282,6 +295,8 @@ abs($quantidade);
         registro_vendas.qnt_solicitada,
         registro_vendas.data,
         lote.lote,
+        registro_vendas.usuario,
+        usuario.nome AS nome_usuario,
         registro_vendas.lote_id,
         lote.produto_id,
         produtos.nome,
@@ -295,6 +310,8 @@ abs($quantidade);
         produtos ON lote.produto_id = produtos.id
         JOIN 
         locais ON registro_vendas.local = locais.id
+         JOIN 
+        usuario ON registro_vendas.usuario = usuario.id
     WHERE 
         (registro_vendas.nome_venda = :saida)    
     ";
@@ -327,6 +344,8 @@ abs($quantidade);
         registro_saida_sem_local.qnt_solicitada,
         registro_saida_sem_local.data,
         lote.lote,
+        usuario.nome AS nome_usuario,
+           registro_saida_sem_local.usuario,
         registro_saida_sem_local.lote_id,
         lote.produto_id,
         produtos.nome,
@@ -337,6 +356,8 @@ abs($quantidade);
         lote ON registro_saida_sem_local.lote_id = lote.id
     JOIN 
         produtos ON lote.produto_id = produtos.id
+         JOIN 
+        usuario ON registro_saida_sem_local.usuario = usuario.id
 
     WHERE 
         (registro_saida_sem_local.nome_saida = :saida)    

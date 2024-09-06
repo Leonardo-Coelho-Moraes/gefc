@@ -39,6 +39,9 @@
           <a href="{{url('lotes')}}" class="nav-link">
             <p>Lotes</p>
           </a></li>
+          <li class="nav-item"><a href="{{url('abastecer')}}" class="nav-link">
+              <p>Abastecer</p>
+            </a></li>
 {%endif%}
  {% if usuario().local == 0  and usuario().nivel == 3 or usuario().nivel == 1%}
         <li class="nav-item"><a href="#" class="nav-link">

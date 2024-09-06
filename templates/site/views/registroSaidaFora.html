@@ -59,10 +59,11 @@
                    <label>Qnt:</label>
                    <input type="number" id="numberField" name="numberField" min="1" class="form-control">
                  </div>
-                 <div class="form-group">
+               <div class="form-group justify-content-between d-flex">
 
-                   <button type="button" class="btn btn-primary" id="submitButton">Enviar</button>
-                 </div>
+                 <button type="button" class="btn btn-primary" id="submitButton">Enviar</button>
+                 <button type="button" class="btn btn-danger" id="limparLista">Limpar Lista</button>
+               </div>
                </form>
 
                <p class="text-body" id='teste'>Lista:</p>
@@ -160,8 +161,9 @@
        <table id="example" class="text-sm table table-striped table-bordered table-hover">
          <thead>
            <tr>
+		<th>ID</th>
 
-             <th>ID</th>
+             <th>COD</th>
              <th>Lote</th>
              <th>Produto</th>
              <th>Fornecedor</th>
@@ -182,15 +184,16 @@
            {% for registro in pesquisas %}
 
            <tr>
-             <td>{{ registro.registro_id }}</td>
+ <td>{{ registro.registro_id }}</td>
+
+             <td>{{ registro.lote_id }}</td>
              <td>
-               <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
-                 class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+            
                  {{ registro.lote }}
-               </a>
+              
              </td>
              <td>
-               <a href="{{ url('produtos/' ~ pro.slug ~ '/' ~ pro.id) }}"
+                <a href="{{ url('produtos/' ~ registro.slug ~ '/' ~ registro.produto_id) }}"
                  class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
                  {{ registro.nome }}
                </a>
@@ -220,6 +223,7 @@
            <tr>
              <td>10000</td>
              <td></td>
+ <td></td>
              <td>Custo Total de Produtos: {{preco}}R$ </td>
              <td></td>
  <td></td>

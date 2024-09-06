@@ -130,7 +130,7 @@ class SiteControlador extends Controlador
             $this->mensagem->alerta('Registro Editado com Sucesso. Corrija a quantidade de estoque do produto pra mais ou para menos!')->flash();
             Helpers::redirecionar("vendas/".$nome);
         } 
-        echo $this->template->renderizar('venda.html', ['titulo' => SITE_NOME . ' ' . $nome, 'registros' => $registros, 'venda' => $nome, 'lotes' => $lotes ]);
+        echo $this->template->renderizar('venda.html', ['titulo' => SITE_NOME . ' Saída: ' . $nome.' do CAF para '.$registros[0]['localNome'] , 'registros' => $registros, 'venda' => $nome, 'lotes' => $lotes ]);
     }
 
   
@@ -167,6 +167,30 @@ class SiteControlador extends Controlador
         }
         echo $this->template->renderizar('registroVendas.html', ['titulo' => SITE_NOME . 'Saídas por Produto', 'locais' => $locais, 'lotes' => $lotes, 'pesquisas'=> $pesquisa, 'lotesarray' => $lotesArray]);
     }
+    public function Abastecer(): void
+    {
+
+        $this->verificarPermissaoAdmin();
+        $locais = (new Busca())->busca(null, null, 'locais', '', '', null);
+        $lotes = (new VendaModelo())->pesquisaFormulario();
+        $lotesArray = json_encode($lotes);
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados)) { 
+            if(isset($dados['loteAdd'])){
+                (new LocalModelo())->abastecerLote($dados);
+                $this->mensagem->sucesso('Sucesso.')->flash();
+                Helpers::redirecionar('abastecer/');
+            }else{
+                (new LocalModelo())->abastecer($dados);
+                $this->mensagem->sucesso('Sucesso.')->flash();
+                Helpers::redirecionar('abastecer/');}
+            
+        }
+        
+
+        $produtos = (new Busca())->busca(null, null, 'produtos', "");
+        echo $this->template->renderizar('abastecer.html', ['titulo' => SITE_NOME . 'Saídas por Produto', 'locais' => $locais, 'lotes' => $lotes, 'lotesarray' => $lotesArray, 'produtos' => $produtos]);
+    }
 
 
 
@@ -191,7 +215,7 @@ class SiteControlador extends Controlador
             Helpers::redirecionar('saidas/fora/' . $nome);
         } 
 
-        echo $this->template->renderizar('saidaFora.html', ['titulo' => SITE_NOME . ' ' . $nome, 'registros' => $registros,'saida' => $nome,'lotes' => $lotes]);
+        echo $this->template->renderizar('saidaFora.html', ['titulo' => SITE_NOME . ' Saída: ' . $nome.' do CAF para '.$registros[0]['local'], 'registros' => $registros,'saida' => $nome,'lotes' => $lotes]);
     }
 
     public function registroSaidaFora(): void

@@ -83,43 +83,81 @@ $(document).ready(function () {
 
 
 
-    $('#submitButton').click(function (event) {
-        // Previne a atualização da página
-        event.preventDefault();
+   $('#submitButton').click(function (event) {
+       event.preventDefault();
 
+       // Pega os valores do select e do input number
+       var selectValue = $('#selectField').val();
+       var numberValue = $('#numberField').val();
+       var qntSolic = $('#qntSolic').val();
+       var splitValues = selectValue.split(';');
 
-        // Pega os valores do select e do input number
-        var selectValue = $('#selectField').val();
-        var numberValue = $('#numberField').val();
-        var qntSolic = $('#qntSolic').val();
-        var splitValues = selectValue.split(';');
+       // Cria um objeto para armazenar os dados
+       var item = {
+           lote: splitValues[0],
+           lote_nome: splitValues[1],
+           produto_nome: splitValues[2],
+           qntSolic: qntSolic,
+           quantidade: numberValue
+       };
 
-        // Cria uma nova div e adiciona os campos input dentro dela
-        var newDiv = $('<div class="form-group d-flex align-items-center border-bottom pb-2 mb-2"></div>');
-        newDiv.append('<input type="hidden"  name="lote' + counter + '" value="' + splitValues[0] + '" readonly>');
-        newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="lote_nome' + counter + '" value="' + splitValues[1] + '" readonly>');
-        newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="produto_nome' + counter + '" value="' + splitValues[2] + '" readonly>');
-        newDiv.append('<input type="number" class="form-control w-25 mx-2" name="qntSolic' + counter + '" value="' + qntSolic + '" readonly>');
-        newDiv.append('<input type="number" class="form-control w-25 mx-2" name="quantidade' + counter + '" value="' + numberValue + '" readonly>');
+       // Pega a lista do localStorage (ou cria uma nova se não existir)
+       var itemList = JSON.parse(localStorage.getItem('itemList')) || [];
+       itemList.push(item);
 
-        // Adiciona o botão de exclusão
-        var deleteButton = $('<button type="button" class="btn btn-danger btn-sm">Excluir</button>');
-        deleteButton.click(function () {
-            $(this).parent().remove();
-        });
-        newDiv.append(deleteButton);
+       // Salva a lista atualizada no localStorage
+       localStorage.setItem('itemList', JSON.stringify(itemList));
 
-        // Adiciona a nova div dentro do formulário alvo
-        $('#targetForm').append(newDiv);
+       // Cria a nova div e adiciona no formulário (como você já faz)
+       adicionarItemNoFormulario(item);
 
+       // Incrementa o contador para os próximos campos
+       counter++;
 
-        // Incrementa o contador para os próximos campos
-        counter++;
+       $('#sourceForm')[0].reset();
+       produtosSelect(lotes);
+   });
 
-        $('#sourceForm')[0].reset();
-        produtosSelect(lotes);
-    });
+   function adicionarItemNoFormulario(item) {
+       var newDiv = $('<div class="form-group d-flex align-items-center border-bottom pb-2 mb-2"></div>');
+       newDiv.append('<input type="hidden" name="lote' + counter + '" value="' + item.lote + '" readonly>');
+       newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="lote_nome' + counter + '" value="' + item.lote_nome + '" readonly>');
+       newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="produto_nome' + counter + '" value="' + item.produto_nome + '" readonly>');
+       newDiv.append('<input type="number" class="form-control w-25 mx-2" name="qntSolic' + counter + '" value="' + item.qntSolic + '" readonly>');
+       newDiv.append('<input type="number" class="form-control w-25 mx-2" name="quantidade' + counter + '" value="' + item.quantidade + '" readonly>');
 
+       var deleteButton = $('<button type="button" class="btn btn-danger btn-sm">Excluir</button>');
+       deleteButton.click(function () {
+           $(this).parent().remove();
+           removerItemDoLocalStorage(item.lote);
+       });
+       newDiv.append(deleteButton);
+
+       $('#targetForm').append(newDiv);
+   }
+   var itemList = JSON.parse(localStorage.getItem('itemList')) || [];
+   itemList.forEach(function (item) {
+       adicionarItemNoFormulario(item);
+       counter++; // Mantém o contador atualizado
+   });
+
+   function removerItemDoLocalStorage(lote) {
+       var itemList = JSON.parse(localStorage.getItem('itemList')) || [];
+       itemList = itemList.filter(function (item) {
+           return item.lote !== lote;
+       });
+       localStorage.setItem('itemList', JSON.stringify(itemList));
+   }
+   $('#limparLista').click(function () {
+       // Limpa o conteúdo do formulário
+       $('#targetForm').empty();
+
+       // Remove a lista do localStorage
+       localStorage.removeItem('itemList');
+
+       // Reseta o contador
+       counter = 0;
+   });
 
 
 

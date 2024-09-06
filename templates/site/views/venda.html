@@ -146,6 +146,8 @@
   <div class="content">
     <div class="container-fluid">
       <div class="card">
+          <div id="printTitle" style="display:none;">Dispensado por: {{registros[0].nome_usuario}} em 
+            {{registros[0].data}}</div>
         <div class="card-header bg-primary">
           <h3 class="card-title">Saída: {{venda}} Para: {{registros[0].localNome}} {{registros[0].data}}</h3>
         </div>
@@ -159,6 +161,7 @@
                 <th>Lote</th>
                 <th>Qnt. Solicitada</th>
                 <th>Qnt.</th>
+          
                 <th>Ação</th>
                 
               
@@ -175,7 +178,7 @@
                 <td>{{ registro.lote }}</td>
                 <td>{{ registro.qnt_solicitada }}</td>
                 <td>{{ registro.quantidade }}</td> 
-
+            
                 <td>
                   <button class="btn btn-primary btn-sm editarSaida">Editar</button>
                   {%if usuario().nivel == 1%}<a href="{{url('saida/deletar/'~registro.registro_id)}}"
