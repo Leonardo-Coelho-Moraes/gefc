@@ -63,6 +63,11 @@ abs($quantidade);
                     $stmt->bindParam(':id', $loteId, PDO::PARAM_INT);
 
                     $stmt->execute();
+
+                    $query = "UPDATE lote SET quantidade = CASE WHEN quantidade < 0 THEN 0 ELSE quantidade END WHERE id = :id";
+                    $stmt = Conexao::getInstancia()->prepare($query);
+                    $stmt->bindParam(':id', $loteId, PDO::PARAM_INT);
+                    $stmt->execute();
                    
                     // Verifique se o produto já existe na tabela local_estoque
                    // $localId = intval($dados['local']);
@@ -185,6 +190,14 @@ abs($quantidade);
 
         $stmt->execute();
 
+        $query = "UPDATE lote SET quantidade = CASE WHEN quantidade < 0 THEN 0 ELSE quantidade END WHERE id = :id";
+        $stmt = Conexao::getInstancia()->prepare($query);
+        $stmt->bindParam(':id', $dados['lote'], PDO::PARAM_INT);
+        $stmt->execute();
+
+
+        
+
         // Definir a query de inserção
         $query = "INSERT INTO registro_vendas (nome_venda, lote_id, quantidade, qnt_solicitada, local, data) VALUES (:nome_venda, :lote, :quantidade, :qnt_solicitada, :local_id, :datar)";
 
@@ -296,10 +309,11 @@ abs($quantidade);
         registro_vendas.data,
         lote.lote,
         registro_vendas.usuario,
-        usuario.nome AS nome_usuario,
+        usuario.nome_completo AS nome_usuario,
         registro_vendas.lote_id,
         lote.produto_id,
         produtos.nome,
+        lote.vencimento,
         registro_vendas.local,
         locais.nome AS localNome
     FROM 
@@ -344,10 +358,11 @@ abs($quantidade);
         registro_saida_sem_local.qnt_solicitada,
         registro_saida_sem_local.data,
         lote.lote,
-        usuario.nome AS nome_usuario,
+        usuario.nome_completo AS nome_usuario,
            registro_saida_sem_local.usuario,
         registro_saida_sem_local.lote_id,
         lote.produto_id,
+        lote.vencimento,
         produtos.nome,
         registro_saida_sem_local.local
     FROM 
@@ -400,8 +415,7 @@ abs($quantidade);
         produtos ON lote.produto_id = produtos.id
         
     WHERE 
-        lote.quantidade > 0 
-        AND lote.vencimento >= $data
+        lote.vencimento >= $data
 ";
 
         // Preparação da consulta
@@ -429,18 +443,13 @@ abs($quantidade);
         SELECT 
             local_estoque.id AS local_estoque_id,
             local_estoque.estoque,
-            lote.lote,
-            lote.produto_id,
-            lote.vencimento,
-            lote.fornecedor,
+            local_estoque.produto_id,
             produtos.nome,
             produtos.slug
         FROM 
             local_estoque
         JOIN 
-            lote ON local_estoque.lote_id = lote.id
-        JOIN 
-            produtos ON lote.produto_id = produtos.id
+            produtos ON local_estoque.produto_id = produtos.id
         WHERE 
             local_estoque.local_id = :local
     ";

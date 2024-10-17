@@ -22,65 +22,7 @@
   </section>
 
   {{flash()}}
-   <section class="content">
-     <div class="container-fluid">
-       <div class="row">
-         <div class="col-12">
-           <!-- Default box -->
-           <div class="card collapsed-card">
-             <div class="card-header bg-primary">
-               <h3 class="card-title">Cadastrar Produto</h3>
-
-               <div class="card-tools">
-                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
-                   <i class="fas fa-plus"></i>
-                 </button>
-
-               </div>
-             </div>
-             <div class="card-body" style="display: none;">
-               <!-- /.conteudo-->
-               <form action="{{url('produtos/produto_cadastrar')}}" method="post">
-
-                 <div class="form-group">
-                   <label>
-                     Produto
-                   </label>
-                   <input class="form-control" id="produto" type="text" name="produto" placeholder="Ex: Dipirona"
-                     required></div>
-
-
-                 <div class="form-group">
-                   <label>
-                     Unidade de Contagem
-                   </label>
-                   <select name="unicont" id="unicont" class="form-control">
-                     <option value="unidade">Unidade</option>
-                     <option value="caixa">Caixa</option>
-                     <option value="pacote">Pacote</option>
-
-
-                   </select>
-                 </div>
-                 <div class="form-group">
-                   <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
-
-                 </div>
-
-
-
-               </form>
-             </div>
-             <!-- /.card-body -->
-
-             <!-- /.card-footer-->
-           </div>
-           <!-- /.card -->
-         </div>
-       </div>
-     </div>
-   </section>
-
+  
   <section class="content">
     <div class="container-fluid">
       <div class="row">
@@ -291,9 +233,27 @@
                   <div class="col"> <label>Produtos:</label>
                     <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
                       placeholder="Deixe vazio para pesquisar todos os Produtos"></div>
-                  <div class="col-2"> <label>Fornecedor:</label>
-                    <input type="text" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
-                      placeholder="Deixe vazio para pesquisar todos os Fornecedores"></div>
+                  
+                      </div>
+                      <div class="row form group">
+                        <div class="col-2"> <label>Fornecedor:</label>
+                          <input type="text" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
+                            placeholder="Deixe vazio para pesquisar todos os Fornecedores"></div>
+ <div class="col-2">
+   <label>Vencimento De</label>
+   <input class="form-control" id="vence_de" type="date" name="vence_de" value="2023-01-30">
+
+ </div>
+                        <div class="col-2">
+                          <label>Vencimento Até</label>
+                          <input class="form-control" id="vence" type="date" name="vence" value="2099-09-16">
+                         
+                      </div>
+                       <div class="col-2"> <label>Qnt Max:</label>
+                         <input type="number" id="max" name="max" class="form-control" value="10000" placeholder="10000">
+                       </div>
+                   
+                      
 </div>
               
 
@@ -301,7 +261,7 @@
 
               
 
-                <div class=" form-group">
+                <div class="form-group">
                   <button type="submit" class="btn btn-primary form-control ">Buscar</button>
                 </div>
 
@@ -319,6 +279,7 @@
       </div>
     </div>
   </section>
+  
 
 
 
@@ -331,6 +292,22 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+
+
+          <div class="d-none">
+            <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid black;">Extrato de Lotes</th>
+                
+                  <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+
+                </tr>
+              </thead>
+
+            </table>
+          </div>
+
           <table id="example" class="text-sm table table-striped table-bordered table-hover">
             <thead>
               <tr>
@@ -390,7 +367,7 @@
 
                 
               
-                <td>Custo: {{preco}}R$ / Comercial : {{precoComercial}}R$</td>
+                <td>ZCusto: {{preco}}R$</td>
                 <td>Total: {{ qnt }}</td>
 
  <td></td>

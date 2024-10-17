@@ -10,8 +10,12 @@ SimpleRouter::get(URL_SITE . 'index.php', function() {
     });
 
 SimpleRouter::match(['get','post'],URL_SITE.'entrada/','SiteControlador@entrada');
+    SimpleRouter::get( URL_SITE . 'entradaRegistros/', 'SiteControlador@entradaRegistros');
+
     SimpleRouter::match(['get', 'post'], URL_SITE . 'entrada/deletar/{id}', 'SiteControlador@deletarEntrada');
     SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/deletar/{id}', 'SiteControlador@deletarProdutos');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'pacientes/deletar/{id}', 'SiteControlador@deletarPaciente');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'pacientes', 'SiteControlador@pacienteLaudo');
     SimpleRouter::match(['get', 'post'], URL_SITE . 'saida/deletar/{id}', 'SiteControlador@deletarSaida');
     SimpleRouter::match(['get', 'post'], URL_SITE . 'saida/fora/deletar/{id}', 'SiteControlador@deletarSaidaFora');
 SimpleRouter::match(['get','post'],URL_SITE.'vendas/{nome}/','SiteControlador@venda');
@@ -35,8 +39,12 @@ SimpleRouter::match(['get','post'],URL_SITE.'pedidos/{pedido}','SiteControlador@
 SimpleRouter::match(['get','post'],URL_SITE.'pedidos/atender/{pedido}','SiteControlador@pedidoAtendido');
 
 SimpleRouter::match(['get','post'],URL_SITE.'lotes','SiteControlador@lotes');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'criarTipo', 'SiteControlador@criarTipo');
 
 SimpleRouter::match(['get','post'],URL_SITE.'produtos','SiteControlador@produtos');
+    SimpleRouter::match(['get', 'post'], URL_SITE . 'produtosCrit', 'SiteControlador@produtosCrit');
+
+
 SimpleRouter::match(['get','post'],URL_SITE.'produtos/produto_cadastrar','SiteControlador@produto_cadastrar');
 SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/{slug}/{id}', 'SiteControlador@produto');
 SimpleRouter::match(['get','post'],URL_SITE.'local/','SiteControlador@local');

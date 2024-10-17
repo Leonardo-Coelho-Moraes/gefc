@@ -45,10 +45,9 @@
                   <div class="col-1">
                     <label>Cod:</label>
                     <input type="num" name="lote{{num}}" class="form-control" id="lote{{num}}"
-                      value="{{entrada.lote_id}}"
-                    
-                      readonly>
-                      
+                      value="{{entrada.lote_id}}"  readonly>
+                       <input type="hidden" name="produto_id{{num}}" class="form-control" id="produto_id{{num}}"
+                         value="{{entrada.produto_id}}" readonly>
                   </div>
                   <div class="col">
                     <label >Produto Nome</label>
@@ -61,7 +60,8 @@
                   </div>
                   <div class="col-1">
                    <label>Confirmado</label>
-                   <input type="number" min="0" id="quantidade{{num}}" name="quantidade{{num}}" class="form-control"
+                   <input type="number" min="0" id="quantidade{{num}}" value="{{entrada.quantidade}}"
+                     name="quantidade{{num}}" class="form-control"
                      name="quantidade_confirmada">
                   </div>
                   </div>

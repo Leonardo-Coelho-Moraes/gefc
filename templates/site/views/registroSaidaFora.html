@@ -72,9 +72,15 @@
                <form action="{{ url('saida/fora/adicionar') }}" method="post">
                  <div id="targetForm" class="d-flex flex-column w-100 text-body"></div>
                  <div class="d-flex w-100 gap-3 align-items-center">
-                   <div class="form-group">
-                     <label for="local">Local</label>
-                     <input type="text" id="local" name="local" class="form-control">
+                   <div class=" row form-group">
+                    <div class="col">    <label for="local">Local</label>
+                      <input type="text" id="local" name="local" class="form-control">
+ </div>
+                 
+                     <div class="col">
+                      <label>Data</label>
+                      <input class="form-control" id="data" type="date" name="data" required>
+                    </div>
                    </div>
                    <div class="form-group">
                      <input class="form-control btn btn-primary" id="venderBtn" type="submit" value="Adicionar Saída">
@@ -158,6 +164,22 @@
         </div>
         <!-- /.card-header -->
         <div class="card-body">
+
+          <div class="d-none">
+            <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid black;">Extrato de Saídas</th>
+                  <th style="border: 1px solid black;">Intervalo da Pesquisa:
+                    {{dados.dePesquisa |date('d/m/Y')}} |
+                    {{dados.atePesquisa |date('d/m/Y')}}</th>
+                  <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+
+                </tr>
+              </thead>
+
+            </table>
+          </div>
        <table id="example" class="text-sm table table-striped table-bordered table-hover">
          <thead>
            <tr>

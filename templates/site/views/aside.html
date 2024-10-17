@@ -1,157 +1,150 @@
-<aside class="main-sidebar sidebar-dark-primary elevation-4">
-  <!-- Brand Logo -->
-  <a href="#" class="brand-link">
 
-    
-<span class="brand-text font-weight-light">Alpha</span>
+
+<aside class="main-sidebar" style="z-index: 10;border-right: 1px solid #DFEAF2;">
+  <!-- Brand Logo -->
+  <a href="../../index3.html" class="brand-link" style="justify-content: center;
+    align-items: baseline;
+    margin-bottom: 10px;
+    color: #343C6A;
+    display: flex;
+    gap: 5px;
+">
+    <span class="text-xl" style="font-weight: 700;color: #0023C4;">α</span>
+    <span class="brand-text" style="font-weight: 600;">Alphα</span>
   </a>
 
   <!-- Sidebar -->
-  <div class="sidebar">
-    <!-- Sidebar user (optional) -->
-    <div class="user-panel mt-3 pb-3 mb-3 d-flex">
-      <div class="image">
-        <img src="{{url('templates/assets/img/avatar5.png')}}" class="img-circle elevation-2" alt="User Image">
-      </div>
-      <div class="info">
-        <a  class="d-block">{{usuario().nome}}</a>
-      </div>
-    </div>
-
-
-
+  <div class="sidebar" style="overflow-y: auto;">
+        
     <!-- Sidebar Menu -->
     <nav class="mt-2">
       <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
- {% if usuario().local == 0  and usuario().nivel <= 2 %}
- <li class="nav-item">
-   <a href="{{url('')}}" class="nav-link">
-     <p>Início</p>
-   </a></li>
-         <li class="nav-item"><a href="{{url('entrada')}}" class="nav-link">
-             <p>Entrada Produtos</p>
-           </a></li>
+            {% if usuario().local == 0  and usuario().nivel <= 2 %}
+
+      
         <li class="nav-item">
-          <a href="{{url('produtos')}}" class="nav-link">
-            <p>Produtos</p>
-          </a></li>
-        <li class="nav-item">
-          <a href="{{url('lotes')}}" class="nav-link">
-            <p>Lotes</p>
-          </a></li>
-          <li class="nav-item"><a href="{{url('abastecer')}}" class="nav-link">
-              <p>Abastecer</p>
-            </a></li>
-{%endif%}
- {% if usuario().local == 0  and usuario().nivel == 3 or usuario().nivel == 1%}
-        <li class="nav-item"><a href="#" class="nav-link">
-            <p>Saídas Local Registrado<i class="right fas fa-angle-left"></i></p>
+          <a href="{{url('entrada')}}" class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Entrada</p>
           </a>
-          <ul class="nav nav-treeview">
-
-
-            <li class="nav-item"><a href="{{url('registro/vendas')}}" class="nav-link">
-                <p>Saídas Por Produto</p>
-              </a></li>
-          </ul>
         </li>
-        <li class="nav-item"><a href="#" class="nav-link">
-            <p>Saídas Local Não Registrado<i class="right fas fa-angle-left"></i></p>
+        <li class="nav-item">
+          <a href="{{url('produtos')}}" class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Produtos</p>
           </a>
-          <ul class="nav nav-treeview">
-            <li class="nav-item">
-              <a href="{{url('registro/saida/fora')}}" class="nav-link">
-                <p>Saídas Por Produto</p>
-              </a></li>
-          </ul>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('produtosCrit')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Produtos Nivel</p>
+          </a>
         </li>
          <li class="nav-item">
-           <a href="{{url('saidas/hospital')}}" class="nav-link">
-             <p>Registro Saídas Hospital</p>
-           </a></li>
-          <!--   <li class="nav-item">
-              <a href="{{url('pedidos')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
-                <p>Pedidos</p>
-              </a></li> -->
-
-
-
-        {%endif%}
-     
- {% if usuario().local == 0  and usuario().nivel == 1%}
-  <li class="nav-item"><a href="#" class="nav-link">
- 
-      <p>Locais<i class="right fas fa-angle-left"></i></p>
-    </a>
-    <ul class="nav nav-treeview">
-
-     
-
-      <li class="nav-item">
-        <a href="{{url('estoque/locais')}}" class="nav-link">
-          <p>Estoque dos Locais</p>
-        </a></li>
-    </ul>
-  </li>
+           <a href="{{url('pacientes')}}"
+             class="nav-link d-flex flex-column justify-content-center align-items-center">
+             <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+             <p class="font-weight-normal">Laudos</p>
+           </a>
+         </li>
+          <li class="nav-item">
+            <a href="{{url('lotes')}}"
+              class="nav-link d-flex flex-column justify-content-center align-items-center">
+              <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+              <p class="font-weight-normal">Lotes</p>
+            </a>
+          </li>
+        <li class="nav-item">
+          <a href="{{url('abastecer')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Abastecer</p>
+          </a>
+        </li>
+                {%endif%}
+        {% if usuario().local == 0  and usuario().nivel == 3 or usuario().nivel == 1%}
 
         <li class="nav-item">
-          <a href="{{url('usuarios')}}" class="nav-link">
-            <p>Usuários</p>
-          </a></li>
-          
-        {%endif%}
+          <a href="{{url('registro/vendas')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Saídas</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('registro/saida/fora')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Saídas Fora</p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('saidas/hospital')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Registros Hospital</p>
+          </a>
+        </li>
+{%endif%}
 
+ {% if usuario().local == 0  and usuario().nivel == 1%}  
+        <li class="nav-item">
+          <a href="{{url('estoque/locais')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Estoque</p>
+          </a>
+        </li>
+          <li class="nav-item">
+            <a href="{{url('usuarios')}}"
+              class="nav-link d-flex flex-column justify-content-center align-items-center">
+              <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+              <p class="font-weight-normal">Usuários
 
-       
- 
-           {% if usuario().local != 0 and  usuario().nivel > 3 %}
-            <li class="nav-item">
-              <a href="{{url('local/entrada')}}" class="nav-link">
-                <p>Entradas</p>
-              </a></li>
-           <li class="nav-item"><a href="#" class="nav-link">
-       
-              <p>{{nome.nome}}<i class="right fas fa-angle-left"></i></p>
-             </a>
-             <ul class="nav nav-treeview">
-               <li class="nav-item">
-                 <a href="{{url('local')}}" class="nav-link">
-                   <p>Estoque {{nome.nome}}</p>
-                 </a></li>
-
-               {% if usuario().local == 3 %}
-               <li class="nav-item">
-                 <a href="{{ url('saida/hospital') }}" class="nav-link">
-                
-                   <p>Fazer Saída Hospital</p>
-                 </a>
-               </li>
-  
-               <li class="nav-item">
-                 <a href="{{ url('saidas/hospital') }}" class="nav-link">
-                  
-                   <p>Registro Saídas Hospital</p>
-                 </a>
-               </li>
-               {% endif %}
-
-              
-              <!-- <li class="nav-item">
-                 <a href="{{url('pedido/fazer')}}" class="nav-link"><i class="nav-icon far fa-user"></i>
-                   <p>Fazer Pedido</p> 
-                 </a></li> -->
-             </ul>
-           </li>
+              </p>
+            </a>
+          </li>
            {%endif%}
 
+       {% if usuario().local != 0 and  usuario().nivel == 4 %}
         <li class="nav-item">
-          <a href="{{url('sair')}}" class="nav-link"  alt='Deslogar'>
-          <p>Sair</p>
-            
-          </a></li>
-
-
-
+          <a href="{{url('local/entrada')}}"
+            class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Entradas</p>
+          </a>
+        </li>
+  {%endif%}
+        <li class="nav-item">
+          <a href="{{url('local')}}" class="nav-link d-flex flex-column justify-content-center align-items-center">
+            <i class="text-xl nav-icon fas fa-tachometer-alt"></i>
+            <p class="font-weight-normal">Estoque</p>
+          </a>
+        </li>
+          {% if usuario().local == 3 and usuario().nivel >= 4  %}
+        <li class="nav-item"></li>
+        <a href="{{ url('saida/hospital') }}"
+          class="nav-link d-flex flex-column justify-content-center align-items-center">
+          <i class="bi bi-box-arrow-left"></i>
+          <p class="font-weight-normal">FazerSaída</p>
+        </a>
+        </li>
+        <li class="nav-item"></li>
+        <a href="{{ url('saidas/hospital') }}"
+          class="nav-link d-flex flex-column justify-content-center align-items-center">
+         <i class="bi bi-box-arrow-left"></i>
+          <p class="font-weight-normal">Saídas Hospital</p>
+        </a>
+        {%endif%}
+        <li class="nav-item"></li>
+          <a href="{{url('sair')}}" class="nav-link d-flex flex-column justify-content-center align-items-center"
+            alt='Deslogar'>
+   <i class="bi bi-door-open"></i>
+          <p class="font-weight-normal">Sair</p>
+         
+        </a>
+        </li>
       </ul>
     </nav>
     <!-- /.sidebar-menu -->

@@ -2,7 +2,6 @@ $(document).ready(function () {
     var counter = 1;
     var dataHospital = $('#dataEstoqueHospital');
     var estoques = dataHospital.data('estoques');
-    
 
 
     function produtosSelecionar(estoques) {
@@ -15,8 +14,8 @@ $(document).ready(function () {
         var validEstoques = estoques;
         // Adiciona os lotes válidos ao selectField
         validEstoques.forEach(function (estoque) {
-            var optionValor = `${estoque.local_estoque_id};${estoque.produto_id};${estoque.nome};${estoque.estoque}`;
-            var optionTexto = `COD:${estoque.produto_id}, ${estoque.nome} Qnt: ${estoque.estoque} ${estoque.unidade_contagem} `;
+            var optionValor = `${estoque.id};${estoque.nome}`;
+            var optionTexto = `COD:${estoque.id}, ${estoque.nome} ${estoque.unidade_contagem} `;
             var opcao = $('<option></option>').val(optionValor).text(optionTexto);
             $selecionadoCampo.append(opcao);
         });
@@ -38,14 +37,14 @@ $(document).ready(function () {
 
         // Filtra os lotes se o código não estiver vazio
         var estoquesFiltrados = produto_id ? estoques.filter(function (estoque) {
-            return estoque.produto_id == produto_id;
+            return estoque.id == produto_id;
         }) : estoques; // Se cod estiver vazio, mostra todos os lotes
 
 
         // Adiciona os lotes ao selectField
         estoquesFiltrados.forEach(function (estoque) {
-            var optionValor = `${estoque.local_estoque_id};${estoque.produto_id};${estoque.nome};${estoque.estoque}`;
-            var optionTexto = `COD:${estoque.produto_id}, ${estoque.nome} Qnt: ${estoque.estoque} ${estoque.unidade_contagem}`;
+            var optionValor = `${estoque.id};${estoque.nome}`;
+            var optionTexto = `COD:${estoque.id}, ${estoque.nome} ${estoque.unidade_contagem}`;
             var opcao = $('<option></option>').val(optionValor).text(optionTexto);
             $selecionadoCampo.append(opcao);
         });
@@ -55,20 +54,7 @@ $(document).ready(function () {
         var produto_id = $(this).val();
         atualizarCampoSelecionado(produto_id);
     });
-    $('#produtoSelecionar').on('change', function () {
-        var valorSelecionado = $(this).val();
-
-        // Verifica se há valor selecionado
-        if (valorSelecionado) {
-            var valoresSeparados = valorSelecionado.split(';');
-
-            // Define o valor máximo do campo number
-            $('#quantidadeSelecionar').attr('max', valoresSeparados[3]);
-        } else {
-            // Se não houver seleção, pode definir o valor máximo como vazio ou algum valor padrão
-            $('#quantidadeSelecionar').removeAttr('max');
-        }
-    });
+  
 
 
 
@@ -85,9 +71,8 @@ $(document).ready(function () {
 
         // Cria uma nova div e adiciona os campos input dentro dela
         var newDiv = $('<div class="form-group d-flex align-items-center border-bottom pb-2 mb-2"></div>');
-        newDiv.append('<input type="hidden" name="registro' + counter + '" value="' + splitValues[0] + '" readonly>');
-        newDiv.append('<input type="hidden" name="produto_id' + counter + '" value="' + splitValues[1] + '" readonly>');
-        newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="produto_nome' + counter + '" value="' + splitValues[2] + '" readonly>');
+        newDiv.append('<input type="hidden" name="produto_id' + counter + '" value="' + splitValues[0] + '" readonly>');
+        newDiv.append('<input type="text" class="form-control-plaintext flex-grow-1" name="produto_nome' + counter + '" value="' + splitValues[1] + '" readonly>');
         newDiv.append('<input type="number" class="form-control w-25 mx-2" name="quantidade' + counter + '" value="' + numberValue + '" readonly>');
 
         // Adiciona o botão de exclusão

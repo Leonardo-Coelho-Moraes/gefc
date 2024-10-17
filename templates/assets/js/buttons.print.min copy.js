@@ -30,22 +30,11 @@
                     return e.settings()[0].aoColumns[e.column(f).index()].sClass
                 }).toArray(),
                 r = function (f, g) {
-                     for (var x = "<tr>", l = 0, z = f.length; l < z; l++) {
-                         if (g === "th") {
-                             // Aplica largura e borda somente ao <th>
-                             x += "<" + g + " style='border:1px solid black;padding-right: 30px;' " +
-                                 (w[l] ? 'class="' + w[l] + '"' : "") + ">" +
-                                 (null === f[l] || f[l] === y ? "" : f[l]) +
-                                 "</" + g + ">";
-                         } else {
-                             x += "<" + g + " style='border-right:1px solid black;' " + (w[l] ? 'class="' + w[l] + '"' : "") + ">" +
-                                 (null === f[l] || f[l] === y ? "" : f[l]) +
-                                 "</" + g + ">";
-                         }
-                     }
-                     return x + "</tr>";
+                    for (var x = "<tr>", l = 0, z = f.length; l < z; l++) x +=
+                        "<" + g + " " + (w[l] ? 'class="' + w[l] + '"' : "") + ">" + (null === f[l] || f[l] === y ? "" : f[l]) + "</" + g + ">";
+                    return x + "</tr>"
                 },
-                m = '<table class="" style="font-size:17px;">';
+                m = '<table class="' + e.table().node().className + '">';
             k.header && (m += "<thead>" + r(a.header, "th") + "</thead>");
             m += "<tbody>";
             for (var t = 0, A = a.body.length; t < A; t++) m += r(a.body[t], "td");
@@ -67,40 +56,16 @@
                 } catch (f) {
                     b(c.document.head).html(q)
                 }
-            
-                c.document.body.innerHTML = `
-                  <table class="table" style="border: 1px solid black; width: 100%;">
-  <thead>
-    <tr>
-      <th scope="col" style="border: 1px solid black; text-align: center;">
-        <img src="http://192.168.106.9/gefc/templates/assets/img/cafmini.jpg" style="width: 200px; display: block; margin: auto;">
-      </th>
-      <th scope="col" style="border: 1px solid black;">
-        <h3 style="text-align:center;">Prefeitura Municipal de Coari</h3>
-        <h4 style="text-align:center;">Secretaria Municipal de Saúde</h4>
-        <h4 style="text-align:center;">Central de Abastecimento Farmacêutico</h4>
-      </th>
-      <th scope="col" style="border: 1px solid black; text-align: center;">
-        <img src="http://192.168.106.9/gefc/templates/assets/img/coari.png" style="width: 200px; display: block; margin: auto;">
-      </th>
-    </tr>
-  </thead>
-</table>
-
-              `;
-            
-               b(c.document.body).append(document.getElementById('cabe').cloneNode(true));
-
-                b(c.document.body).append("<h5 style='text-align:center;'>" + "</h5><div>" + (p.messageTop || "") + "</div>" + m + "<div>" + (p.messageBottom || "") + "</div>");
-               
-               
+                c.document.body.innerHTML = "<h5>" + p.title + "</h5><div>" + (p.messageTop || "") + "</div>" + m + "<div>" + (p.messageBottom || "") + "</div>";
                 b(c.document.body).addClass("dt-print-view");
                 b("img", c.document.body).each(function (f, g) {
                     g.setAttribute("src", v(g.getAttribute("src")))
                 });
                 // Personalização da impressão
 
-                b(c.document.body).append(document.getElementById('assinaturas').cloneNode(true));
+                b(c.document.body).append("<div>" + document.getElementById('printTitle').textContent + "</div>");
+               
+                b(c.document.body).append('<hr style="margin-top: 90px;"><div style="text-align: center;">Assinatura</div>');
                  
 
                 k.customize && k.customize(c, k, e);

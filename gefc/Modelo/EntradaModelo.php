@@ -19,13 +19,13 @@ use PDO;
 class EntradaModelo {
 public function entrada(array $dados): void {
     $data = date('Y-m-d');
-   (new Inserir())->inserir('registro_entrada', 'lote_id, quantidade, data', [$dados['lote'], $dados['quantidade'], $data]);
+   (new Inserir())->inserir('registro_entrada', 'lote_id, quantidade, data', [$dados['loteAdd'], $dados['quantidadeAdd'], $data]);
    
     
     $query = "UPDATE lote SET quantidade = quantidade + :qnt WHERE id = :id";
     $stmt = Conexao::getInstancia()->prepare($query);
-    $stmt->bindParam(':qnt', $dados['quantidade'], PDO::PARAM_INT);
-    $stmt->bindParam(':id', $dados['lote'], PDO::PARAM_INT);
+    $stmt->bindParam(':qnt', $dados['quantidadeAdd'], PDO::PARAM_INT);
+    $stmt->bindParam(':id', $dados['loteAdd'], PDO::PARAM_INT);
 
     $stmt->execute();
 }
@@ -47,7 +47,7 @@ public function atualizar(array $dados): void {
 
 
 
-    public function pesquisa(?string $dePesquisa = '1970-01-01', ?string $atePesquisa = '2099-12-31', ?string $produto = '',  ?string $fornecedor = '')
+    public function pesquisaRelatorio(?string $dePesquisa = '1970-01-01', ?string $atePesquisa = '2099-12-31', ?string $produto = '',  ?string $fornecedor = '')
     {
 
         $conexao = Conexao::getInstancia();
@@ -55,26 +55,31 @@ public function atualizar(array $dados): void {
         // Construção da query com cláusula WHERE dinâmica
         $query = "
     SELECT 
-        registro_entrada.id AS registro_id,
-        registro_entrada.quantidade,
-        registro_entrada.data,
-        lote.lote,
-        registro_entrada.lote_id,
-        lote.fornecedor,
-        lote.vencimento,
-        lote.produto_id,
-        produtos.nome,
-        produtos.slug
-    FROM 
-        registro_entrada
-    JOIN 
-        lote ON registro_entrada.lote_id = lote.id
-    JOIN 
-        produtos ON lote.produto_id = produtos.id
+    registro_entrada.id AS registro_id,
+    registro_entrada.quantidade,
+    registro_entrada.data,
+    lote.lote,
+    registro_entrada.lote_id,
+    lote.fornecedor,
+    lote.vencimento,
+    lote.produto_id,
+    produtos.nome,
+    produtos.slug
+FROM 
+    registro_entrada
+JOIN 
+    lote ON registro_entrada.lote_id = lote.id
+JOIN 
+    produtos ON lote.produto_id = produtos.id
+WHERE 
+    (registro_entrada.data >= :de 
+    AND registro_entrada.data <= :ate 
+    AND produtos.nome LIKE :produto 
+    AND lote.fornecedor LIKE :fornecedor)
+ORDER BY 
+    registro_entrada.id DESC
+LIMIT 30;
 
-    WHERE 
-        (registro_entrada.data >= :de AND registro_entrada.data <= :ate AND produtos.nome LIKE :produto AND lote.fornecedor LIKE :fornecedor)
-        
         
     ";
 
@@ -91,6 +96,81 @@ public function atualizar(array $dados): void {
         $stmt->execute();
 
         // Obtenção dos resultados
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
+
+
+    public function pesquisa(?string $busca = '')
+    {
+
+        $conexao = Conexao::getInstancia();
+
+        // Construção da query com cláusula WHERE dinâmica
+        $query = "
+    SELECT 
+    registro_entrada.id AS registro_id,
+    registro_entrada.quantidade,
+    registro_entrada.data,
+    lote.lote,
+    registro_entrada.lote_id,
+    lote.fornecedor,
+    lote.vencimento,
+    lote.produto_id,
+    produtos.nome,
+    produtos.slug
+FROM 
+    registro_entrada
+JOIN 
+    lote ON registro_entrada.lote_id = lote.id
+JOIN 
+    produtos ON lote.produto_id = produtos.id
+WHERE 
+    (
+    produtos.nome LIKE :busca 
+   )
+ORDER BY 
+    registro_entrada.id DESC
+LIMIT 30;
+
+        
+    ";
+
+        // Preparação da consulta
+        $stmt = $conexao->prepare($query);
+        $stmt->bindValue(':busca', '%' . $busca . '%', PDO::PARAM_STR);
+
+        // Execução da consulta
+        $stmt->execute();
+
+        // Obtenção dos resultados
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
+
+    public function pesquisaEntrada(?string $busca = '')
+    {
+        $conexao = Conexao::getInstancia();
+
+        $query = "
+        SELECT  
+            lote.id,
+            produtos.nome
+        FROM 
+            lote
+        JOIN 
+            produtos ON lote.produto_id = produtos.id 
+        WHERE
+            lote.lote = :busca
+    ";
+
+        $stmt = $conexao->prepare($query);
+        // Utilizando '%' para buscas parciais em todos os campos
+        $stmt->bindValue(':busca', $busca, PDO::PARAM_STR);
+
+        $stmt->execute();
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return $resultado;

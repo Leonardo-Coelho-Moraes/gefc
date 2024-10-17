@@ -103,7 +103,9 @@
                   <div class="form-group"><label>Produto</label> <select class="form-control campo_select"
                       name="produtopadrao" id="produtopadrao">
                   {%for pro in produtos%}
-                  <option value="{{pro.id}}">{{pro.nome}}</option>
+                  <option value="{{pro.id}}">{{pro.nome}}, Q:{{pro.estoque}}
+                    {{pro.unidade_contagem}}
+                  </option>
                   {%endfor%}
                 </select></div>
               
@@ -123,6 +125,8 @@
                   <option value="CHEQUE">CHEQUE</option>
                   <option value="MisoProstol">MisoProstol</option>
                   <option value="Ortopedia">Ortopedia</option>
+                   <option value="Receita">Receita</option>
+                    <option value="Avulso">Avulso</option>
 
                 </select></div>
                
@@ -278,6 +282,8 @@
                  <option value="CHEQUE">CHEQUE</option>
                  <option value="MisoProstol">MisoProstol</option>
                  <option value="Ortopedia">Ortopedia</option>
+                    <option value="Receita">Receita</option>
+                    <option value="Avulso">Avulso</option>
                 
                </select>
              </div>

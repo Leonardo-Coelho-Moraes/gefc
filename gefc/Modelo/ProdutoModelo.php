@@ -20,9 +20,11 @@ class ProdutoModelo {
 
     public function armazenar(array $dados): void
     {
-        $resultados = Helpers::validadarDados($dados);
 
-        $dadosArray = ['nome' => Helpers::Mudar($dados['produto'], [';'], ','), 'slug' => Helpers::Mudar(Helpers::slug($resultados['produto']) . '-' . uniqid(), [',', '.', '%', '/',' ', '+', '-','(',')'], '_'), 'unidade_contagem' => $dados['unicont']];
+        $optionsString = is_array($dados['tipos']) ? implode(',', $dados['tipos']) : $dados['tipos'];
+      $crit = $dados['crit'] * 2;
+
+        $dadosArray = ['nome' => Helpers::Mudar($dados['produto'], [';'], ','), 'slug' => Helpers::Mudar(Helpers::slug($dados['produto']) . '-' . uniqid(), [',', '.', '%', '/',':',' ', '+', '-','(',')'], '_'), 'unidade_contagem' => $dados['unicont'],  $optionsString, $crit];
 
         if (strlen($dadosArray['nome']) < 2) {
             $mensagem = (new Mensagem)->erro('Preencha todos os campos corretamente, os números precisam ser maiores ou iguais a um e os nomes maiores ou iguais a 2 para as informações serem redundantes!')->flash();
@@ -33,7 +35,7 @@ class ProdutoModelo {
         // Chamada à função inserir com uma consulta preparada
         (new Inserir())->inserir(
             'produtos',
-            'nome, slug, unidade_contagem',
+            'nome, slug, unidade_contagem, tipo, qnt_crit',
             $dadosArray
         );
     }
@@ -41,12 +43,15 @@ class ProdutoModelo {
     public function atualizar(array $dados): void
     {
         // Tratamento dos dados
-        $resultados = Helpers::validadarDados($dados);
+        $crit = $dados['crit_edit'] * 2;
+        $options = is_array($dados['tipos_edit']) ? implode(',', $dados['tipos_edit']) : $dados['tipos_edit'];
         // Criação do array de dados
         $dadosArray = [
             $dados['produto_edit'],
-            Helpers::Mudar(Helpers::slug($resultados['produto_edit']) . '-' . uniqid(), [',', '.', '%', '/', '?',' ', '+','-','(',')'], ''),
+            Helpers::Mudar(Helpers::slug($dados['produto_edit']) . '-' . uniqid(), [',', '.', '%',':', '/', '?',' ', '+','-','(',')'], ''),
             $dados['unicont_edit'],
+            $options,
+            $crit
         ];
 
 
@@ -54,7 +59,7 @@ class ProdutoModelo {
         // Chamada à função atualizar com uma consulta preparada
         (new Atualizar())->atualizar(
             'produtos',
-            "nome = ?, slug = ?, unidade_contagem = ?",
+            "nome = ?, slug = ?, unidade_contagem = ?, tipo = ?, qnt_crit=?",
             $dadosArray,
             $dados['produto_id']
         );
@@ -88,11 +93,24 @@ class ProdutoModelo {
 public function pesquisa(string $buscar) {
     $conexao = Conexao::getInstancia();
 
-    $query = "SELECT * FROM produtos
-              WHERE nome LIKE :buscar ";
+    $query = "SELECT 
+    produtos.id, 
+    produtos.nome, 
+    produtos.slug, 
+    produtos.unidade_contagem, 
+    produtos.tipo, 
+     produtos.qnt_crit
+  
+FROM 
+    produtos 
+
+WHERE 
+    produtos.nome LIKE :buscar;
+";
 
     $stmt = $conexao->prepare($query);
     $stmt->bindValue(':buscar', '%' . $buscar . '%', PDO::PARAM_STR);
+
         
     $stmt->execute();
     
@@ -102,8 +120,105 @@ public function pesquisa(string $buscar) {
 
 }
 
+    public function pesquisaNivelCritico()
+    {
+        $conexao = Conexao::getInstancia();
+        $query = "SELECT 
+    produtos.id, 
+    produtos.nome
+  
+FROM 
+    produtos 
+    WHERE produtos.crit_nivel = 0
+";
+        $stmt = $conexao->prepare($query);
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
+    public function pesquisaCrit(?string $filtro = 'todos', ? string $pesquisa = '')
+    {
+        $conexao = Conexao::getInstancia();
+
+        $query = "
+    SELECT 
+        p.id, 
+        p.nome, 
+        p.slug,
+        p.unidade_contagem, 
+    p.tipo, 
+        p.qnt_crit,
+        COALESCE(SUM(l.quantidade), 0) AS total_quantidade
+    FROM 
+        produtos p
+    LEFT JOIN 
+        lote l ON p.id = l.produto_id 
+    WHERE 
+        1 = 1
+    "; // '1 = 1' facilita adicionar condições dinâmicas
+
+        // Se houver uma pesquisa por nome de produto
+        if (!empty($pesquisa)) {
+            $query .= " AND p.nome LIKE :pesquisa ";
+        }
+
+        // Adiciona o filtro específico
+        if ($filtro == 'com_lote') {
+            $query .= " AND l.produto_id IS NOT NULL ";
+        }
+
+        // Agrupa os produtos
+        $query .= " GROUP BY p.id ";
+
+        // Adiciona o HAVING para produtos críticos
+        if ($filtro == 'critico') {
+            $query .= " HAVING total_quantidade <= p.qnt_crit AND p.qnt_crit > 0";
+        }
+
+        $stmt = $conexao->prepare($query);
+
+        // Passa o valor da pesquisa, se houver
+        if (!empty($pesquisa)) {
+            $stmt->bindValue(':pesquisa', '%' . $pesquisa . '%', PDO::PARAM_STR);
+        }
+
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
+    }
+
+    public function criarTipo(string $tipo): void
+    {
+        (new Inserir())->inserir(
+            'tipo_produto',
+            'nome',
+            [$tipo]
+        );
+    }
 
 
+    public function definirNivel(array $dados): void
+    {
+        // Verifique se os dados foram fornecidos corretamente
+        $nivel = $dados['nivel'];
+        foreach ($dados as $key => $value) {
+            if (strpos($key, 'produto') === 0) {
+                $index = str_replace('produto', '', $key);
+                $produtoId = intval($value);
+                    $query = "UPDATE produtos SET crit_nivel = :crit_nivel WHERE id = :id";
+                    $stmt = Conexao::getInstancia()->prepare($query);
+                    $stmt->bindParam(':crit_nivel', $nivel, PDO::PARAM_INT);
+                    $stmt->bindParam(':id', $produtoId, PDO::PARAM_INT);
+                    $stmt->execute();
+
+               
+
+           
+            }
+        }
+    }
 
    }
 

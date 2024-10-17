@@ -1,0 +1,262 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Pacientes Laudo</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Pacientes</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card ">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Cadastrar Paciente</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- /.conteudo-->
+              <form action="{{url('pacientes/') }}" method="post">
+                <div class="form-group">
+                  <label>Nome</label>
+                  <input class="form-control" id="nome" type="text" name="nome" placeholder="Ex: Maria" required>
+                </div>
+                <div class="form-group row">
+
+                  <div class="col">  <label for="local">Local</label>
+                    <select id="local" class="form-control" name="local">
+                      {% for local in locais %}
+                      <option value="{{ local.id }}">{{ local.nome }}</option>
+                      {% endfor %}
+                    </select></div>
+
+                    <div class="col">
+                      <label>Data Nascimento</label>
+                      <input class="form-control" id="data_nas" type="date" name="data_nas" 
+                        required>
+                    </div>
+
+                </div>
+                <div class="row form-group">
+                  
+                  <div class="col">
+                    <label>Número Sus</label>
+                    <input class="form-control" id="sus" type="number" name="sus" min='0' required>
+                  </div>
+
+                  <div class="col ">
+                    <label>Endereço</label>
+                    <input class="form-control" id="endereco" type="text" name="endereco"
+                      placeholder="Ex: Bairro Urucu, Beco do Macaco S/N" required>
+                  </div>
+                  <div class="col">
+                    <label>Contato</label>
+                    <input class="form-control" value="1" id="contato" type="number" 
+                      name="contato" placeholder="979645784" required>
+                  </div>
+
+
+                </div>
+
+                <div class="form-group">
+                  <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
+                </div>
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Editar Paciente</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" style="display: none;" id="form_edit_paciente">
+              <!-- /.conteudo-->
+              <form action="{{url('pacientes/') }}" method="post">
+                <input type="hidden" id="paciente_id" name="paciente_id">
+                <div class="form-group">
+                  <label>Nome</label>
+                  <input class="form-control" id="nome_edit" type="text" name="nome_edit" placeholder="Ex: Maria" required>
+                </div>
+                <div class="form-group row">
+
+                  <div class="col">  <label for="local_edit">Local</label>
+                    <select id="local_edit" class="form-control" name="local_edit">
+                      {% for local in locais %}
+                      <option value="{{ local.id }}">{{ local.nome }}</option>
+                      {% endfor %}
+                    </select></div>
+
+                    <div class="col">
+                      <label>Data Nascimento</label>
+                      <input class="form-control" id="data_nas_edit" type="date" name="data_nas_edit" 
+                        required>
+                    </div>
+
+                </div>
+                <div class="row form-group">
+                  
+                  <div class="col">
+                    <label>Número Sus</label>
+                    <input class="form-control" id="sus_edit" type="number" name="sus_edit" min='0' required>
+                  </div>
+
+                  <div class="col ">
+                    <label>Endereço</label>
+                    <input class="form-control" id="endereco_edit" type="text" name="endereco_edit"
+                      placeholder="Ex: Bairro Urucu, Beco do Macaco S/N" required>
+                  </div>
+                  <div class="col">
+                    <label>Contato</label>
+                    <input class="form-control" id="contato_edit" type="number" 
+                      name="contato_edit" placeholder="979645784" required>
+                  </div>
+
+
+                </div>
+
+                <div class="form-group">
+                  <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
+                </div>
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header">
+          <h3 class="card-title">Entrada de Produtos</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+<div class="d-none">
+  <table id="cabe" class="table" style="border: 1px solid black; margin-bottom: 50px;">
+    <thead >
+      <tr >
+        <th  style="border: 1px solid black;">Extrato de Entrada</th>
+         <th style="border: 1px solid black;">Intervalo da Pesquisa:
+           {{dados.dePesquisa |date('d/m/Y')}} |
+           {{dados.atePesquisa |date('d/m/Y')}}</th>
+        <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+       
+      </tr>
+    </thead>
+
+  </table>
+</div>
+           
+
+          <table id="example" class="text-sm table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Nome</th>
+                <th>Local</th>
+                <th>Data Nas.</th>
+                <th>Sus</th>
+                <th>Endereço</th>
+                <th>Contato</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody>
+              
+              
+              {% for paciente in pacientes %}
+              <tr data-id="{{  paciente.id }}" data-nome="{{paciente.nome}}" data-local="{{paciente.local}}"
+              data-nas="{{ paciente.data_nas }}" data-sus="{{ paciente.sus }}" data-endereco="{{ paciente.endereco }}" data-contato="{{ paciente.contato }}">
+                <td>{{ paciente.id}}</td>
+                <td>{{ paciente.nome}}</td>
+                {% for local in locais %}
+                {% if paciente.local == local.id %}
+              
+                <td>{{ local.nome}}</td>   {% endif %}{% endfor %}
+                <td>{{ paciente.data_nas}}</td>
+                <td>{{ paciente.sus}}</td>
+                <td>{{ paciente.endereco}}</td>
+                <td>{{ paciente.contato}}</td>
+                <td><button class="btn btn-primary btn-sm editar-paciente">Editar</button>
+                 
+                 <a
+                   href="{{url('pacientes/deletar/'~paciente.id)}}" class="btn btn-danger btn-sm">Deletar</a>
+                  
+                 </td></td>
+                
+               
+              </tr>
+             
+              {% endfor %}
+              
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+
+
+
+
+
+
+
+
+  
+</div>
+
+
+
+{% endblock %}

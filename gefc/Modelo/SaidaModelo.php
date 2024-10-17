@@ -35,6 +35,11 @@ class SaidaModelo {
                 $stmt->bindParam(':qnt', $quantidade, PDO::PARAM_INT);
                 $stmt->bindParam(':id', $loteId, PDO::PARAM_INT);
                 $stmt->execute();
+
+                $query = "UPDATE lote SET quantidade = CASE WHEN quantidade < 0 THEN 0 ELSE quantidade END WHERE id = :id";
+                $stmt = Conexao::getInstancia()->prepare($query);
+                $stmt->bindParam(':id', $loteId, PDO::PARAM_INT);
+                $stmt->execute();
         }
     }
 }
@@ -42,7 +47,7 @@ class SaidaModelo {
 
 public function vendaRegistro(array $dados): void {
         // Verifica se há dados enviados
-        $data = date("Y-m-d");
+        $data = $dados['data'];
     $ano = date("Y");
 
         $query = "

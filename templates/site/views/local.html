@@ -59,7 +59,7 @@
                                         Quantidade 
                                     </label>
                                     <input class="form-control" id="estoque" type="number" name="estoque"
-                                        min="1" required>
+                                        min="0" required>
                                 </div>
                                 <div class="form-group">
                                     <input class="btn btn-primary" type="submit" value="Editar">
@@ -92,11 +92,12 @@
                     <table id="example" class="text-sm table table-striped table-bordered table-hover">
                         <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>Lote</th>
+                                <th class="d-none">ID</th>
+                                 <th>COD</th>
+                                
                                 <th>Produto</th>
                                 <th>Qnt.</th>
-                                <th>Vencimento</th>
+                             
                                  <th>Ação</th>
 
 
@@ -105,12 +106,9 @@
                         <tbody>
                             {% for registro in registros %}
                             <tr data-id="{{registro.local_estoque_id }}" data-produto="{{ registro.nome }}">
-                                <td>{{ registro.local_estoque_id }}</td>
-                                <td>
-                                    
-                                        {{ registro.lote }}
-                                   
-                                </td>
+                                <td class="d-none">{{ registro.local_estoque_id }}</td>
+                                 <td>{{ registro.produto_id }}</td>
+                                
                                 <td>
                                    
                                         {{ registro.nome }}
@@ -118,7 +116,7 @@
                                 </td>
                                 
                                 <td>{{ registro.estoque }}</td>
-                                <td>{{ validade(registro.vencimento) }}</td>
+                                
                                 <td scope="row" class="px-6 py-4 whitespace-nowrap">
                                     <button 
                                         class="btn btn-primary editarEstoqueLocal">Editar</button>

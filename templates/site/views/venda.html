@@ -146,11 +146,50 @@
   <div class="content">
     <div class="container-fluid">
       <div class="card">
-          <div id="printTitle" style="display:none;">Dispensado por: {{registros[0].nome_usuario}} em 
-            {{registros[0].data}}</div>
-        <div class="card-header bg-primary">
-          <h3 class="card-title">Saída: {{venda}} Para: {{registros[0].localNome}} {{registros[0].data}}</h3>
+         
+
+        <div class="d-none">
+          <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+            <thead>
+              <tr>
+                <th style="border: 1px solid black;">Cod da Saída: {{venda}}</th>
+                <th style="border: 1px solid black;">Destinatário: {{registros[0].localNome}}</th>
+                
+              </tr>
+               <tr>
+                 <th style="border: 1px solid black;">Funcionário: {{registros[0].nome_usuario}}</th>
+                 <th style="border: 1px solid black;">Data: {{registros[0].data|date('d/m/Y')  }}</th>
+               </tr>
+            </thead>
+           
+
+          </table>
         </div>
+
+        <div class="d-none" >
+          <div id="assinaturas" style="margin-top: 30px;">
+            <div class="d-flex justify-content-around" >
+              <div class="d-flex flex-column" style="width: 250px;">
+                <hr style="width: 250px;">
+                <p style="text-align: center;">Receptor</p>
+              </div>
+              <div class="d-flex flex-column" style="width: 250px;">
+                <hr style="width: 250px;">
+                <p style="text-align: center;">Responsável</p>
+              </div>
+            </div>
+            <div class="d-flex justify-content-around">
+              <div class="d-flex flex-column" style="width: 250px;">
+                <hr style="width: 250px;">
+                <p style="text-align: center;">Data</p>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        
+
         <!-- /.card-header -->
         <div class="card-body">
           <table id="example" class="table table-striped table-bordered table-hover">
@@ -161,7 +200,7 @@
                 <th>Lote</th>
                 <th>Qnt. Solicitada</th>
                 <th>Qnt.</th>
-          
+                <th>Val.</th>
                 <th>Ação</th>
                 
               
@@ -178,6 +217,7 @@
                 <td>{{ registro.lote }}</td>
                 <td>{{ registro.qnt_solicitada }}</td>
                 <td>{{ registro.quantidade }}</td> 
+                <td>{{ registro.vencimento|date('d/m/Y') }}</td>
             
                 <td>
                   <button class="btn btn-primary btn-sm editarSaida">Editar</button>

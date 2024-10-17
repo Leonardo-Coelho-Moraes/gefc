@@ -47,15 +47,7 @@
                 <div class="col-5"> <label>Produtos:</label>
                   <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
                     placeholder="Deixe vazio para pesquisar todos os Produtos"></div>
-                     {% if usuario().local == 0  %}
-                <div class="col-2"> <label>Fornecedor:</label>
-                  <input type="text" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
-                    placeholder="Deixe vazio para pesquisar todos os Fornecedores"></div>
-                    {% else%}
-                     <div class="col-2 d-none" >
-                       <input type="hidden" value="" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
-                         placeholder="Deixe vazio para pesquisar todos os Fornecedores"></div>
-                    {%endif%}
+                   
                 <div class="col-2"> <label>Local:</label>
                   <input type="text" id="localPesquisa" name="localPesquisa" class="form-control"
                     placeholder="Deixe vazio para pesquisar todos os Locais"></div>
@@ -98,12 +90,9 @@
                 <th>ID</th>
                 <th>Dispensa</th>
                 <th>Produto</th>
-                <th>Validade</th>
                 <th>Departamento</th>
-               {% if usuario().local == 0  %} <th>Fornecedor</th>{%endif%}
                 <th>Data</th>
                 <th>Qnt</th>
-               {% if usuario().local == 0  %} <th>Preço</th>{%endif%}
                 <th>Usuario</th>
 
 
@@ -111,22 +100,16 @@
             </thead>
             <tbody>
                {%set qnt = 0%}
-               {%set preco = 0%}
+           
               {%for registro in registros%}
               <tr>
                 <td>{{ registro.saida_id }}</td>
                 <td>{{ registro.saida }}</td>
                 <td>{{ registro.nome }}</td>
-                <td>{{ registro.vencimento|date('d/m/Y') }}</td>
                 <td>{{ registro.local }}</td>
-                {% if usuario().local == 0  %}
-                 <td>{{ registro.fornecedor }}</td>
-                 {%endif%}
                 <td>{{ registro.data|date('d/m/Y') }}</td>
                 <td>{{ registro.quantidade }}</td>
                  {%set qnt = qnt + registro.quantidade%}
-                 {% if usuario().local == 0  %}
-                <td>{{ registro.preco }} R$</td>{%set preco = preco + registro.preco %} {%endif%}
                 <td>{{ registro.username }}</td>
                 
               </tr>
@@ -135,15 +118,12 @@
                <tr>
                  <td>10000</td>
                  <td></td>
-
-                 <td> {% if usuario().local == 0  %}Custo Total de Produtos: {{preco}}R$ {%endif%}</td>
                  <td></td>
                  <td></td>
-                  {% if usuario().local == 0  %}<td></td>{%endif%}
-                 <td></td>
+                 <td></td> 
                  <td>Total: {{ qnt }}</td>
-                 {% if usuario().local == 0  %} <td></td>{%endif%}
                  <td></td>
+               
 
 
                </tr>
