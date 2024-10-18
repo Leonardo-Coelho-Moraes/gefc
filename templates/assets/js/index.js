@@ -73,22 +73,7 @@
         $('#form_edit_lote').css('display', 'block');
     }); 
 
-       
-      $('.editProduto').on('click', function() {
-        // Pega a linha da tabela correspondente ao botão clicado
-        var row = $(this).closest('tr');
 
-        // Captura os dados da linha
-        var produtoId = row.data('id');
-        var produtoNome = row.data('nome');
-        var produtoCrit = row.data('crit');
-
-
-        // Exibe os dados no formulário de edição
-        $('#produto_id').val(produtoId);
-        $('#produto_edit').val(produtoNome);
-          $('#crit_edit').val(produtoCrit);
-    });
         
          $('.editarSaida').on('click', function () {
            // Pega a linha da tabela correspondente ao botão clicado

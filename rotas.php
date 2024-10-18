@@ -10,7 +10,6 @@ SimpleRouter::get(URL_SITE . 'index.php', function() {
     });
 
 SimpleRouter::match(['get','post'],URL_SITE.'entrada/','SiteControlador@entrada');
-    SimpleRouter::get( URL_SITE . 'entradaRegistros/', 'SiteControlador@entradaRegistros');
 
     SimpleRouter::match(['get', 'post'], URL_SITE . 'entrada/deletar/{id}', 'SiteControlador@deletarEntrada');
     SimpleRouter::match(['get', 'post'], URL_SITE . 'produtos/deletar/{id}', 'SiteControlador@deletarProdutos');

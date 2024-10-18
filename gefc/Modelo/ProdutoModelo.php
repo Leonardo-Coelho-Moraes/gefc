@@ -43,7 +43,7 @@ class ProdutoModelo {
     public function atualizar(array $dados): void
     {
         // Tratamento dos dados
-        $crit = $dados['crit_edit'] * 2;
+        $crit = $dados['crit_edit'];
         $options = is_array($dados['tipos_edit']) ? implode(',', $dados['tipos_edit']) : $dados['tipos_edit'];
         // Criação do array de dados
         $dadosArray = [
@@ -93,19 +93,24 @@ class ProdutoModelo {
 public function pesquisa(string $buscar) {
     $conexao = Conexao::getInstancia();
 
-    $query = "SELECT 
+    $query = "
+   SELECT 
     produtos.id, 
     produtos.nome, 
     produtos.slug, 
     produtos.unidade_contagem, 
     produtos.tipo, 
-     produtos.qnt_crit
-  
+    produtos.qnt_crit,
+    COALESCE(SUM(lote.quantidade), 0) AS total_quantidade
 FROM 
-    produtos 
-
+    produtos
+LEFT JOIN 
+    lote ON produtos.id = lote.produto_id 
 WHERE 
-    produtos.nome LIKE :buscar;
+    produtos.nome LIKE CONCAT('%', :buscar, '%')
+GROUP BY 
+    produtos.id LIMIT 40;
+
 ";
 
     $stmt = $conexao->prepare($query);
@@ -169,7 +174,7 @@ FROM
         }
 
         // Agrupa os produtos
-        $query .= " GROUP BY p.id ";
+        $query .= " GROUP BY p.id";
 
         // Adiciona o HAVING para produtos críticos
         if ($filtro == 'critico') {
@@ -218,6 +223,44 @@ FROM
            
             }
         }
+    }
+
+
+    public function pesquisaProduto(?string $id)
+    {
+        $conexao = Conexao::getInstancia();
+
+        $query = "
+        SELECT  
+         produtos.id,
+            produtos.nome,
+             produtos.unidade_contagem,
+              produtos.tipo,
+               produtos.qnt_crit,
+                lote.produto_id,
+                lote.id AS cod,
+                lote.quantidade, 
+                lote.lote,
+                lote.fornecedor,
+                lote.localizacao,
+                lote.vencimento
+
+        FROM 
+            produtos
+        JOIN 
+            lote ON produtos.id  = lote.produto_id
+        WHERE
+            produtos.id = :id
+    ";
+
+        $stmt = $conexao->prepare($query);
+        // Utilizando '%' para buscas parciais em todos os campos
+        $stmt->bindValue(':id', $id, PDO::PARAM_STR);
+
+        $stmt->execute();
+        $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return $resultado;
     }
 
    }

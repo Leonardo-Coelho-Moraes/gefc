@@ -1,55 +1,83 @@
 $(document).ready(function () {
-    var urlsite = $('#entradaLink').val();
-function registroSaidas(busca) {
+    var urlsite = $('#produtosLink').val();
+
+    var tipos = $('#tiposLista');
+    var tiposArray = tipos.data('tipos');
+
+function registroProdutos(busca) {
     // Obtém o valor do link
     
      $.ajax({
-         url: urlsite+'entrada', // URL do arquivo PHP que realizará a pesquisa
+         url: urlsite+'produtos', // URL do arquivo PHP que realizará a pesquisa
          method: 'POST', // Envia os dados via POST
          data: {
-             relatorio: busca
+             pesquisa: busca
          }, // Passa o valor digitado
          success: function (response) {
             var data = JSON.parse(response);
-             criarCards(data) ;// Exibe os resultados na div
+            criarCards(data);
+            // criarCards(data) ;// Exibe os resultados na div
          },
          error: function () {
-             $('#entradas').html('<p>Erro ao buscar dados</p>');
+             $('#produtos').html('<p>Erro ao buscar Produtos</p>');
          }
      });
 }
  
- $('#pesquisaEntrada').keyup(function () {
+ $('#pesquisaProdutos').keyup(function () {
  var query = $(this).val(); // Obtém o valor digitado
     console.log(query);
  if (query.length > 1) { // Executa apenas se houver mais de um caractere digitado
-    registroSaidas(query);
+    registroProdutos(query);
  } else {
-    registroSaidas(''); // Limpa os resultados se o campo estiver vazio
+    registroProdutos(''); // Limpa os resultados se o campo estiver vazio
  }
  });
  
 function criarCards(dados) {
-    const container = $('#entradas');
+    const container = $('#produtos');
     container.empty(); // Limpa os cards anteriores
 
     dados.forEach(item => {
+             // Divide os IDs de tipos separados por vírgulas em um array
+             const tipo_ids = item.tipo ? item.tipo.split(',') : [];
+
+             // Mapeia cada ID para o nome correspondente no tiposArray e junta os resultados
+             const nomeTipo = tipo_ids
+                 .map(tipo_id => {
+                     const tipoEncontrado = tiposArray.find(tipo => tipo.id == tipo_id.trim());
+                     return tipoEncontrado ? tipoEncontrado.nome : 'Desconhecido';
+                 })
+                 .join(', '); // Junta os nomes separados por vírgula
+
+                 
+                  
+                  
+                 
+                  
+
         const card = `
             <div class="col-md-4"
-            style='max-width:300px' >
-                <div class="card" style='position:relative;'>
+            >
+                <div class="card" style='width:400px;height:150px;position:relative;'>
                 
-                    <div class="card-body" >
-                    <i  style='position:absolute;font-size:120px;z-index:4;opacity:0.2;bottom:0;right:0;' class="fa-solid fa-tablets"></i>
-                
-                        <p class="text-sm" >Cod: ${item.lote_id}, ${item.nome} - L:${item.lote}</p>
-                        <p class="text-sm">Qnt: ${item.quantidade} ${item.fornecedor}</p>
-                  
-                        <p class="text-sm" >Dt: ${item.data}</p>
-                        
-                       <div class='d-flex' style='gap:10px;'> <a data-id="${item.registro_id}" data-nome="${item.nome}" data-quantidade="${item.quantidade}" class="text-primary editarEntrada"><i class="icone fa-solid fa-pen"></i></a>
-                        <a class='deletarEntrada text-danger'
-                data-link="entrada/deletar/${item.registro_id}"><i class="icone fa-solid fa-trash text-danger" ></i></a></div>
+                    <div class="card-body d-flex" >
+                    <i  style='position:absolute;font-size:100px;z-index:4;opacity:0.2;bottom:0;left:0;' class="fa-solid fa-tablets"></i>
+                    <div style='z-index:10;'> <p class="text-sm" > ${item.nome} Qnt: ${item.total_quantidade}</p>
+                        <p class="text-sm" > ${nomeTipo}</p>
+
+                        <i data-id='${item.id}'  class="verMais text-xl fa-solid fa-eye"></i>
+</div>
+                       
+                       <div class='d-flex'
+                       style='flex-direction: column;top: 0;position: absolute;width: 22px;height: 100%;right: 0;justify-content: space-evenly;padding-rigth:2px;padding-left:2px;' > <a data-id="${ item.id }"
+                       data-nome="${ item.nome }"
+                       data-crit="${item.qnt_crit }"
+                       class="bg-primary text-white editarProduto d-flex h-100 justify-content-center
+    align-items-center" style='border-top-left-radius: 9px;'><i class="icone fa-solid fa-pen" ></i></a>
+                        <a class='deletarProduto text-white bg-danger d-flex h-100 justify-content-center
+                        align-items-center'
+                data-link="produtos/deletar/${item.id}" style='border-bottom-left-radius: 9px;'><i class="icone fa-solid fa-trash text-white" ></i></a></div>
                 </div>
                     </div>
                     
@@ -60,108 +88,10 @@ function criarCards(dados) {
 
 
 
-function criarGrid(data) {
-    // Limpa o grid anterior, se necessário
-    const gridContainer = document.getElementById('grid'); // Altere o ID para o que você estiver usando
-    gridContainer.innerHTML = ''; // Remove o conteúdo anterior
-
-    // Cria o Grid.js
-    new gridjs.Grid({
-        columns: [
-            {
-                id: 'id',
-                name: 'Id'
-
-            }, {
-                id: 'cod',
-                name: 'COD'
-               
-            },
-            {
-                id: 'lote',
-                name: 'Lote',
-                 width: 'auto'
-            },
-            {
-                id: 'produto',
-                name: 'Produto',
-                 width: '600px'
-            },
-            {
-                id: 'qnt',
-                name: 'Qnt'
-            },
-            {
-                id: 'fornecedor',
-                name: 'Fornecedor',
-                 width: 'auto'
-            },
-            {
-                id: 'data',
-                name: 'Data'
-            },
-             {
-                 id: 'acao',
-                 name: '#',
-                 formatter: (_, row) => {
-                     return gridjs.html(`
-                        <div style="display:flex; gap:8px;">
-                            <a  class='deletarEntrada'
-                data-link="entrada/deletar/${row.cells[0].data}"
-                    class="text-danger" > <i class="fa-solid fa-trash" ></i> </a>
-                <a  data-link="entrada/editar/${row.cells[0].data}"
-                data-id="${row.cells[0].data}" data-nome="${row.cells[3].data}" data-quantidade="${row.cells[4].data}"
-                    class="text-primary editarEntrada" > <i class="fa-solid fa-pen"></i> </a>
-                    
-                        </div>
-                    `);
-                 },
-                 width: 'auto'
-             }
-            // Adicione mais colunas conforme necessário
-        ],
-        data: data.map(item => [
-            item.registro_id,
-            item.lote_id, // Altere para os nomes reais das suas propriedades
-            item.lote,
-            item.nome,
-            item.quantidade,
-            item.fornecedor,
-            item.data,
-            'ação'
-            
-            // Adicione mais propriedades conforme necessário
-        ]),
-        pagination: {
-            limit: 30 // Limite de itens por página
-        },
-        search: true,
-        resizable: true,
-        sort: true,
-        language: {
-            'search': {
-                'placeholder': 'Procurar...'
-            },
-            'pagination': {
-                'previous': 'Anterior',
-                'next': 'Próximo',
-                'showing': 'Exibindo',
-                'results': () => 'resultados'
-            }
-        }, style: {
-           
-            td: {
-                'padding': '3px 6px'
-            }
-        }
-    }).render(gridContainer); // Renderiza no container do grid
-}
+registroProdutos(' ');
 
 
-registroSaidas('');
-
-
-$(document).on('click', '.deletarEntrada', function (e) {
+$(document).on('click', '.deletarProduto', function (e) {
     e.preventDefault(); // Impede o comportamento padrão do link
 
     var link = $(this).data('link'); // Obtém o link de exclusão do data-link
@@ -186,12 +116,12 @@ $(document).on('click', '.deletarEntrada', function (e) {
                     // Supondo que o backend retorne uma mensagem de sucesso
                     Swal.fire({
                         title: 'Excluído',
-                        text: 'O item foi excluído com sucesso.',
+                        text: 'Produto excluído com sucesso.',
                         icon: 'success',
                         confirmButtonText: 'Ok',
                         timer: 800
                     });
-                     registroSaidas('');
+                     registroProdutos('');
                 },
                 error: function () {
                     Swal.fire(
@@ -205,59 +135,82 @@ $(document).on('click', '.deletarEntrada', function (e) {
     });
 });
 
-$(document).on('click', '.editarEntrada', function (e) {
+$(document).on('click', '.editarProduto', function (e) {
     e.preventDefault(); // Impede o comportamento padrão do link
 
    
     var id = $(this).data('id'); // ID do item
     var nome = $(this).data('nome'); // Nome do item
-    var quantidade = $(this).data('quantidade'); // Quantidade do item
+    var crit = $(this).data('crit'); // Quantidade do item
 
     // Exibe o Swal com o formulário
     Swal.fire({
-        title: 'Editar Entrada',
-        html: `<form id="editEntrada">
-                
-                <input id="registro_id" name="registro_id" type="hidden" class="swal2-input" value="${id}" readonly>
-                
-                <label for="produto_nome">Nome</label>
-                <input id="produto_nome" name="produto_nome" type="text" class="swal2-input" value="${nome}" readonly>
-                
-                <label for="quantidade_editada">Quantidade</label>
-                <input name="quantidade_editada" id="quantidade_editada" type="number" class="swal2-input" value="${quantidade}" required>
+        title: 'Editar Produto',
+        html: `<form id="editProduto">
+                <input id="produto_id" value='${id}' type="hidden" name="produto_id">
+                <div class='d-flex flex-column'><label for="produto_edit">Nome</label>
+                <input id="produto_edit" name="produto_edit" type="text" class="swal2-input" value="${nome}" required></div>
+                <div class='d-flex flex-column'><label for="unicont_edit">Unidade de Contagem</label>
+<select name="unicont_edit"
+id="unicont_edit"
+class="swal2-input form-control" >
+                  <option value="UNID">Unidade</option>
+                  <option value="FRC">Frasco</option>
+                  <option value="AMP">Ampola</option>
+                  <option value="BIS">Bisnaga</option>
+               
+                </select></div>
+                <div class='d-flex flex-column'> <label for="tipos_edit">Tipo</label>
+                <select name="tipos_edit[]"
+                id="tipos_edit"
+                class="swal2-input"
+                multiple="multiple" >
+                    ${tiposArray.map(item => `<option value='${item.id}'>${item.nome}</option>`).join('')}
+                </select></div>
+                <div class='d-flex flex-column'> <label for="crit_edit">CMM</label>
+                <input name="crit_edit" id="crit_edit" type="number" class="swal2-input" value="${crit}" required></div>    
             </form>`,
         showCancelButton: true,
         confirmButtonText: 'Atualizar',
         cancelButtonText: 'Cancelar',
+        customClass: {
+            popup: 'w-50' // Adiciona uma classe personalizada ao popup
+        },
         preConfirm: () => {
             // Faz o serialize do formulário
-            return $('#editEntrada').serialize();
-        }
+            return $('#editProduto').serialize();
+        },
+         didOpen: () => {
+             // Inicializa o Select2 quando o modal é exibido
+             $('#tipos_edit').select2({
+                 dropdownParent: $('.swal2-container') // Isso garante que o Select2 funcione dentro do modal
+             });
+         }
     }).then((result) => {
         if (result.isConfirmed) {
             var formData = result.value; // Dados do formulário retornados pelo Swal
 
             // Envia os dados via AJAX para o link fornecido
             $.ajax({
-                url: urlsite+'entrada',
+                url: urlsite+'produtos',
                 method: 'POST', // Envia como POST, altere se necessário
                 data: formData,
                 success: function (response) {
                     // Exibe uma mensagem de sucesso
                     Swal.fire({
                         title: 'Sucesso',
-                        text: 'Editado com Sucesso. Corrija a quantidade de estoque do produto pra mais ou para menos!',
+                        text: 'Produto editado com Sucesso.',
                         icon: 'success',
                         timer: 2500
                     });
 
                     // Chame a função para atualizar a lista, se necessário
-                    registroSaidas(''); // Atualiza a lista sem recarregar a página
+                    registroProdutos(''); // Atualiza a lista sem recarregar a página
                 },
                 error: function () {
                     Swal.fire(
                         'Erro!',
-                        'Houve um problema ao atualizar a entrada.',
+                        'Houve um problema ao atualizar a Produto.',
                         'error'
                     );
                 }
@@ -265,6 +218,55 @@ $(document).on('click', '.editarEntrada', function (e) {
         }
     });
 });
+
+
+$(document).on('click', '.verMais', function (e) {
+    e.preventDefault(); // Impede o comportamento padrão do link
+
+
+    var id = $(this).data('id'); // ID do item
+    
+     // Quantidade do item
+$.ajax({
+    url: urlsite + 'produtos',
+    method: 'POST', // Envia como POST, altere se necessário
+    data: {
+        mais: id
+    },
+    success: function (response) {
+         var produto = JSON.parse(response);
+          Swal.fire({
+              title: produto[0].nome,
+              html: `oi`,
+            
+              customClass: {
+                  popup: 'w-50' // Adiciona uma classe personalizada ao popup
+              },
+              preConfirm: () => {
+                  // Faz o serialize do formulário
+                  return $('#editProduto').serialize();
+              },
+              didOpen: () => {
+                  // Inicializa o Select2 quando o modal é exibido
+                  $('#tipos_edit').select2({
+                      dropdownParent: $('.swal2-container') // Isso garante que o Select2 funcione dentro do modal
+                  });
+              }
+          })
+
+    },
+    error: function () {
+        Swal.fire(
+            'Erro!',
+            'Houve um problema ao dar entrada.',
+            'error'
+        );
+    }
+});
+  
+});
+
+
 
 
 $(document).on('click', '#enviarEntradaLote', function (e) {
@@ -284,7 +286,7 @@ $(document).on('click', '#enviarEntradaLote', function (e) {
         });
 
         // Chame a função para atualizar a lista, se necessário
-        registroSaidas('');
+        registroProdutos('');
         $('#formEntradaLote')[0].reset();// Atualiza a lista sem recarregar a página
     },
     error: function () {
@@ -318,7 +320,7 @@ $(document).on('click', '#cadastrar', function (e) {
             });
 
             // Chame a função para atualizar a lista, se necessário
-            registroSaidas('');
+            registroProdutos('');
             $('#formEntrada')[0].reset(); // Atualiza a lista sem recarregar a página
         },
         error: function () {

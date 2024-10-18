@@ -108,16 +108,33 @@ class SiteControlador extends Controlador
         echo $this->template->renderizar('entrada.html', ['titulo' => SITE_NOME . ' Entrada']);
     }
 
-    public function entradaRegistros(): void
+
+    public function produtos(): void
     {
         $this->verificarPermissaoAdmin();
-        $registros = (new EntradaModelo())->pesquisa('1970-01-01', '2099-12-31', '', '');
-       
-        
-        exit;
-        
-    }
 
+        $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+        if (isset($dados['produto_id'])) {
+                (new ProdutoModelo())->atualizar($dados);
+                echo 'Sucesso';
+                exit;
+        }elseif (isset($dados['mais'])) {
+           $produto = (new ProdutoModelo())->pesquisaProduto($dados['mais']);
+            $produtoArray = json_encode($produto);
+            echo $produtoArray;
+            exit;
+        }
+        $tipos = (new Busca())->busca(null, null, 'tipo_produto', '');
+        $listatipos = json_encode($tipos);
+        $pesquisa = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
+        if (isset($pesquisa)) {
+        $produtos = (new ProdutoModelo())->pesquisa( $pesquisa);
+            $lotesArray = json_encode($produtos);
+            echo $lotesArray;
+            exit;
+        }
+        echo $this->template->renderizar('produtos.html', ['titulo' => SITE_NOME . ' Produtos', 'tipos' => $listatipos]);
+    }
 
     public function pacienteLaudo(): void
     {
@@ -314,39 +331,7 @@ class SiteControlador extends Controlador
         }
     }
 
-    public function produtos(): void
-    {
-        $this->verificarPermissaoAdmin();
-        
-
-        $produtoId = filter_input(INPUT_POST, 'produto_id', FILTER_DEFAULT);
-        if (isset($produtoId)) {
-            $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
-            if (isset($dados)) {
-                (new ProdutoModelo())->atualizar($dados);
-                $this->mensagem->sucesso('Registro Editado com Sucesso. Lembre de atualizar a quantidade do estoque em produtos!')->flash();
-            }
-        }
-
-
-
-        $agora = strtotime(date('Y-m-d'));
-        $produtos = (new ProdutoModelo())->pesquisaCrit('todos', '');
-       
-        $tipos = (new Busca())->busca(null,null,'tipo_produto', '');
-        $filtro = filter_input(INPUT_POST, 'filtro', FILTER_DEFAULT);
-        $pesquisa = filter_input(INPUT_POST, 'pesquisa', FILTER_DEFAULT);
-
-        if (isset($pesquisa)) {
-            $produtos = (new ProdutoModelo())->pesquisaCrit($filtro, $pesquisa);
-          
-            if (empty($produtos)) {
-                $this->mensagem->erro($pesquisa . " não encontrado(a), abaixo a lista de todos os registros!")->flash();
-                $produtos = (new ProdutoModelo())->pesquisa(' ');
-            }
-        }
-        echo $this->template->renderizar('produtos.html', ['titulo' => SITE_NOME . ' Produtos', 'produtos' => $produtos, 'agora' => $agora, 'tipos'=> $tipos]);
-    }
+  
 
     public function produtosCrit(): void
     {
