@@ -1,0 +1,210 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4">
+  <!-- Brand Logo -->
+  <a href="index3.html" class="brand-link">
+    <span class="text-xl" style="font-weight: 700;color: #0023C4;">α</span>
+    <span class="brand-text font-weight-light">Alpha</span>
+  </a>
+
+  <!-- Sidebar -->
+  <div class="sidebar">
+
+
+    <!-- Sidebar Menu -->
+    <nav class="mt-2">
+      <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+        <!-- Add icons to the links using the .nav-icon class
+             with font-awesome or any other icon font library -->
+             {% if usuario().local == 0  and usuario().nivel <= 2 %}
+        <li class="nav-item">
+          <a href="{{url('')}}" class="nav-link">
+            
+            <p>
+              Início
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('entrada')}}" class="nav-link">
+            
+            <p>
+              Entrada
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('mapas')}}" class="nav-link">
+            
+            <p>
+              Mapas
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('produtos')}}" class="nav-link">
+            
+            <p>
+              Produtos
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('codbarras')}}" class="nav-link">
+            
+            <p>
+              Cod. Barras
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('produtosCrit')}}" class="nav-link">
+            
+            <p>
+              Produtos Nivel
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('pacientes')}}" class="nav-link">
+            
+            <p>
+              Laudos
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('lotes')}}" class="nav-link">
+            
+            <p>
+              Lotes
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('abastecer')}}" class="nav-link">
+            
+            <p>
+              Abastecer
+            </p>
+          </a>
+        </li>
+        {%endif%}
+        {% if usuario().local == 0  and usuario().nivel == 3 or usuario().nivel == 1%}
+        <li class="nav-item">
+          <a href="{{url('receitas')}}" class="nav-link">
+            
+            <p>
+              Receitas
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('registro/vendas')}}" class="nav-link">
+            
+            <p>
+              Saídas
+            </p>
+          </a>
+        </li>
+       
+    
+        <li class="nav-item">
+          <a href="{{url('saidas/hospital')}}" class="nav-link">
+            
+            <p>
+              Registros Hospital
+            </p>
+          </a>
+        </li>
+        {%endif%}
+        {% if usuario().local == 0  and usuario().nivel == 1%}  
+        <li class="nav-item">
+          <a href="{{url('estoque/locais')}}" class="nav-link">
+            
+            <p>
+              Estoque
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('padroes')}}" class="nav-link">
+            
+            <p>
+              Padrões
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('relatorios')}}" class="nav-link">
+            
+            <p>
+              Relatorios
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('usuarios')}}" class="nav-link">
+            
+            <p>
+              Usuários
+            </p>
+          </a>
+        </li>
+        {%endif%}
+        {% if usuario().local != 0 and  usuario().nivel >= 1 %}
+        <li class="nav-item">
+          <a href="{{url('entrada/local')}}" class="nav-link">
+            
+            <p>
+              Entradas
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('local/entrada')}}" class="nav-link">
+            
+            <p>
+              Entradas CAF
+            </p>
+          </a>
+        </li>
+        {%endif%}
+        <li class="nav-item">
+          <a href="{{url('local')}}" class="nav-link">
+            
+            <p>
+              Estoque
+            </p>
+          </a>
+        </li>
+        {% if usuario().local == 3 and usuario().nivel >= 4  %}
+        <li class="nav-item">
+          <a href="{{url('saida/hospital')}}" class="nav-link">
+            
+            <p>
+              Fazer Saída
+            </p>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a href="{{url('saidas/hospital')}}" class="nav-link">
+            
+            <p>
+              Saídas Hospital
+            </p>
+          </a>
+        </li>
+        {%endif%}
+        <li class="nav-item">
+          <a href="{{url('sair')}}" class="nav-link">
+            
+            <p>
+              Sair
+            </p>
+          </a>
+        </li>
+      </ul>
+    </nav>
+    <!-- /.sidebar-menu -->
+  </div>
+  <!-- /.sidebar -->
+</aside>

@@ -1,0 +1,90 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Lotes</h1>
+        </div>
+        <div class="col-sm-6">
+          <ul class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Gerar Lista</li>
+          </ul>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Gerar Lista</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body">
+
+              <!-- /.conteudo-->
+
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card ">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Cadastrar Lote</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- /.conteudo-->
+                <div id="data-container" data-lotes='{{ lotesArray }}'>
+               <input type="text" id="barcode-input" placeholder="Digite o lote aqui...">
+               <ul id="barcode-list"></ul>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+{% endblock %}
+{% block script %} <script src="{{url('templates/assets/js/gerar.js')}}"></script> {% endblock %}

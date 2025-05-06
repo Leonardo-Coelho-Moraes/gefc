@@ -1,0 +1,29 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Poppins:wght@200;300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@import url("index.css");
+@import url("base.css");
+@import url("locais.css");
+@import url("entradaSaida.css");
+body{
+    font-family: 'Poppins';
+overflow: hidden;
+    width: 100vw;
+}
+::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background-color: #ffffff00; /* Cor do fundo da trilha */
+}
+
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #cbd5e1; /* Cor do thumb (a parte da barra que você arrasta) */
+}

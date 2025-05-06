@@ -1,0 +1,265 @@
+{%extends 'baseDash.html'%}
+
+{% block conteudo %}
+<div class="w-full flex justify-end items-end py-2 px-4 ">
+  <img src="{{url('templates/assets/img/cafmini.jpg')}}" class="w-[130px]" >
+</div>
+<div id="default-tab-content ">
+ 
+
+  <div class=" p-4 rounded-lg bg-white dark:bg-white h-full flex flex-col justify-center items-start gap-[16px]" id="receitas" role="tabpanel" aria-labelledby="receitas-tab">
+   
+   
+      
+    <div class="p-[10px]  w-[95%] border-gray-100 border rounded-xl">
+      <h3 class="text-xl text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Atendimento</h3>
+    
+      <div id="svg-tree" class="w-full"></div>
+ 
+    </div>
+
+      <div class="flex gap-2 w-[95%] ">
+<div class="p-[10px] border-gray-100 border rounded-xl w-[50%] ">
+          <p class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Estoque Crítico</p>
+          
+
+<div class="relative overflow-x-auto overflow-y- h-[350px]">
+  <table class="w-[95%] text-sm text-left rtl:text-right text-gray-500 ">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50 ">
+          <tr>
+              <th scope="col" class="px-6 py-3">
+                  Produto
+              </th>
+            
+          </tr>
+      </thead>
+      <tbody>
+        {%for crit in zerados%}
+          <tr class="bg-white border-b border-gray-200">
+            
+              <td class="px-6 py-4">
+                  {{crit.nome}}
+              </td>
+             
+          </tr>
+      {%endfor%}
+      </tbody>
+  </table>
+</div>
+
+        </div>
+      
+       
+          <div class="p-[10px] border-gray-100 border rounded-xl w-[50%]">
+            <p class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Relação de Produtos - {{produtos[0].produto}}</p>
+         
+            <div id="grafico3"></div>
+          
+         
+         
+          </div>
+    
+       
+        </div>
+
+
+  <form class="p-[10px] w-[95%] border border-gray-100 rounded-xl " action="{{url('dashPedidos')}}" method="post"> 
+    <h5 class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Entradas por Mês</h5>
+
+    
+    
+    <div id="grafico4" class="w-[95%]"></div>
+  </form>
+
+  
+        
+
+          
+ 
+
+ 
+    
+
+
+
+
+</div>
+ 
+</div>
+<div id="dataPedidosMes" data-pedidos='{{ entradaMeses | json_encode | raw }}'></div>
+<script>
+   
+
+ 
+    var datapedidosMes = $('#dataPedidosMes');
+    var pedidosQntMes = JSON.parse(datapedidosMes.attr('data-pedidos'));
+        
+
+
+
+var categoriasPedidosMes = pedidosQntMes.map(item => item.nome_mes+' - '+item.mes); // Array com os nomes dos locais
+var dadosPedidosMes = pedidosQntMes.map(item => item.total); //
+
+    var tipo0 = parseInt("{{relacao[0].total}}");
+    var tipo1 = parseInt("{{relacao[1].total}}");
+    var tipo2 = parseInt("{{relacao[2].total}}");
+    var tipo3 = parseInt("{{relacao[3].total}}");
+   
+  
+
+        
+
+
+
+
+
+
+  var options3 = {
+    series: [tipo0,tipo1,tipo2,tipo3],
+    chart: {
+        height: 300,
+    type: 'donut',
+  }, legend: {
+  position: 'top', // Posiciona a legenda acima do gráfico
+  horizontalAlign: 'center', // Centraliza a legenda horizontalmente
+  show: false
+},
+  labels: ["{{relacao[0].tipo}}", "{{relacao[1].tipo}}","{{relacao[2].tipo}}","{{relacao[3].tipo}}"],
+  responsive: [{
+    breakpoint: 480,
+    options: {
+      chart: {
+        width: 200
+      },
+      legend: {
+          position: 'top',
+          horizontalAlign: 'center',
+          show: true
+      }
+    }
+  }]
+  };
+
+  var chart3 = new ApexCharts(document.querySelector("#grafico3"), options3);
+  chart3.render();
+
+  var options4 = {
+  chart: {
+   height: 300,
+    type: "area",
+    foreColor: "#020618",
+    toolbar: {
+      autoSelected: "pan",
+      show: false
+    }
+  }, dataLabels: {
+    enabled: false
+  },
+  colors: ["#f54a00"],
+  stroke: {
+    curve: 'straight',
+    width: 1
+  }, grid: {
+    borderColor: "#555",
+    clipMarkers: false,
+    yaxis: {
+      lines: {
+        show: false
+      }
+    }
+  },
+  series: [{
+    name: 'Entradas:',
+    data: dadosPedidosMes
+  }], 
+  tooltip: {
+    theme: "dark"
+  },
+   fill: {
+    type: "gradient",
+    gradient: {
+      enabled: true,
+      opacityFrom: 0.4,
+      opacityTo: 0
+    }
+  },
+  xaxis: {
+   
+    categories: categoriasPedidosMes
+  }
+}
+
+var chart4 = new ApexCharts(document.querySelector("#grafico4"), options4);
+
+chart4.render();
+
+ 
+      
+      
+    
+
+        const datatree = {
+        id: '1',
+        name: 'Central de Abastecimento',
+        options: {
+          fontSize: '25px',
+          fontFamily: 'sans-serif',
+          fontWeight: 600,
+          fontColor: '#a06dcc',
+          borderWidth: 2,
+          borderColor: '#a06dcc',
+          borderColorHover: '#ec327e',
+          nodeBGColor: '#fff',
+          nodeBGColorHover: '#d5c3ff',
+        },
+        children: [
+    {
+      id: '2',
+      name: 'Baixa Complexidade',
+      children: [
+        { id: '3', name: "Ubs's" },
+        { id: '4', name: 'Farma' },
+        { id: '5', name: "Saúde Indigena" },
+        { id: '6', name: "Laudos" },
+        { id: '7', name: "Pestalozzi" },
+      ]
+    }, {
+      id: '8',
+      name: 'Média Complexidade',
+      children: [
+      { id: '9', name: 'Hospital' },
+      { id: '10', name: "Lacen" },
+      { id: '11', name: "Hemoam" },
+      { id: '12', name: "Tropical" },
+      { id: '13', name: "C.E.R" },
+      { id: '14', name: "PoliClínica" }
+      ]
+    }
+
+  
+      ],};
+      const optionsdata = {
+        contentKey: 'name',
+        width: 1000,
+        height: 130,
+        nodeWidth: 240,
+        nodeHeight: 90,
+        childrenSpacing: 50,
+        siblingSpacing: 50,
+        direction: 'top',
+        fontSize: '20px',
+        fontFamily: 'Quicksand, sans-serif',
+        fontWeight: '600',
+        fontColor: '#388ac4',
+        borderColorHover: '#388ac4',
+        nodeBGColorHover: '#d7d7d7',
+        enableToolbar: false,
+        canvasStyle: ' width:100%;',
+      };
+      const tree = new ApexTree(document.getElementById('svg-tree'), optionsdata);
+      tree.render(datatree);
+
+</script>
+
+ {% endblock %}
+

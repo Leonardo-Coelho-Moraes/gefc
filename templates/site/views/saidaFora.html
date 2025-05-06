@@ -1,0 +1,245 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Saída Sem Local Registrado {{saida}}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{url('saidas/fora')}}">Saídas Sem Local Registrado</a></li>
+            <li class="breadcrumb-item active">{{saida}}</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+
+  {{flash()}}
+
+ 
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card collapsed-card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Adicionar Produto</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" style="display: none;">
+              <!-- conteudo -->
+              <form action="{{ url('saidas/fora/'~ saida) }}" method="post">
+
+                <input type="hidden" name="adicionar_produto">
+                <input type="hidden" name="data" value="{{registros[0].data}}">
+                <input type="hidden" name="local" value="{{registros[0].local}}">
+                <input type="hidden" name="venda" value="{{saida}}">
+                <div class="form-group">
+                  <label>Produto</label>
+                  <select id="lote" class="campo_select form-control" style="width: 100%" name="lote">
+                    {%for lote in lotes%}
+                    <option value="{{lote.lote_id}}">COD: {{lote.lote_id}}, L:{{lote.lote}} - {{lote.nome}} Qnt.:
+                      {{lote.quantidade}}
+                      V:{{lote.vencimento}} {{lote.fornecedor}}</option>
+                    {%endfor%}
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    Quantidade Solicitada
+                  </label>
+                  <input class="form-control" id="qntSolic" type="number" name="qntSolic" placeholder="Ex: 12" min="1"
+                    required>
+                </div>
+                <div class="form-group">
+                  <label>
+                    Quantidade
+                  </label>
+                  <input class="form-control" id="quantidade" type="number" name="quantidade" placeholder="Ex: 12"
+                    min="1" required>
+                </div>
+                <div class="form-group">
+                  <input class="btn btn-primary" type="submit" value="Adicionar">
+                </div>
+
+
+              </form>
+            </div>
+            <!-- /.card-body -->
+
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-12">
+            <!-- Default box -->
+            <div class="card collapsed-card">
+              <div class="card-header bg-primary">
+                <h3 class="card-title">Editar Saida</h3>
+
+                <div class="card-tools">
+                  <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                    <i class="fas fa-plus"></i>
+                  </button>
+
+                </div>
+              </div>
+              <div class="card-body" style="display: none;" id="form_edit_saida">
+                <!-- /.conteudo-->
+                <form action="{{ url('saidas/fora/'~saida) }}" method="post">
+                  <input class="form-control" id="registro_id" name="registro_id" type="hidden">
+                  <div class="form-group">
+                    <label>Lote</label>
+
+                    <input class="form-control" id="produtoNome" name="produto_nome" type="text" readonly>
+
+                  </div>
+                  <div class="form-group">
+                    <label>Quantidade</label>
+                    <input class="form-control " id="quantidade_editada" min='1' type="number" name="quantidade_editada"
+                      required>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" class="btn btn btn-primary">Atualizar</button>
+                  </div>
+
+                </form>
+              </div>
+              <!-- /.card-body -->
+
+              <!-- /.card-footer-->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+      </div>
+    </section>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-primary">
+          
+          <h3 class="card-title">Saída: {{saida}} Para: {{registros[0].local}} {{registros[0].data|date('d-m-Y') }}</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+<div class="d-none">
+  <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid black;">Cod da Saída: {{saida}}</th>
+        <th style="border: 1px solid black;">Destinatário: {{registros[0].local}}</th>
+
+      </tr>
+      <tr>
+
+        <th style="border: 1px solid black;">Funcionário: {{registros[0].nome_usuario}}</th>
+        <th style="border: 1px solid black;">Data: {{registros[0].data|date('d/m/Y')  }}</th>
+      </tr>
+    </thead>
+
+
+  </table>
+</div>
+ <div class="d-none">
+   <div id="assinaturas" style="margin-top: 30px;">
+     <div class="d-flex justify-content-around">
+       <div class="d-flex flex-column" style="width: 250px;">
+         <hr style="width: 250px;">
+         <p style="text-align: center;">Receptor</p>
+       </div>
+       <div class="d-flex flex-column" style="width: 250px;">
+         <hr style="width: 250px;">
+         <p style="text-align: center;">Responsável</p>
+       </div>
+     </div>
+     <div class="d-flex justify-content-around">
+       <div class="d-flex flex-column" style="width: 250px;">
+         <hr style="width: 250px;">
+         <p style="text-align: center;">Data</p>
+       </div>
+
+     </div>
+   </div>
+ </div>
+
+          
+          <table id="example" class="table table-striped table-bordered table-hover">
+            <thead>
+              <tr>
+              
+                <th>Produto</th>
+             
+                <th>Fonecedor</th>
+                 <th>Tipo</th>
+                <th>Qnt. Solicitada</th>
+                <th>Qnt.</th>
+            
+                  <th>Ação</th>
+               
+
+              </tr>
+            </thead>
+            <tbody>
+               {% for registro in registros %}
+               <tr data-id="{{ registro.registro_id }}" data-lote="{{ registro.produto_id }}"
+                 data-quantidade="{{ registro.quantidade}}" data-nome="{{ registro.nome}}">
+                
+                 <td>{{ registro.nome }} {{ registro.unidade }} </td>
+          
+                 <td>{{ registro.fornecedor }}</td>
+                 <td>{{ registro.tipo }}</td>
+                 <td>{{ registro.qnt_solicitada }}</td>
+                 <td>{{ registro.quantidade }}</td>
+               
+                 <td>
+                   <button class="btn btn-primary btn-sm editarSaida">Editar</button>
+                   {%if usuario().nivel == 1%}<a href="{{url('saida/fora/deletar/'~registro.registro_id)}}"
+                     class="btn btn-danger btn-sm">Deletar</a>
+                   {%endif%}
+                 </td>
+               </tr>
+               {% endfor %}
+
+            </tbody>
+          </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
+
+
+{% endblock %}

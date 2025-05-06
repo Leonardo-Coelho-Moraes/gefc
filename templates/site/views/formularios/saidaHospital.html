@@ -1,0 +1,308 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Fazer Dispensa Hospital</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item active">Fazer Dispensa Hospital</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+
+   <section class="content">
+     <div class="container-fluid">
+       <div class="row">
+         <div class="col-12">
+           <!-- Default box -->
+           <div class="card ">
+             <div class="card-header bg-primary">
+               <h3 class="card-title">Cadastrar Produto</h3>
+
+               <div class="card-tools">
+                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                   <i class="fas fa-plus"></i>
+                 </button>
+
+               </div>
+             </div>
+             <div class="card-body">
+               <!-- /.conteudo-->
+               <form action="{{url('produtos/produto_cadastrar')}}" method="post">
+
+                 <div class="form-group">
+                   <label>
+                     Produto
+                   </label>
+                   <input class="form-control" id="produto" type="text" name="produto" placeholder="Ex: Dipirona"
+                     required></div>
+
+
+                 <div class="form-group">
+                   <label>
+                     Unidade de Contagem
+                   </label>
+                   <select name="unicont" id="unicont" class="form-control">
+                     <option value="unidade">Unidade</option>
+                     <option value="caixa">Caixa</option>
+                     <option value="pacote">Pacote</option>
+
+
+                   </select>
+                 </div>
+                 <div class="form-group">
+                   <input class="btn btn-primary form-control" type="submit" value="Cadastrar">
+
+                 </div>
+
+
+
+               </form>
+             </div>
+             <!-- /.card-body -->
+
+             <!-- /.card-footer-->
+           </div>
+           <!-- /.card -->
+         </div>
+       </div>
+     </div>
+   </section>
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card ">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Padrão Adicionar</h3>
+
+              <div class="card-tools">
+                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                  <i class="fas fa-plus"></i>
+                </button>
+
+              </div>
+            </div>
+            <div class="card-body" >
+              <form action="{{ url('saida/hospital') }}" method="post">
+                <input type="hidden" name="padrao" id="padrao"
+                  value="padrao">
+                  <div class="form-group"><label>Produto</label> <select class="form-control campo_select"
+                      name="produtopadrao" id="produtopadrao">
+                  {%for pro in produtos%}
+                  <option value="{{pro.id}}">{{pro.nome}}, Q:{{pro.estoque}}
+                    {{pro.unidade_contagem}}
+                  </option>
+                  {%endfor%}
+                </select></div>
+              
+                <div class="form-group"> <label>Local</label><select class="form-control" name="localpadrao"
+                    id="localpadrao">
+                
+                  <option value="Sala de Medicação">Sala de Medicação</option>
+                  <option value="Sala de Emergência">Sala de Emergência</option>
+                  <option value="PS">PS</option>
+                  <option value="Clínica Pediátrica">Clínica Pediátrica</option>
+                  <option value="Alcon">Alcon</option>
+                  <option value="Clínica Médica">Clínica Médica</option>
+                  <option value="Centro Cirúrgico">Centro Cirúrgico</option>
+                  <option value="Pré-Parto">Pré-Parto</option>
+                  <option value="Laboratório">Laboratório</option>
+                  <option value="COVID">COVID</option>
+                  <option value="CHEQUE">CHEQUE</option>
+                  <option value="MisoProstol">MisoProstol</option>
+                  <option value="Ortopedia">Ortopedia</option>
+                   <option value="Receita">Receita</option>
+                    <option value="Avulso">Avulso</option>
+
+                </select></div>
+               
+               <div class="form-group">
+                <label >Quantidade</label>
+                <input type="number" name="qntpadrao" class="form-control" id="qntpadrao" autofocus></div> 
+               <div class="form-group"><button type="submit" class="form-control btn bg-primary">Adicionar</button></div>
+                </form>
+              
+
+
+              
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+   <section class="content">
+     <div class="container-fluid">
+       <div class="row">
+         <div class="col-12">
+           <!-- Default box -->
+           <div class="card card-collapsed collapsed-card ">
+             <div class="card-header bg-primary">
+               <h3 class="card-title">Padrão de Departamentos</h3>
+
+               <div class="card-tools">
+                 <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                   <i class="fas fa-plus"></i>
+                 </button>
+
+               </div>
+             </div>
+             <div class="card-body " style="display: none;">
+              <form action="{{ url('saida/hospital') }}" method="post">
+                 <div class="form-group">
+                   <select class="form-control" id="localSelecionado">
+                     <option value=""></option>
+                     <option value="Sala de Medicação">Sala de Medicação</option>
+                     <option value="Sala de Emergência">Sala de Emergência</option>
+                     <option value="PS">PS</option>
+                     <option value="Clínica Pediátrica">Clínica Pediátrica</option>
+                     <option value="Alcon">Alcon</option>
+                     <option value="Clínica Médica">Clínica Médica</option>
+                     <option value="Centro Cirúrgico">Centro Cirúrgico</option>
+                     <option value="Pré-Parto">Pré-Parto</option>
+                     <option value="Laboratório">Laboratório</option>
+                     <option value="COVID">COVID</option>
+                     <option value="CHEQUE">CHEQUE</option>
+                     <option value="MisoProstol">MisoProstol</option>
+                     <option value="Ortopedia">Ortopedia</option>
+                   </select>
+                 </div>
+                 <button type="submit" class="btn bg-primary">Procurar</button>
+              </form>
+             
+              <table id="example" class="table table-striped table-bordered table-hover text-sm">
+                <thead>
+                  <tr>
+
+                    <th>Produto</th>
+                    <th>Quantidade</th>
+                    <th>Local</th>
+
+
+
+                  </tr>
+                </thead>
+                <tbody >
+                  {%for registro in padrao%}
+                   <tr>
+                    
+                     <td>{{registro.nome}}</td>
+                     <td>{{registro.qnt}}</td>
+                     <td>{{registro.local}}</td>
+
+                   </tr>
+                   {%endfor%}
+                </tbody>
+              </table>
+
+
+
+
+             </div>
+             <!-- /.card-body -->
+
+             <!-- /.card-footer-->
+           </div>
+           <!-- /.card -->
+         </div>
+       </div>
+     </div>
+   </section>
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-primary">
+          <h3 class="card-title">Dispensar</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+          <div id="dataEstoqueHospital" data-estoques='{{ lotesarray }}'></div>
+         <form id="formularioPedido">
+           <div class="form-group">
+             <label>Código de Barras:</label>
+             <input type="text" id="codbarrasHospital" name='codbarrasHospital' class="form-control" >
+           </div>
+           <div class="form-group">
+             <label>Produtos:</label>
+             <select id="produtoSelecionar" class="campo_select form-control" style="width: 100%" required>
+              
+             </select>
+           </div>
+
+           <div class="form-group">
+             <label>Qnt:</label>
+             <input type="number" id="quantidadeSelecionar" min="1" class="form-control" required>
+           </div>
+           <div class="form-group">
+             <button type="button" class="btn btn-primary" id="dispensaHospital">Enviar</button>
+           </div>
+         </form>
+
+         <p class="text-body" id='teste'>Lista:</p>
+         <hr>
+
+         <form action="{{ url('saida/hospital') }}" method="post">
+           <div id="pedidoForm" class="d-flex flex-column w-100 text-body"></div>
+           <div class="d-flex w-100 gap-3 align-items-center">
+             <div class="form-group">
+               <label for="local">Departamento</label>
+               
+               <select class="form-control" id="local" name="local" required>
+                 <option value=""></option>
+                 <option value="Sala de Medicação">Sala de Medicação</option>
+                 <option value="Sala de Emergência">Sala de Emergência</option>
+                 <option value="PS">PS</option>
+                 <option value="Clínica Pediátrica">Clínica Pediátrica</option>
+                 <option value="Alcon">Alcon</option>
+                 <option value="Clínica Médica">Clínica Médica</option>
+                 <option value="Centro Cirúrgico">Centro Cirúrgico</option>
+                 <option value="Pré-Parto">Pré-Parto</option>
+                 <option value="Laboratório">Laboratório</option>
+                 <option value="COVID">COVID</option>
+                 <option value="CHEQUE">CHEQUE</option>
+                 <option value="MisoProstol">MisoProstol</option>
+                 <option value="Ortopedia">Ortopedia</option>
+                    <option value="Receita">Receita</option>
+                    <option value="Avulso">Avulso</option>
+                
+               </select>
+             </div>
+             <div class="form-group">
+               <input class="form-control btn btn-primary" id="dispensar" type="submit" value="Dispensar">
+             </div>
+           </div>
+         </form>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
+
+
+
+{% endblock %}
+ {% block script %}
+  <script src="{{url('templates/assets/js/saida.js')}}"></script>
+  {% endblock %}

@@ -1,0 +1,17 @@
+/* cyrillic-ext */
+
+/* latin */
+
+
+
+
+/* latin */
+@font-face {
+  font-family: 'Source Sans Pro';
+  font-style: normal;
+  font-weight: 400;
+  font-display: fallback;
+  src: url('../font/SourceSans3-Regular.ttf') format('truetype');
+
+}
+

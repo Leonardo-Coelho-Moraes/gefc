@@ -1,0 +1,153 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Saídas Anuais</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Saídas Anuais</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Pesquisa</h3>
+
+
+            </div>
+            <div class="card-body">
+
+              <form  action="{{url('registro/saidas/ano')}}" method="post">
+                <input type="hidden" name="relatorio" id="relatorio" value="relatorio">
+                <div class=" row form-group">
+                  <div class="col-2"> <label>De:</label>
+                    <input type="date" id="dePesquisa" name="dePesquisa" value='2024-01-01' class="form-control" required>
+                  </div>
+                  <div class="col-2"> <label>Até:</label>
+                    <input type="date" id="atePesquisa" name="atePesquisa" value='2024-12-30'  class="form-control" required>
+                  </div>
+                  
+                  <div class="col-2"> <label>Local:</label>
+                  
+                   <select id="localPesquisa" class="form-control" name="localPesquisa">
+                    <option value="">Todos</option>
+                    {% for local in locais %}
+                    <option value="{{ local.nome}}">{{ local.nome }}</option>
+                    {% endfor %}
+                  </select>
+                  </div>
+                     
+
+                </div>
+            
+            <div class=" form-group">
+              <button type="submit" class="btn btn-primary form-control ">Buscar</button>
+            </div>
+
+
+            </form>
+
+
+          </div>
+          <!-- /.card-body -->
+
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+</div>
+</section>
+
+
+
+
+<!-- Main content -->
+<div class="content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header bg-primary">
+        <h3 class="card-title">Saídas por Produto</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+
+<div class="d-none">
+  <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid black;">Extrato de Saídas</th>
+        <th style="border: 1px solid black;">Intervalo da Pesquisa:
+          {{dados.dePesquisa |date('d/m/Y')}} |
+          {{dados.atePesquisa |date('d/m/Y')}}</th>
+        <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+
+      </tr>
+    </thead>
+
+  </table>
+</div>
+
+        <table id="example" class="table table-striped table-bordered table-hover text-sm">
+          <thead>
+            <tr>
+
+              <th>Produto</th>
+              <th>Tipo</th>
+              <th>Fornecedor</th>
+              <th>Quantidade</th>
+             
+
+
+            </tr>
+          </thead>
+          <tbody>
+     
+            {% for registro in pesquisas %}
+
+            <tr>
+
+              <td>{{ registro.nome }}</td>
+              <td>{{ registro.tipo }}</td>
+              <td>{{ registro.fornecedor }}</td>
+              <td>{{ registro.total }}</td>
+           
+            
+            </tr>
+
+            {% endfor %}
+         
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.content -->
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}

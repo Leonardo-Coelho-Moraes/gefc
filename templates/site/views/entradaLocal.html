@@ -1,0 +1,78 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Entrada</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Entrada</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+
+  {{flash()}}
+
+ <div class="content">
+   <div class="container-fluid">
+     <div class="card">
+       <div class="card-header bg-primary">
+         <h3 class="card-title">Entradas por Nome</h3>
+       </div>
+       <!-- /.card-header -->
+       <div class="card-body">
+         <table id="example" class="table table-striped table-bordered table-hover">
+           <thead>
+             <tr>
+               <th>Entradas</th>
+               <th>Data Entrada</th>
+              
+
+
+             </tr>
+           </thead>
+           <tbody>
+           {% for entrada in entradas %}
+
+        
+         
+
+
+           <tr>
+             <td><a href="{{ url('local/entrada/'~entrada.nome_entrada~'') }}"
+                 class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">{{ entrada.nome_entrada }}</a>
+             </td>
+             <td>{{ entrada.data }}</td>
+            
+
+           </tr>
+      
+
+           {% endfor %}
+
+           </tbody>
+         </table>
+       </div>
+       <!-- /.card-body -->
+     </div>
+     <!-- /.content -->
+   </div>
+ </div>
+
+</div>
+
+
+
+{% endblock %}

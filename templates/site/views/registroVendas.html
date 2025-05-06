@@ -1,0 +1,217 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Saídas Por Produto</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Saídas por Produto</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Criar Saída</h3>
+
+            </div>
+            <div class="card-body" >
+       
+             
+             <form method="post" action="{{url('venda/adicionar')}}" >
+              <div class="form-group">  
+                <label for="local">Local</label>
+                <select id="local" class="form-control" name="local">
+                  {% for local in locais %}
+                  <option value="{{ local.id }}">{{ local.nome }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+          <div class="row">
+            <div class="form-group col-3">
+              <label>Data</label>
+              <input class="form-control" id="data" type="date" name="data" required>
+            </div>
+            <div class="col form-group">
+              <label for="descricao">Descrição(No caso de dispensa Avulsa)
+              </label>
+              <input type="text" name="descricao" class="form-control" placeholder="Local não cadastrado para dispensa Avulsa">
+            </div>
+
+          </div>
+             
+               
+               <div class="form-group justify-content-between d-flex">
+              
+                 <button type="submit" class="btn btn-primary" id="submitButton" >Criar</button>
+                  
+               </div>
+             </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Pesquisa</h3>
+
+
+            </div>
+            <div class="card-body">
+
+              <form  action="{{url('registro/vendas')}}" method="post">
+                <input type="hidden" name="relatorio" id="relatorio" value="relatorio">
+                <div class=" row form-group">
+                  <div class="col-2"> <label>De:</label>
+                    <input type="date" id="dePesquisa" name="dePesquisa" class="form-control" required>
+                  </div>
+                  <div class="col-2"> <label>Até:</label>
+                    <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
+                  </div>
+                 
+                  <div class="col-2"> <label>Local:</label>
+                  
+                   <select id="localPesquisa" class="form-control" name="localPesquisa">
+                    <option value="">Todos</option>
+                    {% for local in locais %}
+                    <option value="{{local.nome}}">{{ local.nome }}</option>
+                    {% endfor %}
+                  </select>
+                  </div>
+                     
+
+                </div>
+            
+            <div class=" form-group">
+              <button type="submit" class="btn btn-primary form-control ">Buscar</button>
+            </div>
+
+
+            </form>
+
+
+          </div>
+          <!-- /.card-body -->
+
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+</div>
+</section>
+
+
+
+
+<!-- Main content -->
+<div class="content">
+  <div class="container-fluid">
+    <div class="card">
+      <div class="card-header bg-primary">
+        <h3 class="card-title">Saídas por Produto</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+
+<div class="d-none">
+  <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid black;">Extrato de Saídas</th>
+        <th style="border: 1px solid black;">Intervalo da Pesquisa:
+          {{dados.dePesquisa |date('d/m/Y')}} |
+          {{dados.atePesquisa |date('d/m/Y')}}</th>
+        <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+
+      </tr>
+    </thead>
+
+  </table>
+</div>
+
+        <table id="example" class="table table-striped table-bordered table-hover text-sm">
+          <thead>
+            <tr>
+
+            
+              <th>Dispensa</th>
+              <th>Local</th>
+              <th>Obs</th>
+              <th>Data</th>
+             
+            
+
+
+            </tr>
+          </thead>
+          <tbody>
+           
+            {% for registro in pesquisas %}
+
+            <tr>
+
+
+              <td>
+                <a href="{{ url('vendas/' ~ registro.id) }}"
+                  class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                 Dispensa {{ registro.id }}
+                </a>
+              </td>
+              <td>{{ registro.local }}</td>
+             
+              <td>{{ registro.obs}}</td>
+              <td>{{ registro.data}}</td>
+             
+
+            </tr>
+
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.content -->
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}

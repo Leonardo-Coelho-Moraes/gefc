@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{titulo}}</title>
+   <link rel="stylesheet" href="{{url('templates/assets/css/bootstrap-icons.min.css')}}">
+   <link href="{{url('templates/assets/css/mermaid.min.css')}}" rel="stylesheet" />
+  <!-- Google Font: Source Sans Pro -->
+  <link rel="stylesheet"
+    href="{{url('templates/assets/css/fonts.css')}}">
+  <!-- Font Awesome -->
+  <!-- Font Awesome -->
+  <link rel="shortcut icon" href="{{url('templates/assets/img/favicon.ico')}}" type="image/x-icon">
+  <link rel="stylesheet" href="{{url('templates/assets/css/all.min.css')}}">
+  <link rel="stylesheet" href="{{url('templates/assets/css/select2.min.css')}}">
+  <link rel="stylesheet" href="{{url('templates/assets/css/sweetalert2.min.css')}}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{{url('templates/assets/css/adminlte.min.css')}}">
+ <link rel="stylesheet" href="{{url('templates/assets/css/mermaid.min.css')}}">
+ 
+
+
+<style>
+  .select2-container {
+    z-index: 1000;
+    /* Ajuste este valor conforme necessário */
+  }
+
+  .select2-dropdown {
+    z-index: 1000;
+    /* Ajuste este valor conforme necessário */
+  }
+
+  .break-word {
+    display: block;
+    max-width: 50%;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  * {
+    font-family: "Inter", sans-serif;
+  }
+  .icone:hover {
+    transform: scale(1.6); /* Aumenta o texto */
+    opacity: 1; /* Torna o texto totalmente visível */
+  }
+</style>
+
+</head>
+
+<body >
+  <div id="image-source" style="display: none;">{{url('templates/assets/img/coari.png')}}</div>
+  <!-- Site wrapper -->
+  <div class="wrapper">
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+      <!-- Left navbar links -->
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link" data-widget="pushmenu" href="#" role="button"><i class="fas fa-bars"></i></a>
+        </li>
+        <li class="nav-item d-none d-sm-inline-block">
+          <a class="nav-link">{{nomeLocal().nome}}</a>
+        </li>
+       
+       
+     
+    </nav>
+    <!-- barra Lateral -->
+
+    {% include 'aside.html'%}
+    <!-- /fim da barra Lateral -->
+
+    <!-- Conteudo Do Site -->
+    {% block conteudo %} {% endblock %}
+    <!-- /fim do conteudo -->
+
+
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+      <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+  </div>
+  <!-- ./wrapper -->
+
+  <!-- jQuery -->
+   <script src="{{url('templates/assets/js/jquery.min.js')}}"></script>
+   <!-- Bootstrap 4 -->
+
+   <script src="{{url('templates/assets/js/bootstrap.bundle.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/all.min.js')}}"></script>
+   <!-- AdminLTE App -->
+   <script src="{{url('templates/assets/js/adminlte.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/sweetalert2.all.min.js')}}"></script>
+   <!-- AdminLTE for demo purposes -->
+   <script src="{{url('templates/assets/js/demo.js')}}"></script>
+
+   <script src="{{url('templates/assets/js/select2.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/index.js')}}"></script>
+   <script src="{{url('templates/assets/js/jquery.dataTables.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/dataTables.bootstrap4.min.js')}}"></script>
+   <!-- DataTables Buttons JS -->
+   <script src="{{url('templates/assets/js/dataTables.buttons.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/jszip.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/buttons.html5.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/buttons.print.min.js')}}"></script>
+   <script src="{{url('templates/assets/js/buttons.colVis.min.js')}}"></script>
+      <script src="{{url('templates/assets/js/gridjs.umd.js')}}"></script>
+
+
+   <script>
+     $('.campo_select').select2();
+       $(document).ready(function () {
+
+       $('#example').DataTable({
+       stateSave: true,
+
+
+       dom: 'Bfrtip', // Define o layout dos botões e elementos
+       buttons: [
+
+       {
+       extend: 'excelHtml5',
+       text: 'Exportar Excel',
+       className: 'btn btn-success'
+       },
+       {
+       extend: 'print',
+       text: 'Imprimir',
+       className: 'btn btn-success',
+       exportOptions: {
+       columns: ':visible'
+       }
+       },
+       {
+       extend: 'colvis',
+       text: 'Escolher colunas',
+       className: 'btn btn-primary'
+       }
+       ],
+       "paging": true,
+       "searching": true,
+       "info": true,
+       "lengthChange": true,
+
+       "pageLength": 40,
+       "language": {
+       "lengthMenu": "Mostrar _MENU_ registros por página",
+       "zeroRecords": "Nenhum registro encontrado",
+       "info": "Mostrando página _PAGE_ de _PAGES_",
+       "infoEmpty": "Nenhum registro disponível",
+       "infoFiltered": "(filtrado de _MAX_ registros no total)"
+
+       }
+       });
+
+       });
+   </script>
+
+   {% block script %} {% endblock %}
+
+
+
+</body>
+
+</html>

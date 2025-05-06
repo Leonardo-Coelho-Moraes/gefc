@@ -1,0 +1,156 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Estoque {{nome.nome}}</h1>
+                </div>
+                 <input type="hidden" value="{{url('')}}" id="entradaLink">
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+                        <li class="breadcrumb-item"><a href="{{url('vendas')}}">Saídas</a></li>
+                        <li class="breadcrumb-item active">{{venda}}</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+
+    {{flash()}}
+
+    <section class="content">
+        <div class="container-fluid">
+            <!--  <a class="btn btn-lg btn-success mb-2" id="pedir">Fazer Pedido Mapa</a> -->
+           
+
+            <div class="row">
+                <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card ">
+                        <div class="card-header bg-primary">
+                            <h3 class="card-title">Editar Estoque</h3>
+
+                            <div class="card-tools">
+                                <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+
+                            </div>
+                        </div>
+                        <div class="card-body" id="form_edit_estoque" style="display: none;"  >
+                            <!-- conteudo -->
+                            <form action="{{ url('local/')}}" method="post">
+                                <input type="hidden" id="id" name="id">
+                                <div class="form-group">
+                                    <label>
+                                        Produto
+                                    </label>
+                                    <input class="form-control" id="produto" type="text" name="produto" min="1" readonly>
+                                </div>
+                                
+
+                                <div class="form-group">
+                                    <label>
+                                        Quantidade 
+                                    </label>
+                                    <input class="form-control" id="estoque" type="number" name="estoque"
+                                        min="0" required>
+                                </div>
+                                <div class="form-group">
+                                    <input class="btn btn-primary" type="submit" value="Editar">
+                                </div>
+
+
+                            </form>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <!-- /.card-footer-->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <div class="d-none">
+        <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+          <thead>
+            <tr>
+              <th style="border: 1px solid black;">Extrato de Estoque</th>
+              <th style="border: 1px solid black;">Intervalo da Pesquisa:
+                {{dados.dePesquisa |date('d/m/Y')}} |
+                {{dados.atePesquisa |date('d/m/Y')}}</th>
+              <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+      
+            </tr>
+          </thead>
+      
+        </table>
+      </div>
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header bg-primary">
+                    <h3 class="card-title">Estoque</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="example" class="text-sm table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th class="d-none">ID</th>
+                                 <th>COD</th>
+                                
+                                <th>Produto</th>
+                                <th>Qnt.</th>
+                             
+                                 <th>Ação</th>
+
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for registro in registros %}
+                            <tr data-id="{{registro.local_estoque_id }}" data-produto="{{ registro.nome }}">
+                                <td class="d-none">{{ registro.local_estoque_id }}</td>
+                                 <td>{{ registro.produto_id }}</td>
+                                
+                                <td>
+                                   
+                                        {{ registro.nome }}
+                                   
+                                </td>
+                                
+                                <td>{{ registro.estoque }}</td>
+                                
+                                <td scope="row" class="px-6 py-4 whitespace-nowrap">
+                                    <button 
+                                        class="btn btn-primary editarEstoqueLocal">Editar</button>
+                                </td>
+
+                            </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.content -->
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}{% block script %} <script src="{{url('templates/assets/js/local.js')}}"></script> {% endblock %}

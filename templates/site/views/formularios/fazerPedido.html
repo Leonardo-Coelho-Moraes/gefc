@@ -1,0 +1,106 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Fazer Pedido</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Fazer Pedido</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+
+  {{flash()}}
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card ">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Fazer Pedido</h3>
+
+             
+            </div>
+            <div class="card-body">
+              <!-- conteudo -->
+             
+
+                <form id="formularioPedido">
+
+                  <div class="form-group">
+                    <label>Produto</label>
+                    <select id="produtoPedidoFazer" class="campo_select form-control" style="width: 100%"
+                      name="produtoPedidoFazer">
+                      {%for pro in produtos%}
+
+                      <option value="{{pro.id}};{{pro.nome}}">{{pro.nome}}</option>
+
+                      {%endfor%}
+                    </select>
+                  </div>
+
+
+
+                 <div class="form-group">
+                   <label>
+                     Quantidade
+                   </label>
+                   <input class="form-control" id="quantidadePedidoFazer" type="number" name="quantidadePedidoFazer"
+                     placeholder="Ex: 12"
+                     min="1" required>
+                 </div>
+                 <div class="form-group">
+                <a class="btn btn-primary pedido" id="pedido">Adicionar</a>
+                 </div>
+                </form>
+                <p class='text-lg text-gray-900'>Lista:</p>
+                <hr>
+
+                <form action="{{url('pedido/fazer')}}" method="post">
+                  <div id="pedidoForm" class="d-flex flex-column w-100 text-body">
+
+                  </div>
+                  <div class="flex gap-3 w-full align-center">
+                    <!-- Campos serão adicionados aqui -->
+
+                    <input
+                      class="btn btn-primary"
+                      id="venderBtn" type="submit" value="Pedir">
+                  </div>
+                </form>
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+
+
+{% endblock %}
+
+{% block script %} 
+<script src="{{url('templates/assets/js/pedido.js')}}"></script>
+{% endblock %}

@@ -1,0 +1,243 @@
+{%extends 'baseDash.html'%}
+
+{% block conteudo %}
+<div id="default-tab-content ">
+  
+  <div class=" p-4 rounded-xl bg-white dark:bg-white h-full flex flex-col justify-center items-start gap-[16px]" id="dashboard" role="tabpanel" aria-labelledby="dashboard-tab">
+   
+
+        <div class="p-[10px]  w-full ">
+          <h3 class="text-xl text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Custos Periódicos com Departamentos</h3>
+          <form action="{{url('/dash')}}" method="post" class=" gap-2 w-full grid grid-cols-3">
+            <div class="">
+              <label for="de" class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">De:</label>
+              <input type="date" id="de" name="de" class="border border-orange-600 text-gray-500 text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 dark:placeholder-gray-500 dark:text-gray-500 "  required />
+            </div>
+            <div class="">
+              <label for="ate" class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">Até:</label>
+              <input type="date" id="ate" name="ate" class="border border-orange-600 text-gray-500 text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 dark:placeholder-gray-500 dark:text-gray-500 "  required />
+            </div>
+            <div class=" block">
+              <label for="local" class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">Local</label>
+    
+              <select name="local" id="local" class="border border-orange-600 text-gray-500 text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 dark:placeholder-gray-500 dark:text-gray-500 " required>
+                <option value=" ">Todos Locais</option>
+                <option value="Ubs">Todas Ubs's</option>
+              </select>
+            </div>
+            <button type="submit"
+            class="flex items-center justify-center bg-orange-600 text-white p-2.5 cursor-pointer text-white font-semibold tracking-widest rounded-md hover:bg-orange-400 duration-300  hover:translate-x-3 w-[50px]"
+          >
+            <svg
+              class="w-5 h-5"
+              stroke="currentColor"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                stroke-linejoin="round"
+                stroke-linecap="round"
+              ></path>
+            </svg>
+          </button>
+          </form>
+          <div class="grid grid-cols-2 w-full gap-2 mt-4">
+          
+<div class="flex flex-col bg-white rounded-xl border border-gray-100">
+  <div class="px-2 py-4 sm:p-4 sm:pb-4">
+    <div class="grid items-center justify-center w-full grid-cols-1 text-left">
+      <div>
+        <h2 class="text-lg font-medium tracking-tighter text-gray-600 lg:text-xl"> Custo Mensal (Aproximado) </h2></div>
+      <div class="mt-2">
+        <p>
+          <span class="text-2xl font-light tracking-tight text-black">2443 R$</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+            
+<div class="flex flex-col bg-white rounded-xl border border-gray-100">
+  <div class="px-2 py-4 sm:p-4 sm:pb-4">
+    <div class="grid items-center justify-center w-full grid-cols-1 text-left">
+      <div>
+        <h2 class="text-lg font-medium tracking-tighter text-gray-600 lg:text-xl">Custo Médio Mensal </h2></div>
+      <div class="mt-2">
+        <p>
+          <span class="text-2xl font-light tracking-tight text-black">2443 R$</span></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+             
+              
+           
+           
+          </div>
+     
+        </div>
+        <div class="flex gap-2 w-full ">
+<div class="p-[10px] border-gray-100 border rounded-xl">
+          <p class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Custos</p>
+          <div id="grafico2"></div>
+        </div>
+        <div class="p-[10px] border-gray-100 border rounded-xl w-full">
+          <p class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Consumo mês atual</p>
+          <div id="grafico3"></div>
+        </div>
+        </div>
+        
+    
+     
+        
+   
+ 
+    <div class="p-[10px] w-full border border-gray-100 rounded-xl "> 
+      <h5 class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Custos Mensais Com Local</h5>
+      <div class="block">
+        <label for="localMensal" class="block mb-2 text-sm font-medium text-gray-500 dark:text-gray-500">Local</label>
+
+        <select name="localMensal" id="localMensal" class="border border-orange-600 text-gray-500 text-sm rounded-lg focus:ring-orange-600 focus:border-orange-600 block w-full p-2.5 dark:placeholder-gray-500 dark:text-gray-500 " required>
+          <option value=" ">Todos Locais</option>
+          <option value="Ubs">Todas Ubs's</option>
+        </select>
+      </div>
+      
+      <div id="grafico1" class="w-full"></div>
+    </div>
+    <div class="p-[10px] w-full border border-gray-100 rounded "> 
+      <h5 class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Controle</h5>
+     
+      
+   
+    </div>
+
+  </div>
+
+ 
+</div>
+{% endblock %}
+{% block script %} 
+<script>
+  var options = {
+  chart: {
+   height: 280,
+    type: "area",
+    foreColor: "#ccc",
+    toolbar: {
+      autoSelected: "pan",
+      show: false
+    }
+  }, dataLabels: {
+    enabled: false
+  },
+  colors: ["#f54a00"],
+  stroke: {
+    curve: 'straight',
+    width: 1
+  }, grid: {
+    borderColor: "#555",
+    clipMarkers: false,
+    yaxis: {
+      lines: {
+        show: false
+      }
+    }
+  },
+  series: [{
+    name: 'Custos R$',
+    data: [30,40,35,67,49,20,70,91,125,36]
+  }], 
+  tooltip: {
+    theme: "dark"
+  },
+   fill: {
+    type: "gradient",
+    gradient: {
+      enabled: true,
+      opacityFrom: 0.4,
+      opacityTo: 0
+    }
+  },
+  xaxis: {
+   
+    categories: ['Jan','Fev','Mar','Abr','Mai','Jun','Jul', 'Ago','Set','Out']
+  }
+}
+
+var chart = new ApexCharts(document.querySelector("#grafico1"), options);
+
+chart.render();
+
+
+
+
+var options = {
+  series: [44, 55, 13, 43, 22],
+  chart: {
+      width: 380,
+      type: 'pie',
+  },
+  labels: ['Team A', 'Team B', 'Team C', 'Team D', 'Team E'],
+  legend: {
+      position: 'top', // Posiciona a legenda acima do gráfico
+      horizontalAlign: 'center', // Centraliza a legenda horizontalmente
+      show: true
+  },
+  responsive: [{
+      breakpoint: 480,
+      options: {
+          chart: {
+              width: 200
+          },
+          legend: {
+              position: 'top',
+              horizontalAlign: 'center',
+              show: true
+          }
+      }
+  }]
+};
+
+var chart = new ApexCharts(document.querySelector("#grafico2"), options);
+chart.render();
+
+    
+      var options = {
+        series: [{
+        data: [235, 345, 580, 690, 1100, 1200, 1380]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      labels: ['Valor'],
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          borderRadiusApplication: 'end',
+          horizontal: true,
+        }
+      },
+      dataLabels: {
+        enabled: false
+      },
+      xaxis: {
+        categories: ['Hopital', 'SOS', "Ubs's", 'Tropical', 'Lacen', 'Hemoam', 'Policlinica'
+        ],
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#grafico3"), options);
+      chart.render();
+    
+    
+    
+    
+  </script>
+
+ {% endblock %}

@@ -1,0 +1,187 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+<div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+
+        <div class="container-fluid">
+            <div class="row mb-2">
+                <div class="col-sm-6">
+                    <h1>Usuários</h1>
+                </div>
+                <div class="col-sm-6">
+                    <ol class="breadcrumb float-sm-right">
+                        <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+                        <li class="breadcrumb-item active">Usuários</li>
+                    </ol>
+                </div>
+            </div>
+        </div><!-- /.container-fluid -->
+    </section>
+
+
+
+    <section class="content">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Default box -->
+                    <div class="card ">
+                        <div class="card-header bg-primary">
+                            <h3 class="card-title">Usuários</h3>
+
+                           
+                        </div>
+                        <div class="card-body" >
+                            <!-- /.conteudo-->
+                              <form action="{{url('usuarios')}}" method="post">
+                                  <div class="form-group">
+                                      <label >
+                                          Nome
+                                      </label>
+                                      <input
+                                          class="form-control"
+                                          id="usuariocad" type="text" name="usuariocad" placeholder="Ex: Leonardoxg2d"
+                                          required>
+                                  </div>
+
+                                  <div class="form-group">
+                                      <label>
+                                          Senha
+                                      </label>
+                                      <input
+                                          class="form-control"
+                                          id="senha" type="password" name="senha" placeholder="Ex: akmi432mx" required>
+                                  </div>
+
+
+
+                                  <div class="form-group">
+                                      <label>
+                                          Nível
+                                      </label>
+                                      <select id="nivel"
+                                          class='form-control'
+                                          name="nivel">
+                                          <option value="1">Administrador</option>
+                                          <option value="2">Entrada</option>
+                                          <option value="3">Saída</option>
+                                          <option value="4">Local</option>
+                                          <option value="5">Hospital Funcionario</option>
+
+                                      </select>
+                                  </div>
+                                  <div class="form-group">
+                                      <label>
+                                          Local
+                                      </label>
+                                      <select id="local"
+                                          class='form-control'
+                                          name="local">
+                                          <option value="0">Todos</option>
+                                          {%for local in locais%}
+                                          <option value="{{local.id}}">{{local.nome}}</option>
+                                          {%endfor%}
+
+                                      </select>
+                                  </div>
+
+
+                                <div class="form-group"> <button
+                                        class="btn btn-primary form-control"
+                                        type="submit">
+                                        Enviar
+                                    </button></div>
+
+                                 
+
+                              </form>
+                        </div>
+                        <!-- /.card-body -->
+
+                        <!-- /.card-footer-->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+    {{flash()}}
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="container-fluid">
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">Usuários</h3>
+                </div>
+                <!-- /.card-header -->
+                <div class="card-body">
+                    <table id="example" class="table table-striped table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Nome</th>
+                                <th>Acesso</th>
+                                <th>Local</th>
+                                 <th>Senha</th>
+                                <th>Ação</th>
+                            
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for usuario in usuarios %}
+                            {% set nomeLocal = 'Administração' %} {# Valor padrão #}
+                            {% for local in locais %}
+                            {% if local.id == usuario.local %}
+                            {% if usuario.local != 1 %}
+                            {% set nomeLocal = local.nome %}
+                            {% else %}
+                            {% set nomeLocal = 'Todos' %}
+                            {% endif %}
+                            {% endif %}
+                            {% endfor %}
+                            <tr>
+                                <td>{{ usuario.id }}</td>
+                                <td>{{ usuario.nome }}</td>
+                               {% set nivel = 'indeterminado' %}
+                                 {% if usuario.nivel == 1 %}
+                                 {% set nivel = 'Administrador' %}
+                                 {% elseif usuario.nivel == 2 %}
+                                 {% set nivel = 'Entrada' %}
+                                 {% elseif usuario.nivel == 3 %}
+                                 {% set nivel = 'Saída' %}
+                                 {% elseif usuario.nivel == 4 %}
+                                 {% set nivel = 'Local' %}
+                                  {% endif %}
+                                <td>{{ nivel }}</td>
+                                  
+                                <td>{{ nomeLocal }}</td>
+                                <td>{{ usuario.senha }}</td>
+                                <td>
+                                    <a href="{{ url('usuarios/editar/' ~ usuario.id) }}"
+                                        class="btn btn-primary">Editar</a>
+                                    /
+                                    <a href="{{ url('usuarios/deletar/' ~ usuario.id) }}"
+                                        class="btn btn-danger">Deletar</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.content -->
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,388 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+<input type="hidden" value="{{url('')}}" id="entradaLink">
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Receita</h1>
+        </div>
+       
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+           <div class="mb-2 flex gap-4">
+            <button class="btn btn-primary btn-lg "  data-toggle="modal" data-target="#pacienteModal" >Criar Paciente</button>
+            <button class="btn btn-success btn-lg" data-toggle="modal" data-target="#prescritorModal" >Criar Prescritor</button>
+
+            <!-- Button trigger modal -->
+
+<!-- Modal -->
+<div class="modal fade " id="pacienteModal" tabindex="-1" aria-labelledby="pacienteModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="pacienteModalLabel">Criar Paciente</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url('receitas')}}" method="post">
+          <div class="row">
+            <div class="form-group col">
+              <label for="nome">Nome Paciente</label>
+              <input type="text" name="nome" class="form-control" required>
+            </div>
+            <div class="form-group col-3">
+              <label for="sus">CNS (Cartão SUS)</label>
+              <input type="text" name="sus" class="form-control" required>
+            </div>
+          </div>
+          <div class="row">
+            <div class="form-group col">
+              <label for="bairro">Bairro</label>
+              
+              <select name="bairro" class="form-control" required>
+                {%for bairro in bairros%}
+                <option value="{{bairro.id}}">{{bairro.nome}}</option>
+                {%endfor%}
+              </select>
+            </div>
+            <div class="form-group col">
+              <label for="endereco">Endereço</label>
+              <input type="text" name="endereco" class="form-control" required>
+            </div>
+            <div class="form-group col-3">
+              <label for="numero">Número</label>
+              <input type="text" name="numero" class="form-control" required>
+            </div>
+            <div class="form-group col-3">
+              <label for="telefone">Telefone</label>
+              <input type="text" name="telefone" class="form-control" required>
+            </div>
+          </div>
+          <div class="form-group ">
+            <label for="observacao">Observação</label>
+            <textarea name="observacao" id="observacao" class="form-control"></textarea>
+          </div>
+          <button type="submit" class="btn btn-lg btn-primary"> Criar</button>
+         
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+   
+      </div>
+    </div>
+  </div>
+</div>
+<div class="modal fade " id="prescritorModal" tabindex="-1" aria-labelledby="prescritorModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="prescritorModalLabel">Criar Prescritor</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <form action="{{url('receitas')}}" method="post">
+          <input type="hidden" name="cadPrescritor">
+          <div class="row">
+            <div class="form-group col">
+              <label for="nome">Nome Prescritor</label>
+              <input type="text" name="nome" class="form-control" required>
+            </div>
+            <div class="form-group col-3">
+              <label for="crm">CRM</label>
+              <input type="text" name="crm" class="form-control" required>
+            </div>
+          </div>
+        
+          <button type="submit" class="btn btn-lg btn-primary"> Criar</button>
+         
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+   
+      </div>
+    </div>
+  </div>
+</div>
+  
+           </div>
+         
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Cadastrar Receita</h3>
+            </div>
+          <div class="card-body">
+            <form action="{{url('receitas')}}" method="post" >
+                  
+           <input type="hidden" name="cadReceita">
+              
+                  <div class="form-group">
+                     <label>Paciente:</label>
+                  
+                    <select id="pacientePesquisa" class="form-control" name="pacientePesquisa"></select>
+                   </div>
+                
+                  <div class="form-group"> 
+                    <label>Local:</label>
+                  
+                   <select id="localPesquisa" class="form-control" name="localPesquisa">
+                 
+                    {% for local in locais %}
+                    <option value="{{local.id}}">{{ local.nome }}</option>
+                    {% endfor %}
+                  </select>
+                  </div>
+                  <div class="form-group"> 
+                    <label>Prescritor:</label>
+                  
+                   <select id="prescritorPesquisa" class="form-control" name="prescritorPesquisa"></select>
+                  </div>
+
+                  <div class="form-group"> 
+                    <label>Data de Dispensa da Receita:</label>
+                 
+                   <input type="date" name="dataReceita" id="dataReceitac" class="form-control">
+                  </div>
+                  <div class="form-group"> 
+                    <label>Observação</label>
+                 
+                   <textarea name="obs" id="obs" class="form-control"></textarea>
+                  </div>
+
+                  <div class="form-group"> 
+                   <button class="btn btn-primary" type="submit">Criar</button>
+                  </div>
+
+                   
+
+            
+              
+            </form>
+          </div>
+        </div>
+    
+     
+         
+            
+                <div class="card collapsed-card">
+                  <div class="card-header bg-primary">
+                    <h3 class="card-title">Editar Receita</h3>
+    
+                    <div class="card-tools">
+                      <button type="button" class="btn btn-tool" data-card-widget="collapse" title="Collapse">
+                        <i class="fas fa-plus"></i>
+                      </button>
+    
+                    </div>
+                  </div>
+                  <div class="card-body" style="display: none;" id="form_edit_receita">
+                    <!-- /.conteudo-->
+                    <form action="{{ url('receitas/') }}" method="post">
+                      <input class="form-control" id="registro_id" name="registro_id" type="hidden">
+                      <div class="form-group">
+                        <label>Paciente:</label>
+                     
+                       <select id="pacienteEdit" class="form-control" name="pacienteEdit"></select>
+                      </div>
+                   
+                     <div class="form-group"> 
+                       <label>Local:</label>
+                     
+                      <select id="localEdit" class="form-control" name="localEdit">
+                        
+                       {% for local in locais %}
+                       <option value="{{local.id}}">{{ local.nome }}</option>
+                       {% endfor %}
+                     </select>
+                     </div>
+                     <div class="form-group"> 
+                       <label>Prescritor:</label>
+                     
+                      <select id="prescritorEdit" class="form-control" name="prescritorEdit"></select>
+                     </div>
+   
+                     <div class="form-group"> 
+                       <label>Data de Dispensa da Receita:</label>
+                    
+                      <input type="date" name="data_receitaEdit" id="data_receitaEdit" class="form-control">
+                     </div>
+                     <div class="form-group"> 
+                       <label>Observação</label>
+                    
+                      <textarea name="obsEdit" id="obsEdit" class="form-control"></textarea>
+                     </div>
+   
+                     <div class="form-group"> 
+                      <button class="btn btn-primary" type="submit">Editar</button>
+                     </div>
+    
+                    </form>
+                  </div>
+                  <!-- /.card-body -->
+    
+                  <!-- /.card-footer-->
+                </div>
+              
+    
+
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Pesquisa</h3>
+
+
+            </div>
+            <div class="card-body">
+
+              <form  action="{{url('receitas')}}" method="post">
+                <input type="hidden" name="relatorio" id="relatorio" value="relatorio">
+                <div class=" row form-group">
+                  <div class="col-2"> <label>De:</label>
+                    <input type="date" id="dePesquisa" name="dePesquisa" class="form-control" required>
+                  </div>
+                  <div class="col-2"> <label>Até:</label>
+                    <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
+                  </div>
+                
+                  <div class="col-2"> <label>Local:</label>
+                  
+                   <select id="localRela" class="form-control" name="localRela">
+                    <option value="">Todos</option>
+                    {% for local in locais %}
+                    <option value="{{local.nome}}">{{ local.nome }}</option>
+                    {% endfor %}
+                  </select>
+                  </div>
+                     
+
+                </div>
+            
+            <div class=" form-group">
+              <button type="submit" class="btn btn-primary form-control ">Buscar</button>
+            </div>
+
+
+            </form>
+
+
+          </div>
+          <!-- /.card-body -->
+
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+</div>
+</section>
+
+
+
+
+<!-- Main content -->
+<div class="content">
+  <div class="container-fluid">
+   
+
+    <div class="card">
+      <div class="card-header bg-primary">
+        <h3 class="card-title">Receitas</h3>
+      </div>
+      <!-- /.card-header -->
+      <div class="card-body">
+
+<div class="d-none">
+  <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+    <thead>
+      <tr>
+        <th style="border: 1px solid black;">Extrato de Receitas</th>
+        <th style="border: 1px solid black;">Intervalo da Pesquisa:
+          {{dados.dePesquisa |date('d/m/Y')}} |
+          {{dados.atePesquisa |date('d/m/Y')}}</th>
+        <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+
+      </tr>
+    </thead>
+
+  </table>
+</div>
+
+        <table id="example" class="table table-striped table-bordered table-hover text-sm">
+          <thead>
+            <tr>
+
+            
+              <th>Receita</th>
+             <th>Paciente</th>
+              <th>Prescritor</th>
+              <th>Local</th>
+              <th>Data</th>
+              <th>#</th>
+              
+
+
+            </tr>
+          </thead>
+          <tbody>
+           
+            {% for registro in pesquisas %}
+
+            <tr data-id="{{ registro.id }}" data-paciente="{{ registro.paciente }}"
+            data-prescritor="{{ registro.prescritor}}" data-local="{{ registro.local}}" data-datacao="{{ registro.data}}" data-localId="{{registro.localId}}">
+
+
+              <td>
+                <a href="{{ url('receita/' ~ registro.id ~ '/') }}"
+                  class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                 Receita {{ registro.id }}
+                </a>
+              </td>
+              <td>{{ registro.paciente }}</td>
+              <td>
+                {{ registro.prescritor }} - CRM: {{registro.crm}}
+              </td>
+              <td>{{ registro.local}}</td>
+              <td>{{ registro.data }}</td>
+              <td> <button class="btn bnt-sm btn-primary editarReceita">Editar</button></td>
+            
+
+            </tr>
+
+            {% endfor %}
+            
+          </tbody>
+        </table>
+      </div>
+      <!-- /.card-body -->
+    </div>
+    <!-- /.content -->
+  </div>
+</div>
+</div>
+
+
+
+
+
+
+
+{% endblock %}
+{% block script %}  <script src="{{url('templates/assets/js/receita.js')}}"></script>  {% endblock %}

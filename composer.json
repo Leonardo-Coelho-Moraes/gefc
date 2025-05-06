@@ -1,0 +1,22 @@
+{
+    "name": "sge/sge",
+    "description": "Sistema de Gerenciamento de Estoque",
+    "type": "project",
+    "autoload": {
+        "psr-4": {
+            "gefc\\": "gefc/"
+        },
+        "files":[
+        "gefc/configuracao.php"
+        ]
+    },
+    "authors": [
+        {
+            "name": "Leonardo Coelho Moraes"
+        }
+    ],
+    "require": {
+        "twig/twig": "^3.0",
+        "pecee/simple-router": "^5.4"
+    }
+}

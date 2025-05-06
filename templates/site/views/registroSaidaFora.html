@@ -1,0 +1,251 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Saídas Por Produto</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">Saídas Fora por Produto</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+
+  {{flash()}}
+
+   <section class="content">
+     <div class="container-fluid">
+       <div class="row">
+         <div class="col-12">
+           <!-- Default box -->
+           <div class="card">
+             <div class="card-header bg-primary">
+               <h3 class="card-title">Adicionar Saída Fora Sem Local Registrado</h3>
+
+
+             </div>
+             <div class="card-body">
+             
+          
+               <form id="sourceForm">
+                 
+                 <div class="form-group">
+                   <label>Produtos:</label>
+                   <select id="selectField" class="campo_select form-control" style="width: 100%" name="selectField">
+                    {% for produto in produtos %}
+                    <option value="{{ produto.id }};{{ produto.nome }}">{{ produto.nome }}</option>
+                    {% endfor %}
+
+
+                   </select>
+                 </div>
+                 
+                 <div class="form-group">
+                   <label>Qnt:</label>
+                   <input type="number" id="numberField" name="numberField" min="1" class="form-control">
+                 </div>
+                 <div class="form-group">
+                  <label>Fornecedor</label>
+  
+                  <select name="fornecedor" id="fornecedor" class="form-control" required>
+                    <option value="Fornecedor">Fornecedor</option>
+                    <option value="CEMA">CEMA</option>
+                  </select>
+                </div>
+               <div class="form-group justify-content-between d-flex">
+
+                 <button type="button" class="btn btn-primary" id="submitButton">Enviar</button>
+                 <button type="button" class="btn btn-danger" id="limparLista">Limpar Lista</button>
+               </div>
+               </form>
+
+               <p class="text-body" id='teste'>Lista:</p>
+               <hr>
+
+               <form action="{{ url('saida/fora/adicionar') }}" method="post">
+                 <div id="targetForm" class="d-flex flex-column w-100 text-body"></div>
+                 <div class="d-flex w-100 gap-3 align-items-center">
+                   <div class=" row form-group">
+                    <div class="col">    <label for="local">Local</label>
+                      <input type="text" id="local" name="local" class="form-control">
+ </div>
+                 
+                     <div class="col">
+                      <label>Data</label>
+                      <input class="form-control" id="data" type="date" name="data" required>
+                    </div>
+                   
+                   </div>
+                   <div class="form-group">
+                     <input class="form-control btn btn-primary" id="venderBtn" type="submit" value="Adicionar Saída">
+                   </div>
+                 </div>
+               </form>
+             </div>
+             <!-- /.card-body -->
+
+             <!-- /.card-footer-->
+           </div>
+           <!-- /.card -->
+         </div>
+       </div>
+     </div>
+   </section>
+
+<section class="content">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-12">
+        <!-- Default box -->
+        <div class="card">
+          <div class="card-header bg-primary">
+            <h3 class="card-title">Pesquisa</h3>
+
+
+          </div>
+          <div class="card-body">
+
+            <form action="{{url('registro/saida/fora')}}" method="post">
+              <input type="hidden" name="relatorio" id="relatorio" value="relatorio">
+              <div class=" row form-group">
+                <div class="col-2"> <label>De:</label>
+                  <input type="date" id="dePesquisa" name="dePesquisa" class="form-control" required>
+                </div>
+                <div class="col-2"> <label>Até:</label>
+                  <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
+                </div>
+
+                <div class="col-5"> <label>Produtos:</label>
+                  <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
+                    placeholder="Deixe vazio para pesquisar todos os Produtos"></div>
+                  
+                <div class="col-2"> <label>Local:</label>
+                  <input type="text" id="localPesquisa" name="localPesquisa" class="form-control"
+                    placeholder="Deixe vazio para pesquisar todos os Locais"></div>
+
+              </div>
+
+              <div class=" form-group">
+                <button type="submit" class="btn btn-primary form-control ">Buscar</button>
+              </div>
+
+
+            </form>
+
+
+          </div>
+          <!-- /.card-body -->
+
+          <!-- /.card-footer-->
+        </div>
+        <!-- /.card -->
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+  <!-- Main content -->
+  <div class="content">
+    <div class="container-fluid">
+      <div class="card">
+        <div class="card-header bg-primary">
+          <h3 class="card-title">Saídas por Produto</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+
+          <div class="d-none">
+            <table id="cabe" class="table" style="border: 1px solid black;margin-bottom: 50px;">
+              <thead>
+                <tr>
+                  <th style="border: 1px solid black;">Extrato de Saídas</th>
+                  <th style="border: 1px solid black;">Intervalo da Pesquisa:
+                    {{dados.dePesquisa |date('d/m/Y')}} |
+                    {{dados.atePesquisa |date('d/m/Y')}}</th>
+                  <th style="border: 1px solid black;">Data Extração: {{ "now"|date("d/m/Y") }} </th>
+
+                </tr>
+              </thead>
+
+            </table>
+          </div>
+       <table id="example" class="text-sm table table-striped table-bordered table-hover">
+         <thead>
+           <tr>
+	
+
+            
+             <th>Produto</th>
+             <th>Fornecedor</th>
+             <th>Nome Saída</th>
+             <th>Local</th>
+             <th>Qnt Solicitada</th>
+             <th>Qnt</th>
+             <th>Preço</th>
+             <th>Data</th>
+
+
+           </tr>
+         </thead>
+         <tbody>
+           {%set qnt = 0%}
+           {%set qntSolic = 0%}
+           {%set preco = 0%}
+           {% for registro in pesquisas %}
+
+           <tr>
+ 
+             <td>
+                <a href="{{ url('produtos/' ~ registro.slug ~ '/' ~ registro.produto_id) }}"
+                 class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                 {{ registro.nome }} {{registro.unidade}}
+               </a>
+             </td>
+             <td>{{ registro.fornecedor }}</td>
+             <td>
+              <a href="{{ url('saidas/fora/'~registro.nome_saida) }}"
+                class="link-offset-2 link-offset-3-hover link-underline link-underline-opacity-0 link-underline-opacity-75-hover">
+                {{ registro.nome_saida }}
+              </a>
+             </td>
+
+
+             <td>{{ registro.local}}</td>
+             <td>{{ registro.qnt_solicitada }}</td>
+             {%set qntSolic = qntSolic + registro.qnt_solicitada %}
+             <td>{{ registro.quantidade }}</td>
+             {%set qnt = qnt + registro.quantidade%}
+             <td>{{ registro.preco }} R$</td>
+             {%set preco = preco + registro.preco %}
+             <td>{{ registro.data|date('d/m/Y') }}</td>
+
+
+           </tr>
+
+           {% endfor %}
+        
+         </tbody>
+       </table>
+        </div>
+        <!-- /.card-body -->
+      </div>
+      <!-- /.content -->
+    </div>
+  </div>
+</div>
+
+{%endblock%}
+{% block script %} <script src="{{url('templates/assets/js/venda.js')}}"></script> {% endblock %}

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link href="{{url('templates/assets/css/flowbite.min.css')}}" rel="stylesheet" />
+    <script src="{{url('templates/assets/js/flowbite.min.js')}}"></script>
+    <script src="{{url('templates/assets/js/tailwindcss.js')}}"></script>
+    <script src="{{url('templates/assets/js/apexcharts.js')}}"></script>
+    <script src="{{url('templates/assets/js/apextree.js')}}"></script>
+    <script src="{{url('templates/assets/js/jquery.min.js')}}"></script>
+</head>
+<body class=" flex items-start gap-2  flex-col min-h-screen w-full">
+    
+
+
+
+  
+  
+  <div class="flex justify-center  w-full">
+    <div class="shadow-md  h-full fixed w-[18vw] left-[0] flex-col  p-[16px] flex justify-start items-center gap-[17px]" id="default-tab" data-tabs-toggle="#default-tab-content" role="tablist">
+
+<img src="{{url('templates/assets/img/semsa.png')}}"  id="logoDah" >
+
+      <!-- <a href="{{url('dash')}}" class=" text-center inline-block w-full px-4 py-3 rounded-lg hover:text-white hover:bg-orange-600 text-orange-600 dark:text-orange-600 dark:hover:bg-orange-600 dark:hover:text-white font-bold text-wrap break-words" >Custos</a>
+ -->
+ <a href="{{url('dashCaf')}}" class=" text-center inline-block w-full px-4 py-3 rounded-lg hover:text-white hover:bg-orange-600 text-orange-600 dark:text-orange-600 dark:hover:bg-orange-600 dark:hover:text-white font-bold text-wrap break-words tracking-widest" >CAF</a>
+
+<a href="{{url('dashReceitas')}}" class=" text-center inline-block w-full px-4 py-3 rounded-lg hover:text-white hover:bg-orange-600 text-orange-600 dark:text-orange-600 dark:hover:bg-orange-600 dark:hover:text-white font-bold text-wrap break-words tracking-widest" >RECEITAS</a>
+<a href="{{url('dashPedidos')}}" class=" text-center inline-block w-full px-4 py-3 rounded-lg hover:text-white hover:bg-orange-600 text-orange-600 dark:text-orange-600 dark:hover:bg-orange-600 dark:hover:text-white font-bold text-wrap break-words tracking-widest" >PEDIDOS</a>
+
+      
+      <a href="{{url('/')}}" class=" text-center inline-block w-full px-4 py-3 rounded-lg hover:text-white hover:bg-orange-600 text-orange-600 dark:text-orange-600 dark:hover:bg-orange-600 dark:hover:text-white font-bold text-wrap break-words tracking-widest" >SISTEMA</a>
+
+    </div>
+    <div class=" w-[82vw] ml-[18vw]  h-[100vh] ">
+  
+      
+      
+
+    {% block conteudo %} {% endblock %}
+
+    </div>
+    <!-- ... -->
+    
+  </div>
+  <script>
+    $(document).ready(function() {
+        var trocaImagem = true; // Flag para alternar entre as imagens
+
+        // Função para alternar entre as imagens a cada 10 segundos
+        setInterval(function() {
+            if (trocaImagem) {
+                $('#logoDah').attr('src', "{{url('templates/assets/img/semsa.png')}}"); // Altera para imagem2
+            } else {
+                $('#logoDah').attr('src', "{{url('templates/assets/img/coari.png')}}"); // Altera para imagem1
+            }
+
+            trocaImagem = !trocaImagem; // Inverte a flag para a próxima troca
+        }, 10000); // 10 segundos (10000 milissegundos)
+    });
+</script>
+  {% block script %} {% endblock %}
+
+ 
+</body>
+</html>

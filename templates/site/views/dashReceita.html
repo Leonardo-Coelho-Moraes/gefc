@@ -1,0 +1,311 @@
+{%extends 'baseDash.html'%}
+
+{% block conteudo %}
+<div class="w-full flex justify-end items-end py-2 px-4">
+  <img src="{{url('templates/assets/img/cafmini.jpg')}}" class="w-[130px]" >
+</div>
+<div id="default-tab-content ">
+ 
+
+  <div class=" p-4 rounded-lg bg-white dark:bg-white h-full flex flex-col justify-center items-start gap-[16px]" id="receitas" role="tabpanel" aria-labelledby="receitas-tab">
+   
+   
+      <div class="flex gap-2 w-[95%]">
+        <div class="p-[10px]  w-[70%] border-gray-100 border rounded-xl">
+          <h3 class="text-xl text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Dispensa de Receita</h3>
+        
+          <div id="grafico1"></div>
+     
+        </div>
+    
+        <div class="p-[10px]  w-[30%] border-gray-100 border rounded-xl flex flex-col gap-2">
+          <h3 class="text-xl text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Receitas Últimos 10 dias</h3>
+        
+          <div id="grafico5"></div>
+          <div class="flex flex-col bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div class="px-2 py-2 sm:p-4 sm:pb-2">
+              <div class="grid items-center justify-center w-[95%] grid-cols-1 text-left">
+                <div>
+                  <h2 class="text-lg font-medium tracking-tighter text-gray-600 lg:text-xl"> Média Receitas Mensal</h2></div>
+                <div class="mt-2">
+                  <p>
+                    <span class="text-2xl font-light tracking-tight text-black">263</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="flex flex-col bg-white rounded-xl border border-gray-100 shadow-sm">
+            <div class="px-2 py-2 sm:p-4 sm:pb-2">
+              <div class="grid items-center justify-center w-[95%] grid-cols-1 text-left">
+                <div>
+                  <h2 class="text-lg font-medium tracking-tighter text-gray-600 lg:text-xl"> Média de Consumo Diário </h2></div>
+                <div class="mt-2">
+                  <p>
+                    <span class="text-2xl font-light tracking-tight text-black">9.580</span></p>
+                </div>
+              </div>
+            </div>
+          </div>
+     
+        </div>
+
+      </div>
+  
+
+      <div class="flex gap-2 w-[95%] ">
+<div class="p-[10px] border-gray-100 border rounded-xl w-[60%]">
+          <p class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Medicamentos mais Consumidos</p>
+          <div id="grafico2" class="w-[95%]"></div>
+        </div>
+        <div class="p-[10px] w-[95%] border border-gray-100 rounded-xl  w-[40%]"> 
+          <h5 class="text-lg text-orange-600 dark:text-orange-600 font-bold font-sans mb-2">Consumo de medicação</h5>
+          
+          
+          <div id="grafico4" class="w-[95%]"></div>
+         
+        </div>
+        </div>
+
+
+       
+
+       
+          
+ 
+
+ 
+    
+
+
+
+
+</div>
+ 
+</div>
+{% endblock %}
+{% block script %} 
+<script>
+  
+ 
+ 
+  var options = {
+          series: [{
+          name: 'Receitas',
+          data: [ 3811, 3235,1808]
+        }],
+          chart: {
+          height: 300,
+          type: 'bar',
+        },
+        plotOptions: {
+          bar: {
+            borderRadius: 10,
+            dataLabels: {
+              position: 'top', // top, center, bottom
+            },
+            distributed: true
+          }
+        },
+        dataLabels: {
+          enabled: true,
+          formatter: function (val) {
+            return val ;
+          },
+          offsetY: -20,
+          style: {
+            fontSize: '12px',
+            colors: ["#304758"]
+          }
+        },
+        
+        xaxis: {
+          categories: [ "Jan - 2025", "Fev - 2025","Mar - 2025"],
+          position: 'top',
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false
+          },
+          crosshairs: {
+            fill: {
+              type: 'gradient',
+              gradient: {
+                colorFrom: '#D8E3F0',
+                colorTo: '#BED1E6',
+                stops: [0, 100],
+                opacityFrom: 0.4,
+                opacityTo: 0.5,
+              }
+            }
+          },
+          tooltip: {
+            enabled: true,
+          }
+        },
+        legend: {
+          show: false
+        },
+        yaxis: {
+          axisBorder: {
+            show: false
+          },
+          axisTicks: {
+            show: false,
+          },
+          labels: {
+            show: false,
+            formatter: function (val) {
+              return val ;
+            }
+          }
+        
+        }
+        };
+
+        var chart = new ApexCharts(document.querySelector("#grafico1"), options);
+        chart.render();
+      
+
+  
+      
+
+  var options = {
+        series: [{
+          name: 'Qnt',
+        data: [1392,1069,696,556,526,470,453,436,367,306]
+      }],
+        chart: {
+        type: 'bar',
+        height: 350
+      },
+      labels: ['Valor'],
+      plotOptions: {
+        bar: {
+          borderRadius: 4,
+          borderRadiusApplication: 'end',
+          horizontal: true,
+          distributed: true
+        }
+      },
+      dataLabels: {
+        enabled: false
+      }, legend: {
+          show: false
+        },
+      xaxis: {
+        categories: ['Ibuprofeno 300mg','Dipirona sódica 500mg','Ibuprofeno 600mg','Ibuprofeno 50mg/ml gotas','Secnidazol 1000mg','Paracetamol 500mg','Amoxicilina 500mg','Cloridrato de ciprofloxacino 500mg','Cefalexina suspensão oral 250mg/5ml','Amoxicilina suspensão oral 250mg/5ml'],
+      }
+      };
+
+      var chart = new ApexCharts(document.querySelector("#grafico2"), options);
+      chart.render();
+  
+
+
+  var options = {
+  chart: {
+   height: 300,
+    type: "area",
+    foreColor: "#020618",
+    toolbar: {
+      autoSelected: "pan",
+      show: false
+    }
+  }, dataLabels: {
+    enabled: false
+  },
+  colors: ["#f54a00"],
+  stroke: {
+    curve: 'straight',
+    width: 1
+  }, grid: {
+    borderColor: "#555",
+    clipMarkers: false,
+    yaxis: {
+      lines: {
+        show: false
+      }
+    }
+  }, legend: {
+          show: false
+        },
+  series: [{
+    name: 'Medicamentos',
+    data: [64138,84399,67080]
+  }], 
+  tooltip: {
+    theme: "dark"
+  },
+   fill: {
+    type: "gradient",
+    gradient: {
+      enabled: true,
+      opacityFrom: 0.4,
+      opacityTo: 0
+    }
+  },
+  xaxis: {
+   
+    categories: ['Jan','Fev', 'Mar']
+  }
+}
+
+var chart = new ApexCharts(document.querySelector("#grafico4"), options);
+
+chart.render();
+
+  var options5 = {
+          series: [{
+          data: [252, 265, 288, 305, 260, 219, 289, 438, 217, 102]
+        }],
+          chart: {
+          type: 'bar',
+          
+          height: 100,
+          sparkline: {
+            enabled: true
+          }
+        },
+        plotOptions: {
+          bar: {
+            columnWidth: '80%',
+            distributed: true
+          }
+        },
+        legend: {
+          show: false
+        },
+        labels: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+        xaxis: {
+          crosshairs: {
+            width: 1
+          },
+        },
+        tooltip: {
+          fixed: {
+            enabled: false
+          },
+          x: {
+            show: false
+          },
+          y: {
+            title: {
+              formatter: function (seriesName) {
+                return ''
+              }
+            }
+          },
+          marker: {
+            show: false
+          }
+        }
+        };
+
+        var chart5 = new ApexCharts(document.querySelector("#grafico5"), options5);
+        chart5.render();
+
+</script>
+
+ {% endblock %}
+

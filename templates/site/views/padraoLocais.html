@@ -1,0 +1,135 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+<nav class="main-header navbar navbar-expand navbar-white navbar-light ">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item d-none d-sm-inline-block">
+      <h3 class="card-title p-3">Padrões</h3>
+    </li>
+  </ul>
+
+  <!-- Right navbar links -->
+  <ul class="nav nav-pills ml-auto p-2">
+    <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Padrões</a></li>
+    <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">Editar Padrão</a></li>
+    <li class="nav-item"><a class="nav-link " href="#tab_3" data-toggle="tab">Cadastar Padrão</a></li>
+  </ul>
+</nav>
+
+<div class="content-wrapper bg-white">
+
+
+
+  <div class="mb-2 d-flex"></div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="tab-content">
+        <div class="tab-pane active" id="tab_1">
+
+          <input type="hidden" value="{{url('')}}" id="lotesLink">
+          <div class="input-group mb-2">
+            <select name="pesquisarLocais" id="pesquisarLocais" class="form-control form-control-lg">
+              {% for local in locais %}
+              <option value="{{ local.id }}">{{ local.nome }}</option>
+              {% endfor %}
+
+            </select>
+            <div class="input-group-append">
+              <button type="submit" id="botaoPesquisar" class="btn btn-lg btn-default">
+                <i class="fa fa-search"></i>
+              </button>
+            </div>
+          </div>
+          <div id="grid" ></div>
+        </div>
+
+          <div class="tab-pane " id="tab_2">
+
+            <form id="editarPadraoForm">
+                <input type="hidden" name="registro_id" id="registro_id">
+              <div class="form-group">
+                <label>Produto</label>
+                <select id="produto_edit" class="campo_select form-control" style="width: 100%" name="produto_edit">
+                </select>
+          
+              </div>
+              <div class="row form-group">
+
+                <div class="col">
+                  <label>Local</label>
+                   <select name="local_edit" id="local_edit" class="form-control">
+                     {% for local in locais %}
+                     <option value="{{ local.id }}">{{ local.nome }}</option>
+                     {% endfor %}
+
+                   </select>
+                </div>
+               
+
+
+              </div>
+              <div class="row form-group">
+                <div class="col">
+                  <label>Quantidade</label>
+                  <input class="form-control" id="quantidade_edit" type="number" name="quantidade_edit" min='0'
+                    required>
+                </div>
+                 </div>
+              <div class="form-group">
+                   <input class="btn btn-primary form-control" type="button" id="editarPadraoBotao" value="Editar">
+            
+              </div>
+            </form>
+          </div>
+          <div class="tab-pane" id="tab_3">
+               <form id="cadastrarPadraoForm">
+
+                <div class="form-group">
+                  <label>Produto</label>
+                  <select id="produto" class="campo_select form-control" style="width: 100%" name="produto">
+                  </select>
+                </div>
+                <div class="row form-group">
+
+                  <div class="col">
+                    <label>Local</label>
+                      <select name="local" id="local" class="form-control">
+                       {% for local in locais %}
+                       <option value="{{ local.id }}">{{ local.nome }}</option>
+                       {% endfor %}
+                    
+                    </select>
+                  </div>
+
+
+
+                </div>
+                <div class="row form-group">
+                  <div class="col">
+                    <label>Quantidade</label>
+                    <input class="form-control" id="quantidade" type="number" name="quantidade" min='0'
+                      required>
+                  </div>
+                </div>
+
+                 <div class="form-group">
+                     <input class="btn btn-primary form-control" type="button" id="cadastrarPadraoBotao" value="Cadastrar">
+                 </div>
+               </form>
+          </div>
+        <!-- /.tab-pane -->
+      </div>
+    </div>
+  </div>
+
+
+
+
+  <!-- /.content -->
+</div>
+
+
+{% endblock %}
+{% block script %} <script src="{{url('templates/assets/js/padroes.js')}}"></script> {% endblock %}

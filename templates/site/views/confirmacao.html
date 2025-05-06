@@ -1,0 +1,89 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>Confirmar Entrada</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item active">{{entrada}}</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Lista da Entrada</h3>
+            </div>
+            <div class="card-body" >
+
+
+              <form action="{{ url('local/entrada/'~entrada~'') }}" method="post">
+                <input type="hidden" name="local" id="local" value="{{local}}">
+                {% set num = 1%}
+                {%for entrada in entradas%}
+                <div class="row form-group">
+                  <input type="hidden" value="{{entrada.id}}" id="registro{{num}}"
+                    name="registro{{num}}">
+                  <div class="col-1">
+                    <label>ID</label>
+                   
+                       <input type="num" name="produto_id{{num}}" class="form-control" id="produto_id{{num}}"
+                         value="{{entrada.produto_id}}" readonly>
+                  </div>
+                  <div class="col">
+                    <label >Produto</label>
+                    <input type="text" class="form-control" value="{{entrada.nome}}">
+               
+                  </div>
+                  <div class="col-1">
+                   <label>QNT</label>
+                   <input type="number"  value="{{entrada.quantidade}}" class="form-control" readonly>
+                  </div>
+                  <div class="col-1">
+                   <label>Confirmado</label>
+                   <input type="number" min="0" id="quantidade{{num}}" value="{{entrada.quantidade}}"
+                     name="quantidade{{num}}" class="form-control"
+                   >
+                  </div>
+                  </div>
+                   {% set num  = num + 1 %}
+                  {%endfor%}
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary" >Confirmar</button>
+                </div>
+
+              </form>
+
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</div>
+
+{% endblock %}

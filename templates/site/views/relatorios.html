@@ -1,0 +1,209 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+<nav class="main-header navbar navbar-expand navbar-white navbar-light ">
+  <!-- Left navbar links -->
+  <ul class="navbar-nav">
+    <li class="nav-item d-none d-sm-inline-block">
+      <h3 class="card-title p-3">Relatórios</h3>
+    </li>
+  </ul>
+
+  <!-- Right navbar links -->
+  <ul class="nav nav-pills ml-auto p-2">
+    <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Entrada</a></li>
+    <li class="nav-item"><a class="nav-link " href="#tab_2" data-toggle="tab">Produtos</a></li>
+    <li class="nav-item"><a class="nav-link" href="#tab_3" data-toggle="tab">Lotes</a></li>
+    <input type="hidden" value="{{url('')}}" id="produtosLink">
+  </ul>
+</nav>
+
+<div class="content-wrapper bg-white">
+
+
+
+  <div class="mb-2 d-flex"></div>
+
+  <div class="content">
+    <div class="container-fluid">
+      <div class="tab-content">
+       
+        <div class="tab-pane active" id="tab_1">
+        <div class="row">
+          <div class="col col-3">
+   <form id="formRelatorioEntradas" class="card card-body">
+
+        <label>De:</label>
+         <input type="date" id="deEntrada" name="deEntrada" class="form-control" required="">
+       
+      <label>Até:</label>
+         <input type="date" id="ateEntrada" name="ateEntrada" class="form-control" required="">
+    
+
+     <label>Produtos:</label>
+         <input type="text" id="produtoEntrada" name="produtoEntrada" class="form-control"
+           placeholder="Deixe vazio para pesquisar todos os Produtos">
+           
+        <label>Fornecedor:</label>
+         <input type="text" id="fornecedorEntrada" name="fornecedorEntrada" class="form-control"
+           placeholder="Deixe vazio para pesquisar todos os Fornecedores">
+
+
+     
+
+   
+      <input type="button" name="enviarEntrada" id="enviarEntrada" value="Buscar" class="btn btn-primary form-control ">
+    
+
+
+   </form>
+ 
+          </div>
+          <div class="col">
+            <div class="card card-body" >
+              <div class="card-tittle d-flex justify-content-between">
+                <h3 class=" card-title ">Entradas</h3>
+                <button class="btn btn-primary" id="imprimirEntrada"><i class="fa-solid fa-print"></i></button>
+              </div>
+              <div class="card-body " id="tabelaEntrada">
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+         
+        </div>
+          <div class="tab-pane " id="tab_2">
+            <div class="row">
+              <div class="col col-3">
+                <form id="formProdutos" class="card card-body">
+    <select id="filtro" name="filtro" class="form-control">
+      <option value="todos">Todos os produtos</option>
+      <option value="com_lote">Produtos com lote</option>
+      <option value="critico">Produtos críticos (quantidade menor ou igual ao critico)</option>
+    </select>
+    <input type="search" name="pesquisaProduto" id="pesquisaProduto" class="form-control form-control-md"
+      placeholder="Ex: DIpirona">
+      <select id="tipoProduto" name="tipoProduto" class="form-control">
+        <option value="">Todos</option>
+        {% for tipoM in tiposMed%}
+        <option value="{{tipoM.nome}}">{{tipoM.nome}}</option>
+       
+        {%endfor%}
+       
+      </select>
+                  <input type="button" name="enviarProduto" id="enviarProduto" value="Buscar"
+                    class="btn btn-primary form-control ">
+                </form>
+              </div>
+              <div class="col">
+                <div class="card card-body">
+                  <div class="card-tittle d-flex justify-content-between">
+                    <h3 class=" card-title ">Produtos</h3>
+                    <button class="btn btn-primary" id="imprimirProdutos"><i class="fa-solid fa-print"></i></button>
+                  </div>
+               <!--<table id="example" class="table table-striped table-bordered table-hover text-sm">
+                    <thead>
+                      <tr>
+          <th>nome</th>
+                        <th>tipo</th>
+                        <th>Qnt1</th>
+                        <th>qnt2</th>
+                       <th>Fornecedor</th>
+                        <th>Cema</th>
+                     
+          
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for produto in produtos%}
+          
+                      <tr>
+          <td>{{ produto.nome }}</td>
+          
+                        <td>{{ produto.tipo }}</td>
+                        <td>{{ produto.total_quantidade }}</td>
+                        <td>
+                          
+                            {{ produto.total_quantidade2 }}
+                       
+                        </td>
+                        <td>{{ produto.qnt_for }}</td>
+                        <td>{{ produto.qnt_cema }} 
+                            
+                        </td>
+          
+          
+          
+                      </tr>
+          
+                      {% endfor %}
+                    
+                    </tbody>
+                  </table>-->
+                  <div class="card-body " id="tabelaProdutos">
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="tab-pane" id="tab_3">
+            <div class="row">
+              <div class="col col-3">
+                <form id="formLotes" class="card card-body">
+                   <label>Cod:</label>
+      <input type="text" id="codPesquisa" name="codPesquisa" class="form-control" placeholder="100">
+     <label>Produtos:</label>
+      <input type="text" id="produtoPesquisa" name="produtoPesquisa" class="form-control"
+        placeholder="Deixe vazio para pesquisar todos os Produtos"> 
+        <label>Fornecedor:</label>
+      <input type="text" id="fornecedorPesquisa" name="fornecedorPesquisa" class="form-control"
+        placeholder="Deixe vazio para pesquisar todos os Fornecedores">
+      <label>Vencimento De</label>
+      <input class="form-control" id="vence_de" type="date" name="vence_de" value="2023-01-30">
+      <label>Vencimento Até</label>
+      <input class="form-control" id="vence" type="date" name="vence" value="2099-09-16">
+    <label>0 p/ todos lotes e 1 p/ lotes com saldo:</label>
+   
+      <input type="number" id="max" name="max" min='0' max='1' class="form-control" value="1" placeholder="1">
+                  <input type="button" name="enviarLotes" id="enviarLotes" value="Buscar"
+                    class="btn btn-primary form-control ">
+
+
+
+                </form>
+              </div>
+              <div class="col">
+                <div class="card card-body">
+                  <div class="card-tittle d-flex justify-content-between">
+                    <h3 class=" card-title ">Lotes</h3>
+                    <button class="btn btn-primary" id="imprimirLotes"><i class="fa-solid fa-print"></i></button>
+                  </div>
+                  <div class="card-body " id="tabelaLotes">
+
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        <!-- /.tab-pane -->
+      </div>
+    </div>
+  </div>
+
+
+  
+
+  <!-- /.content -->
+</div>
+
+
+{% endblock %}
+{% block script %} <script src="{{url('templates/assets/js/relatorio.js')}}"></script> {% endblock %}

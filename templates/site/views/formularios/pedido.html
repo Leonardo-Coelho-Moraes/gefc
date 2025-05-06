@@ -1,0 +1,113 @@
+{%extends 'base.html'%}
+{% block conteudo %}
+
+
+<div class="content-wrapper">
+  <!-- Content Header (Page header) -->
+  <section class="content-header">
+
+    <div class="container-fluid">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1>{{pedido}}</h1>
+        </div>
+        <div class="col-sm-6">
+          <ol class="breadcrumb float-sm-right">
+            <li class="breadcrumb-item"><a href="{{url('index')}}">Inicio</a></li>
+            <li class="breadcrumb-item"><a href="{{url('pedidos')}}">Pedidos</a></li>
+            <li class="breadcrumb-item active">{{pedido}}</li>
+          </ol>
+        </div>
+      </div>
+    </div><!-- /.container-fluid -->
+  </section>
+
+  {{flash()}}
+
+  <section class="content">
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <!-- Default box -->
+          <div class="card">
+            <div class="card-header bg-primary">
+              <h3 class="card-title">Lista Pedido</h3>
+            </div>
+            <div class="card-body" >
+
+
+              <form action="{{ url('pedidos/' ~ pedido) }}" method="post">
+                <div class="row form-group">
+                  <div class="col">
+                       <p>Produto</p>
+                  </div>
+                  <div class="col-4">
+                    <p>Lote</p>
+                  </div>
+                  <div class="col-1">
+                    <p>Solicitado</p>
+                  </div>
+                  <div class="col-1">
+                    <p>Liberado</p>
+                  </div>
+                   </div>
+                   {% set num = 1 %}
+                  {%for produto in produtos%}
+                  
+                    <div class="row form-group">
+                        <input type="hidden" id="pedido" name="pedido{{num}}"  value="{{produto.pedido_id}}" class="form-control">
+                      <div class="col">
+                        <input type="text" id="produto" name="produto{{num}}" class="form-control" value="{{produto.nome}}" readonly>
+                      </div>
+                      <div class="col-4">
+                       
+                        <select id="lote{{num}}" class="form-control" name="lote{{num}}">
+                          {% set hasLotes = false %}
+                          {% for lote in lotes %}
+                          {% if produto.produto_id == lote.produto_id %}
+                          <option value="{{lote.id}}">{{lote.lote}} - Qnt.: {{lote.quantidade}} {{produto.unidade_contagem}} Val.:
+                            {{lote.vencimento}} {{lote.fornecedor}}</option>
+                          {% set hasLotes = true %}
+                          {% endif %}
+                          {% endfor %}
+                          {% if not hasLotes %}
+                          <option value="">Estoque zerado</option>
+                          {% endif %}
+                        </select>
+                      </div>
+                      <div class="col-1">
+                        <input type="number" id="qntSolic" name="qntSolic{{num}}" class="form-control"
+                          value="{{produto.qnt_solicitada}}" readonly>
+                      </div>
+                      <div class="col-1">
+                        <input type="text" id="quantidade" name="quantidade{{num}}" min="1" class="form-control" >
+                      </div>
+                    </div>
+                     {% set num = num + 1 %}
+                    
+                  {%endfor%}
+
+               
+                
+                 <input type="hidden" value="{{ produtos[0].local }}" name="local">
+                <div class="form-group">
+                  <button type="submit" class="btn btn-primary" >Enviar</button>
+                </div>
+
+              </form>
+
+            </div>
+            <!-- /.card-body -->
+
+            <!-- /.card-footer-->
+          </div>
+          <!-- /.card -->
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+</div>
+
+{% endblock %}
