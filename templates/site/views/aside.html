@@ -89,14 +89,7 @@
         </li>
         {%endif%}
         {% if usuario().local == 0  and usuario().nivel == 3 or usuario().nivel == 1%}
-        <li class="nav-item">
-          <a href="{{url('receitas')}}" class="nav-link">
-            
-            <p>
-              Receitas
-            </p>
-          </a>
-        </li>
+     
         <li class="nav-item">
           <a href="{{url('registro/vendas')}}" class="nav-link">
             
@@ -168,6 +161,14 @@
           </a>
         </li>
         {%endif%}
+        <li class="nav-item">
+          <a href="{{url('receitas')}}" class="nav-link">
+            
+            <p>
+              Receitas
+            </p>
+          </a>
+        </li>
         <li class="nav-item">
           <a href="{{url('local')}}" class="nav-link">
             

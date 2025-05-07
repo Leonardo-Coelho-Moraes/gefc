@@ -79,10 +79,11 @@ class ReceitaModelo {
     public function cadReceita(array $dados)
     {
         $usuario = UsuarioControlador::usuario()->id;
+        $local = UsuarioControlador::usuario()->local;
         (new Inserir())->inserir(
             'numero_receita',
             'paciente_id	, local_id, prescritor_id, obs,data, usuario_id',
-            [$dados['pacientePesquisa'], $dados['localPesquisa'], $dados['prescritorPesquisa'], $dados['obs'], $dados['dataReceita'], $usuario]
+            [$dados['pacientePesquisa'], $local, $dados['prescritorPesquisa'], $dados['obs'], $dados['dataReceita'], $usuario]
         );
         $receita = Conexao::getInstancia()->lastInsertId();
        Helpers::redirecionar('receita/'.$receita);
@@ -117,7 +118,7 @@ class ReceitaModelo {
        
         $dadosArray = [
             $dados['pacienteEdit'],
-            $dados['localEdit'],
+         
             $dados['prescritorEdit'],
             $dados['obsEdit'],
              $dados['data_receitaEdit']
@@ -126,13 +127,14 @@ class ReceitaModelo {
         // Chamada à função atualizar com uma consulta preparada
         (new Atualizar())->atualizar(
             'numero_receita',
-            "paciente_id = ?, local_id = ?, prescritor_id = ?, obs = ?, data=?",
+            "paciente_id = ?, prescritor_id = ?, obs = ?, data=?",
             $dadosArray,
             $dados['registro_id']
         );
     }
     public function registarProdutoReceita(array $dados, int $id): void
     {
+        $local = UsuarioControlador::usuario()->local;
         foreach ($dados as $key => $value) {
             if (strpos($key, 'produto_id') === 0) {
                 $index = str_replace('produto_id', '', $key);
@@ -159,6 +161,15 @@ class ReceitaModelo {
                         $stmt->execute();
 
                     
+                        if($dados['descontar'] == 1){
+                            $query = "UPDATE local_estoque SET estoque = estoque - :qnt WHERE produto_id = :id AND local_id = :local";
+                            $stmt = Conexao::getInstancia()->prepare($query);
+                            $stmt->bindParam(':qnt', $quantidade, PDO::PARAM_INT);
+                            $stmt->bindParam(':id', $produtoId, PDO::PARAM_INT);
+                            $stmt->bindParam(':local', $local, PDO::PARAM_INT);
+                            $stmt->execute();
+            
+                        }
                  
                   
                 }
@@ -170,7 +181,7 @@ class ReceitaModelo {
     public function pesquisaReceita($id)
     {
        
-       
+  
         $conexao = Conexao::getInstancia();
 
         $query = "  
@@ -183,14 +194,16 @@ class ReceitaModelo {
         dispensa_receita  
     JOIN   
         produtos ON dispensa_receita.medicacao_id = produtos.id  
+    
 
-        WHERE dispensa_receita.receita_id = :id;
+        WHERE dispensa_receita.receita_id = :id 
 
  
     ";
 
         $stmt = $conexao->prepare($query);
         $stmt->bindValue(':id', $id, PDO::PARAM_INT);
+      
         $stmt->execute();
 
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -233,10 +246,10 @@ class ReceitaModelo {
         return $resultado;
     }
 
-    public function pesquisaReceitas(?string $dePesquisa = '2023-01-30', ?string $atePesquisa = '2099-12-31',?string $local = '', int $limite)
+    public function pesquisaReceitas(?string $dePesquisa = '2023-01-30', ?string $atePesquisa = '2099-12-31', int $limite)
     {
        
-       
+        $local = UsuarioControlador::usuario()->local;
         $conexao = Conexao::getInstancia();
 
         $query = "  
@@ -258,7 +271,7 @@ class ReceitaModelo {
         JOIN   
         prescritores ON numero_receita.prescritor_id = prescritores.id  
     WHERE  
-        ( numero_receita.data >= :de AND numero_receita.data <= :ate  AND   locais.nome LIKE :local)  
+        ( numero_receita.data >= :de AND numero_receita.data <= :ate  AND   local_id = :local )  
     ORDER BY numero_receita.id DESC
     LIMIT :limite  
     ";
@@ -266,13 +279,14 @@ class ReceitaModelo {
         $stmt = $conexao->prepare($query);
         $stmt->bindValue(':de', $dePesquisa, PDO::PARAM_STR);
         $stmt->bindValue(':ate', $atePesquisa, PDO::PARAM_STR);
-        $stmt->bindValue(':local', '%' . $local . '%', PDO::PARAM_STR);
+        $stmt->bindValue(':local', $local , PDO::PARAM_STR);
         $stmt->bindValue(':limite', $limite, PDO::PARAM_INT); // Binding do limite como inteiro  
         $stmt->execute();
 
         $resultado = $stmt->fetchAll(PDO::FETCH_ASSOC);
         return $resultado;
     }
+
    
 
 

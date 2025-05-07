@@ -142,11 +142,11 @@ class SiteControlador extends Controlador
 
     public function receitas(): void
     {
-        $this->verificarPermissaoAdmin();
+       
         $data = date('Y-m-d');
-        $receitas = (new ReceitaModelo())->pesquisaReceitas('2025-01-30', $data, '',  30);
-        $locais = (new Busca())->busca(null, null, 'locais', '', '', null);
-        $bairros = (new Busca())->busca(null, null, 'bairros', '', '', null);
+        $receitas = (new ReceitaModelo())->pesquisaReceitas('2025-01-30', $data,   30);
+     
+        $bairros = (new Busca())->busca(null, null, 'bairros', '', '');
        
         $dados = filter_input_array(INPUT_POST, FILTER_DEFAULT);
         if( isset($dados['cadReceita'])){
@@ -181,14 +181,14 @@ class SiteControlador extends Controlador
         }
         elseif(isset($dados["relatorio"])) {
            
-            $receitas = (new ReceitaModelo())->pesquisaReceitas($dados["dePesquisa"], $dados["atePesquisa"],$dados['localRela'],30000000);
+            $receitas = (new ReceitaModelo())->pesquisaReceitas($dados["dePesquisa"], $dados["atePesquisa"],30000000);
          
         }
       
         
        
 
-        echo $this->template->renderizar('receitas.html', ['titulo' => SITE_NOME . ' Receitas', 'locais'=>$locais, 'pesquisas'=>$receitas, 'bairros'=>$bairros]);
+        echo $this->template->renderizar('receitas.html', ['titulo' => SITE_NOME . ' Receitas', 'pesquisas'=>$receitas, 'bairros'=>$bairros]);
     }
     public function receita(int $id): void
     {
@@ -390,16 +390,14 @@ class SiteControlador extends Controlador
     }
     public function deletarEntrada(int $id): void
     {
-        $this->verificarPermissaoAdmin();
-        
+       
         (new Deletar())->deletar($id,'registro_entrada');
         $this->mensagem->sucesso('Entrada Deletada com Sucesso!')->flash();
         Helpers::redirecionar('entrada/');
     }
     public function deletarEntradaLocal(int $id): void
     {
-        $this->verificarPermissaoAdmin();
-        
+       
         (new Deletar())->deletar($id,'entrada_ubs');
         $this->mensagem->sucesso('Entrada Deletada com Sucesso!')->flash();
         Helpers::redirecionar('entrada/local');
@@ -449,9 +447,9 @@ class SiteControlador extends Controlador
     
     public function deletarProdutoReceita(int $id): void
     {
-        $this->verificarPermissaoAdmin();
+        
         (new Deletar())->deletar($id, 'dispensa_receita');
-        Helpers::redirecionar('receita/'.$id);
+        Helpers::redirecionar('receitas/');
     
     }
     public function venda(int $nome): void

@@ -141,16 +141,7 @@
                     <select id="pacientePesquisa" class="form-control" name="pacientePesquisa"></select>
                    </div>
                 
-                  <div class="form-group"> 
-                    <label>Local:</label>
-                  
-                   <select id="localPesquisa" class="form-control" name="localPesquisa">
                  
-                    {% for local in locais %}
-                    <option value="{{local.id}}">{{ local.nome }}</option>
-                    {% endfor %}
-                  </select>
-                  </div>
                   <div class="form-group"> 
                     <label>Prescritor:</label>
                   
@@ -204,16 +195,7 @@
                        <select id="pacienteEdit" class="form-control" name="pacienteEdit"></select>
                       </div>
                    
-                     <div class="form-group"> 
-                       <label>Local:</label>
-                     
-                      <select id="localEdit" class="form-control" name="localEdit">
-                        
-                       {% for local in locais %}
-                       <option value="{{local.id}}">{{ local.nome }}</option>
-                       {% endfor %}
-                     </select>
-                     </div>
+                    
                      <div class="form-group"> 
                        <label>Prescritor:</label>
                      
@@ -262,15 +244,7 @@
                     <input type="date" id="atePesquisa" name="atePesquisa" class="form-control" required>
                   </div>
                 
-                  <div class="col-2"> <label>Local:</label>
                   
-                   <select id="localRela" class="form-control" name="localRela">
-                    <option value="">Todos</option>
-                    {% for local in locais %}
-                    <option value="{{local.nome}}">{{ local.nome }}</option>
-                    {% endfor %}
-                  </select>
-                  </div>
                      
 
                 </div>
